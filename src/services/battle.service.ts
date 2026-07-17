@@ -6,6 +6,38 @@ import {BattleStateStore} from "../stores/battleStateStore";
 import pgBossManager from "@shared/pg-boss-manager";
 
 import logger from "@shared/logger";
+import config from "../config/config";
+
+const moveTimers = new Map<string, NodeJS.Timeout>();
+
+const MOVE_TIMEOUT_MS = (1000*config.battleTurnTimeLimit);
+
+function startMoveTimer(battle: battleGrpc.BattleObject) {
+  stopMoveTimer(battle.id);
+
+  const currentPlayer = battle.players[turn(battle)];
+
+  const timer = setTimeout(async () => {
+    moveTimers.delete(battle.id);
+
+    try {
+      await leaveBattle(currentPlayer, battle.id);
+    } catch (e) {
+      logger.error(e);
+    }
+  }, MOVE_TIMEOUT_MS);
+
+  moveTimers.set(battle.id, timer);
+}
+
+function stopMoveTimer(battleId: string) {
+  const timer = moveTimers.get(battleId);
+
+  if (timer) {
+    clearTimeout(timer);
+    moveTimers.delete(battleId);
+  }
+}
 
 export function battleStore(): BattleStateStore {
   // убедимся, что сторы инициализированы
@@ -27,6 +59,8 @@ export const battleNew = async (battle: battleGrpc.BattleObject) => {
   await battleStore().set(battle);
   await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
 
+  startMoveTimer(battle);
+
   return battle;
 
 };
@@ -39,9 +73,6 @@ function getSymbolForUser(battle: battleGrpc.BattleObject, move: engineGrpc.Batt
 }
 
 function verifyTurn(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMoveRequest) {
-  // logger.log(move.profileId);
-  // logger.log(turn(battle));
-  // logger.log(battle.players[turn(battle)]);
   if (move.profileId != battle.players[turn(battle)]) {
     throw new Error(`Not your turn`);
   }
@@ -107,9 +138,11 @@ export const makeMove = async (move: engineGrpc.BattleMoveRequest) => {
   }
 
   if (battle.status == battleGrpc.BattleStatus.FINISHED) {
+    stopMoveTimer(battle.id);
     await battleStore().remove(battle.id);
   } else {
     await battleStore().set(battle);
+    startMoveTimer(battle);
   }
 
   await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
@@ -134,6 +167,7 @@ export const leaveBattle = async (profileId: string, battleId: string) => {
 
   battle.status = battleGrpc.BattleStatus.FINISHED;
 
+  stopMoveTimer(battle.id);
   await battleStore().remove(battle.id);
 
   await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
