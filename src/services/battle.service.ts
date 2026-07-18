@@ -10,168 +10,168 @@ import config from "../config/config";
 
 const moveTimers = new Map<string, NodeJS.Timeout>();
 
-const MOVE_TIMEOUT_MS = (1000*config.battleTurnTimeLimit);
+const moveTimeoutMs = (1000 * config.battleTurnTimeLimit);
 
 function startMoveTimer(battle: battleGrpc.BattleObject) {
-  stopMoveTimer(battle.id);
+    stopMoveTimer(battle.id);
 
-  const currentPlayer = battle.players[turn(battle)];
+    const currentPlayer = battle.players[turn(battle)];
 
-  const timer = setTimeout(async () => {
-    moveTimers.delete(battle.id);
+    const timer = setTimeout(async () => {
+        moveTimers.delete(battle.id);
 
-    try {
-      await leaveBattle(currentPlayer, battle.id);
-    } catch (e) {
-      logger.error(e);
-    }
-  }, MOVE_TIMEOUT_MS);
+        try {
+            await leaveBattle(currentPlayer, battle.id);
+        } catch (e) {
+            logger.error(e);
+        }
+    }, moveTimeoutMs);
 
-  moveTimers.set(battle.id, timer);
+    moveTimers.set(battle.id, timer);
 }
 
 function stopMoveTimer(battleId: string) {
-  const timer = moveTimers.get(battleId);
+    const timer = moveTimers.get(battleId);
 
-  if (timer) {
-    clearTimeout(timer);
-    moveTimers.delete(battleId);
-  }
+    if (timer) {
+        clearTimeout(timer);
+        moveTimers.delete(battleId);
+    }
 }
 
 export function battleStore(): BattleStateStore {
-  // убедимся, что сторы инициализированы
-  const battleStore = StoreRegistry.getStore<BattleStateStore>(stores.BattleStateStore.key);
+    // убедимся, что сторы инициализированы
+    const battleStore = StoreRegistry.getStore<BattleStateStore>(stores.BattleStateStore.key);
 
-  if (!battleStore) {
-    throw new Error("BattleStateStore not found");
-  }
+    if (!battleStore) {
+        throw new Error("BattleStateStore not found");
+    }
 
-  return battleStore;
+    return battleStore;
 }
 
 export const battleNew = async (battle: battleGrpc.BattleObject) => {
-  // logger.log('New battle started', battle)
-  battle.cells = Array(9).fill(battleGrpc.BattleCellValue.CELL_EMPTY);
-  battle.status = battleGrpc.BattleStatus.ACTIVE;
-  battle.winner = "";
+    // logger.log('New battle started', battle)
+    battle.cells = Array(9).fill(battleGrpc.BattleCellValue.CELL_EMPTY);
+    battle.status = battleGrpc.BattleStatus.ACTIVE;
+    battle.winner = "";
 
-  await battleStore().set(battle);
-  await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
+    await battleStore().set(battle);
+    await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
 
-  startMoveTimer(battle);
+    startMoveTimer(battle);
 
-  return battle;
+    return battle;
 
 };
 
 function getSymbolForUser(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMoveRequest): battleGrpc.BattleCellValue {
-  const idx = battle.players.indexOf(move.profileId);
-  if (idx === -1) throw new Error("User is not found in the battle");
+    const idx = battle.players.indexOf(move.profileId);
+    if (idx === -1) throw new Error("User is not found in the battle");
 
-  return idx === 0 ? battleGrpc.BattleCellValue.CELL_X : battleGrpc.BattleCellValue.CELL_O;
+    return idx === 0 ? battleGrpc.BattleCellValue.CELL_X : battleGrpc.BattleCellValue.CELL_O;
 }
 
 function verifyTurn(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMoveRequest) {
-  if (move.profileId != battle.players[turn(battle)]) {
-    throw new Error(`Not your turn`);
-  }
+    if (move.profileId != battle.players[turn(battle)]) {
+        throw new Error(`Not your turn`);
+    }
 }
 
 function turn(battle: battleGrpc.BattleObject) {
-  return battle.cells.filter(
-    cell => cell !== battleGrpc.BattleCellValue.CELL_EMPTY
-  ).length % battle.players.length;
+    return battle.cells.filter(
+        cell => cell !== battleGrpc.BattleCellValue.CELL_EMPTY
+    ).length % battle.players.length;
 }
 
 function verifyCell(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMoveRequest) {
-  if (battle.cells[move.cellIdx] != battleGrpc.BattleCellValue.CELL_EMPTY) {
-    throw new Error(`Cell is not empty`);
-  }
+    if (battle.cells[move.cellIdx] != battleGrpc.BattleCellValue.CELL_EMPTY) {
+        throw new Error(`Cell is not empty`);
+    }
 }
 
 function isWin(battle: battleGrpc.BattleObject): boolean {
-  const winningCombos = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-  ];
+    const winningCombos = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
 
-  for (const [a, b, c] of winningCombos) {
-    if (
-      battle.cells[a] !== battleGrpc.BattleCellValue.CELL_EMPTY &&
-      battle.cells[a] === battle.cells[b] &&
-      battle.cells[a] === battle.cells[c]
-    ) {
-      return true;
+    for (const [a, b, c] of winningCombos) {
+        if (
+            battle.cells[a] !== battleGrpc.BattleCellValue.CELL_EMPTY &&
+            battle.cells[a] === battle.cells[b] &&
+            battle.cells[a] === battle.cells[c]
+        ) {
+            return true;
+        }
     }
-  }
-  return false;
+    return false;
 }
 
 function isDraw(battle: battleGrpc.BattleObject): boolean {
-  return !battle.cells.includes(battleGrpc.BattleCellValue.CELL_EMPTY);
+    return !battle.cells.includes(battleGrpc.BattleCellValue.CELL_EMPTY);
 }
 
 export const makeMove = async (move: engineGrpc.BattleMoveRequest) => {
-  const battle = await battleStore().get(move.battleId);
+    const battle = await battleStore().get(move.battleId);
 
-  if (!battle) {
-    throw new Error(`Battle ${move.battleId} not found`);
-  }
-
-  try {
-    verifyTurn(battle, move);
-    verifyCell(battle, move);
-  } catch (err) {
-    logger.error(err);
-    return battle;
-  }
-
-  battle.cells[move.cellIdx] = getSymbolForUser(battle, move);
-
-  if (isWin(battle) || isDraw(battle)) {
-    battle.status = battleGrpc.BattleStatus.FINISHED;
-    if (isWin(battle)) {
-      battle.winner = move.profileId;
+    if (!battle) {
+        throw new Error(`Battle ${move.battleId} not found`);
     }
-  }
 
-  if (battle.status == battleGrpc.BattleStatus.FINISHED) {
-    stopMoveTimer(battle.id);
-    await battleStore().remove(battle.id);
-  } else {
-    await battleStore().set(battle);
-    startMoveTimer(battle);
-  }
+    try {
+        verifyTurn(battle, move);
+        verifyCell(battle, move);
+    } catch (err) {
+        logger.error(err);
+        return battle;
+    }
 
-  await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
+    battle.cells[move.cellIdx] = getSymbolForUser(battle, move);
 
-  return battle;
+    if (isWin(battle) || isDraw(battle)) {
+        battle.status = battleGrpc.BattleStatus.FINISHED;
+        if (isWin(battle)) {
+            battle.winner = move.profileId;
+        }
+    }
+
+    if (battle.status == battleGrpc.BattleStatus.FINISHED) {
+        stopMoveTimer(battle.id);
+        await battleStore().remove(battle.id);
+    } else {
+        await battleStore().set(battle);
+        startMoveTimer(battle);
+    }
+
+    await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
+
+    return battle;
 };
 
 export const leaveBattle = async (profileId: string, battleId: string) => {
-  const battle = await battleStore().get(battleId);
+    const battle = await battleStore().get(battleId);
 
-  if (!battle) {
+    if (!battle) {
 
-    logger.error(`Leave battle: Battle ${battleId} not found`);
-    return;
-  }
+        logger.error(`Leave battle: Battle ${battleId} not found`);
+        return;
+    }
 
-  if (!battle?.players.includes(profileId)) {
-    throw new Error(`Battle ${battleId} doesnt have player ${profileId}`);
-  }
-  const winner = battle.players.find((id) => id !== profileId);
-  battle.winner = winner ?? "";
+    if (!battle?.players.includes(profileId)) {
+        throw new Error(`Battle ${battleId} doesnt have player ${profileId}`);
+    }
+    const winner = battle.players.find((id) => id !== profileId);
+    battle.winner = winner ?? "";
 
-  battle.status = battleGrpc.BattleStatus.FINISHED;
+    battle.status = battleGrpc.BattleStatus.FINISHED;
 
-  stopMoveTimer(battle.id);
-  await battleStore().remove(battle.id);
+    stopMoveTimer(battle.id);
+    await battleStore().remove(battle.id);
 
-  await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
+    await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
 
-  return battle;
+    return battle;
 
 };
