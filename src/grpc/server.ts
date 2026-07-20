@@ -7,14 +7,14 @@ import * as engineHandler from "./handlers/engine.handler";
 const server = new grpc.Server();
 
 server.addService(EngineService, {
-  battleChannel: engineHandler.battleChannel,
+    battleChannel: engineHandler.battleChannel,
 });
 
 server.addService(HealthService, {
-  check: healthHandler.check,
-  status: healthHandler.status,
-  livez: healthHandler.livez,
-  readyz: healthHandler.readyz,
+    check: healthHandler.check,
+    status: healthHandler.status,
+    livez: healthHandler.livez,
+    readyz: healthHandler.readyz,
 });
 
 export default server;

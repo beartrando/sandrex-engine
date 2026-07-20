@@ -8,39 +8,20 @@ import {GrpcClientManager} from '@shared/grpc-client-manager';
 import logger from "@shared/logger";
 
 const battleManager = new GrpcClientManager<battleGrpc.BattleClient>(() => {
-  return new battleGrpc.BattleClient(config.serviceBattleUrl, grpc.credentials.createInsecure());
+    return new battleGrpc.BattleClient(config.serviceBattleUrl, grpc.credentials.createInsecure());
 });
 
-export const health = (): Promise<healthGrpc.HealthReport | null> => {
-  const grpcRequest: emptyGrpc.Empty = {};
-  return battleManager.call<healthGrpc.HealthReport>((client, cb) => client.check(grpcRequest, cb));
-};
-
-export const status = (): Promise<healthGrpc.StatusInfo | null> => {
-  const grpcRequest: emptyGrpc.Empty = {};
-  return battleManager.call((client, cb) => client.status(grpcRequest, cb));
-};
-
-export const livez = (): Promise<healthGrpc.LiveStatus | null> => {
-  const grpcRequest: emptyGrpc.Empty = {};
-  return battleManager.call((client, cb) => client.livez(grpcRequest, cb));
-};
-
-export const readyz = (): Promise<healthGrpc.ReadyStatus | null> => {
-  const grpcRequest: emptyGrpc.Empty = {};
-  return battleManager.call((client, cb) => client.readyz(grpcRequest, cb));
-};
-
-// export const getBattle = (battleId: string): Promise<battleGrpc.BattleObject | null> => {
-//   const grpcRequest: battleGrpc.BattleIdRequest = {battleId};
-//   return battleManager.call((client, cb) => client.getBattle(grpcRequest, cb));
+// export const get = (grpcRequest: battleGrpc.BattleIdRequest, metadata: grpc.Metadata): Promise<battleGrpc.BattleObject | null> => {
+//   return battleManager.call((client, cb) => client.get(grpcRequest, metadata, cb));
+// };
+//
+// export const upsert = (grpcRequest: profileGrpc.ProfileIdRequest, metadata: grpc.Metadata): Promise<battleGrpc.BattleObject | null> => {
+//   return battleManager.call<battleGrpc.BattleObject>(
+//     (client, cb) => client.upsert(grpcRequest, metadata, cb)
+//   ).catch((err) => {
+//     logger.error("Upsert battle failed:", err);
+//     return null;
+//   });
 // };
 
-export const upsertBattle = (grpcRequest: profileGrpc.ProfileIdRequest): Promise<battleGrpc.BattleObject | null> => {
-  return battleManager.call<battleGrpc.BattleObject>(
-    (client, cb) => client.upsertBattle(grpcRequest, cb)
-  ).catch((err) => {
-    logger.error("Upsert battle failed:", err);
-    return null;
-  });
-};
+export default battleManager;
