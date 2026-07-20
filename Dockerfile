@@ -40,6 +40,8 @@ RUN pnpm --filter engine prisma:generate
 # ---------- DEV ----------
 FROM deps AS dev
 
+COPY services/engine/tsconfig.test.json ./services/engine/
+
 ENV NODE_ENV=development
 
 RUN chown -R node:node /usr/src/app
