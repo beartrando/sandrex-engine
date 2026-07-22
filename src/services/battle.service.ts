@@ -57,7 +57,7 @@ export const battleNew = async (battle: battleGrpc.BattleObject) => {
     battle.winner = "";
 
     await battleStore().set(battle);
-    await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
+    await pgBossManager.queue.enqueue(kafkaProducersConfig.battleUpdated, battle);
 
     startMoveTimer(battle);
 
@@ -145,7 +145,7 @@ export const makeMove = async (move: engineGrpc.BattleMoveRequest) => {
         startMoveTimer(battle);
     }
 
-    await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
+    await pgBossManager.queue.enqueue(kafkaProducersConfig.battleUpdated, battle);
 
     return battle;
 };
@@ -170,7 +170,7 @@ export const leaveBattle = async (profileId: string, battleId: string) => {
     stopMoveTimer(battle.id);
     await battleStore().remove(battle.id);
 
-    await pgBossManager.enqueueEvent(kafkaProducersConfig.topicBattleUpdated, battle);
+    await pgBossManager.queue.enqueue(kafkaProducersConfig.battleUpdated, battle);
 
     return battle;
 
