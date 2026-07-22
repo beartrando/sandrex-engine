@@ -125,7 +125,7 @@ async function bootstrap(): Promise<void> {
         await createKafkaConsumers();
         await startPgBoss();
         logger.info(
-            '🚀 Battle service started',
+            '🚀 Engine service started',
         );
     } catch (err) {
         logger.error(
