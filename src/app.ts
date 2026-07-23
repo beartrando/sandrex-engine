@@ -1,7 +1,9 @@
 import grpcServer from './grpc/server';
 import * as grpc from '@grpc/grpc-js';
+import {initRedis} from "./lib/redis-client";
 
 import logger from '@shared/logger';
+import {StoreRegistry} from "./services/store-registry";
 
 import kafkaConfig, {
     kafkaConsumersConfig,
@@ -119,12 +121,19 @@ async function createKafkaConsumers(): Promise<void> {
     );
 }
 
+async function startRedis() {
+    await initRedis();
+    // logger.log('startRedis');
+    await StoreRegistry.init();
+}
+
 async function bootstrap(): Promise<void> {
 
     try {
         await startGrpc();
         await startPgBoss();
         await createKafkaConsumers();
+        await startRedis();
         logger.info(
             '🚀 Engine service started',
         );

@@ -1,5 +1,6 @@
 import {BattleStateStore} from "../stores/battleStateStore";
 import {getRedis} from "../lib/redis-client";
+import logger from "@shared/logger";
 
 export const stores = {
     BattleStateStore: {
@@ -17,12 +18,11 @@ export class StoreRegistry {
         // logger.log('StoreClass');
 
         for (const {class: StoreClass, key} of Object.values(stores)) {
-            // logger.log(StoreClass);
-            // logger.log(key);
             const storeObj = new StoreClass(redis);
+            // logger.log(key);
+            // logger.log(StoreClass);
             this.addStore(key, storeObj);
         }
-
 
         await this.loadAll();
     }

@@ -16,14 +16,13 @@ export async function battleChannel(
                 if (event.start) {
                     const battleObj: battleGrpc.BattleObject = event.start.battle as battleGrpc.BattleObject;
 
+                    // logger.log(battleObj);
                     const battle = await battleService.battleNew(battleObj);
                     if (battle) call.write(engineGrpc.BattleStreamResponse.create({battle}));
 
                 }
 
                 if (event.move) {
-                    logger.log('')
-
                     const battleMoveRequest = event.move as engineGrpc.BattleMoveRequest;
 
                     const battle = await battleService.makeMove(battleMoveRequest);

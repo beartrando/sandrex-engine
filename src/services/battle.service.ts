@@ -44,7 +44,7 @@ export function battleStore(): BattleStateStore {
     const battleStore = StoreRegistry.getStore<BattleStateStore>(stores.BattleStateStore.key);
 
     if (!battleStore) {
-        throw new Error("BattleStateStore not found");
+        throw new Error('BattleStateStore is not registered. StoreRegistry.init() was not called.');
     }
 
     return battleStore;
@@ -114,6 +114,7 @@ function isDraw(battle: battleGrpc.BattleObject): boolean {
 }
 
 export const makeMove = async (move: engineGrpc.BattleMoveRequest) => {
+    logger.info(await battleStore().loadAll());
     const battle = await battleStore().get(move.battleId);
 
     if (!battle) {
