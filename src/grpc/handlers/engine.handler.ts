@@ -17,7 +17,7 @@ export async function battleChannel(
                     const battleObj: battleGrpc.BattleObject = event.start.battle as battleGrpc.BattleObject;
 
                     // logger.log(battleObj);
-                    const battle = await battleService.battleNew(battleObj);
+                    const battle: battleGrpc.BattleObject = await battleService.battleNew(battleObj);
                     if (battle) call.write(engineGrpc.BattleStreamResponse.create({battle}));
 
                 }
@@ -25,15 +25,17 @@ export async function battleChannel(
                 if (event.move) {
                     const battleMoveRequest = event.move as engineGrpc.BattleMoveRequest;
 
-                    const battle = await battleService.makeMove(battleMoveRequest);
+                    const battle: battleGrpc.BattleObject = await battleService.makeMove(battleMoveRequest);
 
                     logger.log(battle);
                     if (battle) call.write(engineGrpc.BattleStreamResponse.create({battle}));
                 }
 
                 if (event.leave) {
-                    const battle = await battleService.leaveBattle(event.leave.profileId, event.leave.battleId);
-                    if (battle) call.write(engineGrpc.BattleStreamResponse.create({battle}));
+                    const battle: battleGrpc.BattleObject | undefined = await battleService.leaveBattle(event.leave.profileId, event.leave.battleId);
+                    if (battle) {
+                        call.write(engineGrpc.BattleStreamResponse.create({battle}));
+                    }
                 }
 
                 if (event.ping) {

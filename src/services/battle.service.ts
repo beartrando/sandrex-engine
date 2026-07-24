@@ -50,7 +50,7 @@ export function battleStore(): BattleStateStore {
     return battleStore;
 }
 
-export const battleNew = async (battle: battleGrpc.BattleObject) => {
+export const battleNew = async (battle: battleGrpc.BattleObject): Promise<battleGrpc.BattleObject> => {
     // logger.log('New battle started', battle)
     battle.cells = Array(9).fill(battleGrpc.BattleCellValue.CELL_EMPTY);
     battle.status = battleGrpc.BattleStatus.ACTIVE;
@@ -113,9 +113,8 @@ function isDraw(battle: battleGrpc.BattleObject): boolean {
     return !battle.cells.includes(battleGrpc.BattleCellValue.CELL_EMPTY);
 }
 
-export const makeMove = async (move: engineGrpc.BattleMoveRequest) => {
-    logger.info(await battleStore().loadAll());
-    const battle = await battleStore().get(move.battleId);
+export const makeMove = async (move: engineGrpc.BattleMoveRequest): Promise<battleGrpc.BattleObject> => {
+    const battle: battleGrpc.BattleObject | undefined = await battleStore().get(move.battleId);
 
     if (!battle) {
         throw new Error(`Battle ${move.battleId} not found`);
@@ -151,7 +150,7 @@ export const makeMove = async (move: engineGrpc.BattleMoveRequest) => {
     return battle;
 };
 
-export const leaveBattle = async (profileId: string, battleId: string) => {
+export const leaveBattle = async (profileId: string, battleId: string): Promise<battleGrpc.BattleObject | undefined> => {
     const battle = await battleStore().get(battleId);
 
     if (!battle) {
