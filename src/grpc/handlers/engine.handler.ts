@@ -7,18 +7,18 @@ import logger from "@shared/logger";
 
 
 export async function battleChannel(
-    call: grpc.ServerDuplexStream<engineGrpc.BattleStreamRequest, engineGrpc.BattleStreamResponse>
+    call: grpc.ServerDuplexStream<engineGrpc.BattleRequest, engineGrpc.BattleResponse>
 ) {
     try {
         // слушаем входящие события от Streaming
-        call.on("data", async (event: engineGrpc.BattleStreamRequest) => {
+        call.on("data", async (event: engineGrpc.BattleRequest) => {
             try {
                 if (event.start) {
                     const battleObj: battleGrpc.BattleObject = event.start.battle as battleGrpc.BattleObject;
 
                     // logger.log(battleObj);
                     const battle: battleGrpc.BattleObject = await battleService.battleNew(battleObj);
-                    if (battle) call.write(engineGrpc.BattleStreamResponse.create({battle}));
+                    if (battle) call.write(engineGrpc.BattleResponse.create({battle}));
 
                 }
 
@@ -28,20 +28,20 @@ export async function battleChannel(
                     const battle: battleGrpc.BattleObject = await battleService.makeMove(battleMoveRequest);
 
                     logger.log(battle);
-                    if (battle) call.write(engineGrpc.BattleStreamResponse.create({battle}));
+                    if (battle) call.write(engineGrpc.BattleResponse.create({battle}));
                 }
 
                 if (event.leave) {
                     const battle: battleGrpc.BattleObject | undefined = await battleService.leaveBattle(event.leave.profileId, event.leave.battleId);
                     if (battle) {
-                        call.write(engineGrpc.BattleStreamResponse.create({battle}));
+                        call.write(engineGrpc.BattleResponse.create({battle}));
                     }
                 }
 
                 if (event.ping) {
                     // logger.info('Streaming-engine stream Ping');
                     const ping = emptyGrpc.Empty.create({});
-                    call.write(engineGrpc.BattleStreamResponse.create({ping}));
+                    call.write(engineGrpc.BattleResponse.create({ping}));
 
                     // heartbeat — можно просто игнорировать или логировать
                 }
