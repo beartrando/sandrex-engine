@@ -17,7 +17,7 @@ const battleManager = new GrpcClientManager<battleGrpc.BattleClient>(() => {
 //
 // export const upsert = (grpcRequest: profileGrpc.ProfileIdRequest, metadata: grpc.Metadata): Promise<battleGrpc.BattleObject | null> => {
 //   return battleManager.call<battleGrpc.BattleObject>(
-//     (client, cb) => client.upsert(grpcRequest, metadata, cb)
+//     (client, cb) => client.getOrCreate(grpcRequest, metadata, cb)
 //   ).catch((err) => {
 //     logger.error("Upsert battle failed:", err);
 //     return null;

@@ -1,7 +1,7 @@
 // import crypto from "crypto";
 // import { battleStore, battleNew, makeMove } from "../../../../src/services/battle.service";
 // import { BattleCellValue, BattleObject, BattleStatus } from "../../../../src/grpc/generated/battle";
-// import { BattleMoveRequest } from "../../../../src/grpc/generated/engine";
+// import { BattleMove } from "../../../../src/grpc/generated/engine";
 //
 //
 // describe("upsertBattle", () => {
@@ -18,7 +18,7 @@
 //       players: [userId1, userId2],
 //       cells: [],
 //       status: BattleStatus.ACTIVE,
-//       winner: "",
+//       winnerId: "",
 //     };
 //
 //     await battleNew(battle);
@@ -33,7 +33,7 @@
 //   });
 //
 //   test("игрок делает корректный ход", async () => {
-//     const move: BattleMoveRequest = {
+//     const move: BattleMove = {
 //       battleId: battle.id,
 //       userId: userId1,
 //       cellIdx: 0,
@@ -46,7 +46,7 @@
 //   });
 //
 //   test("ошибка при неверном ходе (не твой ход)", async () => {
-//     const move: BattleMoveRequest = {
+//     const move: BattleMove = {
 //       battleId: battle.id,
 //       userId: userId2, // должен ходить userId1 первым
 //       cellIdx: 0,
@@ -56,10 +56,10 @@
 //   });
 //
 //   test("ошибка при занятой клетке", async () => {
-//     const move1: BattleMoveRequest = {battleId: battle.id, userId: userId1, cellIdx: 0};
+//     const move1: BattleMove = {battleId: battle.id, userId: userId1, cellIdx: 0};
 //     await makeMove(move1);
 //
-//     const move2: BattleMoveRequest = {battleId: battle.id, userId: userId2, cellIdx: 0};
+//     const move2: BattleMove = {battleId: battle.id, userId: userId2, cellIdx: 0};
 //     await expect(makeMove(move2)).rejects.toThrow("Cell is not empty");
 //   });
 //
@@ -77,7 +77,7 @@
 //
 //   test("ничья завершает баттл", async () => {
 //     // последовательность ходов, приводящая к ничьей
-//     const moves: BattleMoveRequest[] = [
+//     const moves: BattleMove[] = [
 //       {battleId: battle.id, userId: userId1, cellIdx: 0},
 //       {battleId: battle.id, userId: userId2, cellIdx: 1},
 //       {battleId: battle.id, userId: userId1, cellIdx: 2},

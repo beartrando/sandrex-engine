@@ -14,7 +14,7 @@ export async function battleChannel(
         call.on("data", async (event: engineGrpc.BattleRequest) => {
             try {
                 if (event.start) {
-                    const battleObj: battleGrpc.BattleObject = event.start.battle as battleGrpc.BattleObject;
+                    const battleObj: battleGrpc.BattleObject = event.start as battleGrpc.BattleObject;
 
                     // logger.log(battleObj);
                     const battle: battleGrpc.BattleObject = await battleService.battleNew(battleObj);
@@ -23,9 +23,9 @@ export async function battleChannel(
                 }
 
                 if (event.move) {
-                    const battleMoveRequest = event.move as engineGrpc.BattleMoveRequest;
+                    const battleMove = event.move as engineGrpc.BattleMove;
 
-                    const battle: battleGrpc.BattleObject = await battleService.makeMove(battleMoveRequest);
+                    const battle: battleGrpc.BattleObject = await battleService.makeMove(battleMove);
 
                     logger.log(battle);
                     if (battle) call.write(engineGrpc.BattleResponse.create({battle}));

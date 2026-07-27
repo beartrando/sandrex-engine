@@ -15,7 +15,7 @@ const moveTimeoutMs = (1000 * config.battleTurnTimeLimit);
 function startMoveTimer(battle: battleGrpc.BattleObject) {
     stopMoveTimer(battle.id);
 
-    const currentPlayer = battle.players[turn(battle)];
+    const currentPlayer = battle.playerIds[turn(battle)];
 
     const timer = setTimeout(async () => {
         moveTimers.delete(battle.id);
@@ -54,7 +54,7 @@ export const battleNew = async (battle: battleGrpc.BattleObject): Promise<battle
     // logger.log('New battle started', battle)
     battle.cells = Array(9).fill(battleGrpc.BattleCellValue.CELL_EMPTY);
     battle.status = battleGrpc.BattleStatus.ACTIVE;
-    battle.winner = "";
+    battle.winnerId = "";
 
     await battleStore().set(battle);
     await pgBossManager.queue.enqueue(kafkaProducersConfig.battleUpdated, battle);
@@ -65,15 +65,15 @@ export const battleNew = async (battle: battleGrpc.BattleObject): Promise<battle
 
 };
 
-function getSymbolForUser(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMoveRequest): battleGrpc.BattleCellValue {
-    const idx = battle.players.indexOf(move.profileId);
+function getSymbolForUser(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMove): battleGrpc.BattleCellValue {
+    const idx = battle.playerIds.indexOf(move.profileId);
     if (idx === -1) throw new Error("User is not found in the battle");
 
     return idx === 0 ? battleGrpc.BattleCellValue.CELL_X : battleGrpc.BattleCellValue.CELL_O;
 }
 
-function verifyTurn(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMoveRequest) {
-    if (move.profileId != battle.players[turn(battle)]) {
+function verifyTurn(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMove) {
+    if (move.profileId != battle.playerIds[turn(battle)]) {
         throw new Error(`Not your turn`);
     }
 }
@@ -81,10 +81,10 @@ function verifyTurn(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMove
 function turn(battle: battleGrpc.BattleObject) {
     return battle.cells.filter(
         cell => cell !== battleGrpc.BattleCellValue.CELL_EMPTY
-    ).length % battle.players.length;
+    ).length % battle.playerIds.length;
 }
 
-function verifyCell(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMoveRequest) {
+function verifyCell(battle: battleGrpc.BattleObject, move: engineGrpc.BattleMove) {
     if (battle.cells[move.cellIdx] != battleGrpc.BattleCellValue.CELL_EMPTY) {
         throw new Error(`Cell is not empty`);
     }
@@ -113,7 +113,7 @@ function isDraw(battle: battleGrpc.BattleObject): boolean {
     return !battle.cells.includes(battleGrpc.BattleCellValue.CELL_EMPTY);
 }
 
-export const makeMove = async (move: engineGrpc.BattleMoveRequest): Promise<battleGrpc.BattleObject> => {
+export const makeMove = async (move: engineGrpc.BattleMove): Promise<battleGrpc.BattleObject> => {
     const battle: battleGrpc.BattleObject | undefined = await battleStore().get(move.battleId);
 
     if (!battle) {
@@ -133,7 +133,7 @@ export const makeMove = async (move: engineGrpc.BattleMoveRequest): Promise<batt
     if (isWin(battle) || isDraw(battle)) {
         battle.status = battleGrpc.BattleStatus.FINISHED;
         if (isWin(battle)) {
-            battle.winner = move.profileId;
+            battle.winnerId = move.profileId;
         }
     }
 
@@ -159,11 +159,13 @@ export const leaveBattle = async (profileId: string, battleId: string): Promise<
         return;
     }
 
-    if (!battle?.players.includes(profileId)) {
+    if (!battle?.playerIds.includes(profileId)) {
         throw new Error(`Battle ${battleId} doesnt have player ${profileId}`);
     }
-    const winner = battle.players.find((id) => id !== profileId);
-    battle.winner = winner ?? "";
+
+    const winnerId = battle.playerIds.find((id) => id !== profileId);
+
+    battle.winnerId = winnerId ?? "";
 
     battle.status = battleGrpc.BattleStatus.FINISHED;
 
