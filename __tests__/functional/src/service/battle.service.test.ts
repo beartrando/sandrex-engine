@@ -1,7 +1,7 @@
 // import crypto from "crypto";
-// import { battleStore, battleNew, makeMove } from "../../../../src/services/battle.service";
-// import { BattleCellValue, BattleObject, BattleStatus } from "../../../../src/grpc/generated/battle";
-// import { BattleMove } from "../../../../src/grpc/generated/engine";
+// import { battleStore, battleNew, makeMove } from "../../../../src/orchestration/battle.service";
+// import { BattleCellValue, BattleObject, BattleStatus } from "../../../../src/infrastructure/grpc/generated/battle";
+// import { BattleMove } from "../../../../src/infrastructure/grpc/generated/engine";
 //
 //
 // describe("upsertBattle", () => {

@@ -19,7 +19,6 @@ COPY services/engine/jest.config.js ./services/engine/
 COPY services/engine/tsconfig.json ./services/engine/
 COPY services/engine/src ./services/engine/src/
 COPY services/engine/__tests__ ./services/engine/__tests__/
-COPY services/engine/prisma ./services/engine/prisma/
 
 RUN apt-get update && apt-get install -y protobuf-compiler
 
@@ -32,7 +31,7 @@ FROM base AS deps
 RUN pnpm fetch
 RUN pnpm install --offline --frozen-lockfile
 
-RUN mkdir -p ./services/engine/src/grpc/generated
+RUN mkdir -p ./services/engine/src/infrastructure/grpc/generated
 RUN pnpm --filter engine proto:generate
 
 RUN pnpm --filter engine prisma:generate
