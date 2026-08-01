@@ -1,47 +1,47 @@
 import * as grpc from '@grpc/grpc-js';
-import * as battleGrpc from '../generated/battle';
-import * as engineGrpc from '../generated/engine';
-import * as emptyGrpc from '../generated/common/empty';
+import * as battleProto from '../generated/battle';
+import * as engineProto from '../generated/engine';
+import * as emptyProto from '../generated/common/empty';
 import * as battleService from '../../services/battle.service';
 import logger from "@shared/logger";
 
 
 export async function battleChannel(
-    call: grpc.ServerDuplexStream<engineGrpc.BattleRequest, engineGrpc.BattleResponse>
+    call: grpc.ServerDuplexStream<engineProto.BattleRequest, engineProto.BattleResponse>
 ) {
     try {
         // слушаем входящие события от Streaming
-        call.on("data", async (event: engineGrpc.BattleRequest) => {
+        call.on("data", async (event: engineProto.BattleRequest) => {
             try {
                 if (event.start) {
-                    const battleObj: battleGrpc.BattleObject = event.start as battleGrpc.BattleObject;
+                    const battleObj: battleProto.BattleObject = event.start as battleProto.BattleObject;
 
                     // logger.log(battleObj);
-                    const battle: battleGrpc.BattleObject = await battleService.battleNew(battleObj);
-                    if (battle) call.write(engineGrpc.BattleResponse.create({battle}));
+                    const battle: battleProto.BattleObject = await battleService.battleNew(battleObj);
+                    if (battle) call.write(engineProto.BattleResponse.create({battle}));
 
                 }
 
                 if (event.move) {
-                    const battleMove = event.move as engineGrpc.BattleMove;
+                    const battleMove = event.move as engineProto.BattleMove;
 
-                    const battle: battleGrpc.BattleObject = await battleService.makeMove(battleMove);
+                    const battle: battleProto.BattleObject = await battleService.makeMove(battleMove);
 
                     logger.log(battle);
-                    if (battle) call.write(engineGrpc.BattleResponse.create({battle}));
+                    if (battle) call.write(engineProto.BattleResponse.create({battle}));
                 }
 
                 if (event.leave) {
-                    const battle: battleGrpc.BattleObject | undefined = await battleService.leaveBattle(event.leave.profileId, event.leave.battleId);
+                    const battle: battleProto.BattleObject | undefined = await battleService.leaveBattle(event.leave.profileId, event.leave.battleId);
                     if (battle) {
-                        call.write(engineGrpc.BattleResponse.create({battle}));
+                        call.write(engineProto.BattleResponse.create({battle}));
                     }
                 }
 
                 if (event.ping) {
                     // logger.info('Streaming-engine stream Ping');
-                    const ping = emptyGrpc.Empty.create({});
-                    call.write(engineGrpc.BattleResponse.create({ping}));
+                    const ping = emptyProto.Empty.create({});
+                    call.write(engineProto.BattleResponse.create({ping}));
 
                     // heartbeat — можно просто игнорировать или логировать
                 }

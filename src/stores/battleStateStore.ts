@@ -1,9 +1,9 @@
 import Redis from "ioredis";
-import * as battleGrpc from "../grpc/generated/battle";
+import * as battleProto from "../grpc/generated/battle";
 
 export class BattleStateStore {
     private redis: Redis;
-    private cache: Map<string, battleGrpc.BattleObject> = new Map();
+    private cache: Map<string, battleProto.BattleObject> = new Map();
 
     constructor(redis: Redis) {
         this.redis = redis;
@@ -14,7 +14,7 @@ export class BattleStateStore {
         for (const key of keys) {
             const state = await this.redis.get(key);
             if (state) {
-                const battle: battleGrpc.BattleObject = battleGrpc.BattleObject.fromJSON(
+                const battle: battleProto.BattleObject = battleProto.BattleObject.fromJSON(
                     JSON.parse(state),
                 );
                 this.cache.set(battle.id, battle);
@@ -23,11 +23,11 @@ export class BattleStateStore {
         console.log(`✅ Loaded ${this.cache.size} battles from Redis`);
     }
 
-    get(battleId: string): battleGrpc.BattleObject | undefined {
+    get(battleId: string): battleProto.BattleObject | undefined {
         return this.cache.get(battleId);
     }
 
-    async set(battle: battleGrpc.BattleObject): Promise<void> {
+    async set(battle: battleProto.BattleObject): Promise<void> {
         this.cache.set(battle.id, battle);
         await this.redis.set(`battle:${battle.id}`, JSON.stringify(battle));
     }
