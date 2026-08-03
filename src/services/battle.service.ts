@@ -1,4 +1,4 @@
-import {kafkaProducersConfig} from "../config/kafka.config";
+import {messageProducersConfig} from "../config/kafka.config";
 import {StoreRegistry, stores} from "./store-registry";
 import * as battleProto from "../grpc/generated/battle";
 import * as engineProto from "../grpc/generated/engine";
@@ -44,7 +44,7 @@ export function battleStore(): BattleStateStore {
     const battleStore = StoreRegistry.getStore<BattleStateStore>(stores.BattleStateStore.key);
 
     if (!battleStore) {
-        throw new Error('BattleStateStore is not registered. StoreRegistry.init() was not called.');
+        throw new Error('BattleStateStore is not registered. StoreRegistry.start() was not called.');
     }
 
     return battleStore;
@@ -57,7 +57,7 @@ export const battleNew = async (battle: battleProto.BattleObject): Promise<battl
     battle.winnerId = "";
 
     await battleStore().set(battle);
-    await pgBossManager.queue.enqueue(kafkaProducersConfig.battleUpdated, battle);
+    await pgBossManager.queue.enqueue(messageProducersConfig.battleUpdated, battle);
 
     startMoveTimer(battle);
 
@@ -145,7 +145,7 @@ export const makeMove = async (move: engineProto.BattleMove): Promise<battleProt
         startMoveTimer(battle);
     }
 
-    await pgBossManager.queue.enqueue(kafkaProducersConfig.battleUpdated, battle);
+    await pgBossManager.queue.enqueue(messageProducersConfig.battleUpdated, battle);
 
     return battle;
 };
@@ -172,7 +172,7 @@ export const leaveBattle = async (profileId: string, battleId: string): Promise<
     stopMoveTimer(battle.id);
     await battleStore().remove(battle.id);
 
-    await pgBossManager.queue.enqueue(kafkaProducersConfig.battleUpdated, battle);
+    await pgBossManager.queue.enqueue(messageProducersConfig.battleUpdated, battle);
 
     return battle;
 

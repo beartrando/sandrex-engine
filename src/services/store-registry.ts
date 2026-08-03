@@ -1,6 +1,5 @@
 import {BattleStateStore} from "../stores/battleStateStore";
 import {getRedis} from "../lib/redis-client";
-import logger from "@shared/logger";
 
 export const stores = {
     BattleStateStore: {
@@ -12,7 +11,7 @@ export const stores = {
 export class StoreRegistry {
     private static stores: Map<string, any> = new Map();
 
-    static async init(): Promise<void> {
+    static async start(): Promise<void> {
         const redis = getRedis();
 
         // logger.log('StoreClass');

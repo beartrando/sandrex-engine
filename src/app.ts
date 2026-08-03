@@ -5,12 +5,9 @@ import {initRedis} from "./lib/redis-client";
 import logger from '@shared/logger';
 import {StoreRegistry} from "./services/store-registry";
 
-import kafkaConfig, {
-    kafkaConsumersConfig,
-    kafkaProducersConfig,
-} from './config/kafka.config';
+import messageConfig, {messageConsumersConfig, messageProducersConfig,} from './config/kafka.config';
 
-import { createConsumer } from '@shared/kafka-manager';
+import {createConsumer} from '@shared/kafka-manager';
 
 import pgBossManager from '@shared/pg-boss-manager';
 import pgBossConfig from './config/pg-boss.config';
@@ -27,7 +24,7 @@ async function startProto(): Promise<void> {
                 (err, port) => {
                     if (err) {
                         logger.error(
-                            { err },
+                            {err},
                             '❌ Failed to start gRPC',
                         );
 
@@ -53,14 +50,14 @@ async function startPgBoss(): Promise<void> {
 
 async function initKafkaBridge(): Promise<void> {
     const topics = Object.values(
-        kafkaProducersConfig,
+        messageProducersConfig,
     );
 
     while (true) {
         try {
             for (const topic of topics) {
                 await pgBossManager.kafka.start(
-                    kafkaConfig,
+                    messageConfig,
                     topic,
                 );
             }
@@ -70,7 +67,7 @@ async function initKafkaBridge(): Promise<void> {
             return;
         } catch (err) {
             logger.warn(
-                { err },
+                {err},
                 '⏳ Waiting for PgBoss/Kafka bridge initialization...',
             );
             await sleep(3000);
@@ -90,7 +87,7 @@ async function retryKafkaInit(
             return;
         } catch (err) {
             logger.warn(
-                { err },
+                {err},
                 '⏳ Waiting for Kafka topics...',
             );
             await sleep(3000);
@@ -100,15 +97,15 @@ async function retryKafkaInit(
 
 async function createKafkaConsumers(): Promise<void> {
     const configs = Object.values(
-        kafkaConsumersConfig,
+        messageConsumersConfig,
     );
     await retryKafkaInit(
         async () => {
             await Promise.all(
                 configs.map(
-                    async ({ topic, handler }) => {
+                    async ({topic, handler}) => {
                         await createConsumer(
-                            kafkaConfig,
+                            messageConfig,
                             {
                                 topic,
                                 handler,
@@ -124,7 +121,7 @@ async function createKafkaConsumers(): Promise<void> {
 async function startRedis() {
     await initRedis();
     // logger.log('startRedis');
-    await StoreRegistry.init();
+    await StoreRegistry.start();
 }
 
 async function bootstrap(): Promise<void> {
@@ -139,7 +136,7 @@ async function bootstrap(): Promise<void> {
         );
     } catch (err) {
         logger.error(
-            { err },
+            {err},
             '💥 Failed to start Battle',
         );
         process.exit(1);
