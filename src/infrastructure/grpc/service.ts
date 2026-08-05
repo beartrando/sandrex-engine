@@ -1,6 +1,5 @@
 import * as grpc from "@grpc/grpc-js";
 import * as healthProto from '../../contracts/proto/common/health';
-import * as profileProto from '../../contracts/proto/profile';
 import logger from "@shared/logger";
 import BattleHandler from "./handlers/battle.handler";
 import HealthHandler from "./handlers/health.handler";

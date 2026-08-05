@@ -1,56 +1,75 @@
-import {createConsumer, createProducer, KafkaConfig, KafkaProducer} from "@shared/kafka-manager";
+import Redis from "ioredis";
+
 import logger from "@shared/logger";
+
 import sleep from "../../utils/sleep";
-import BattleUpdatedConsumer from "./consumers/battle-updated";
+
+export interface RedisConfig {
+    host: string;
+    port: number;
+    password?: string;
+}
 
 export class CacheService {
-
-    private producer?: KafkaProducer;
+    private client?: Redis;
 
     constructor(
-        private readonly config: KafkaConfig,
-        private readonly consumersConfig: Record<string, string>,
-        private readonly battleUpdatedConsumer: BattleUpdatedConsumer,
+        private readonly config: RedisConfig,
     ) {
     }
 
+    get client(): Redis {
+        if (!this._client) {
+            throw new Error("CacheService is not started");
+        }
+
+        return this._client;
+    }
+
     async start(): Promise<void> {
-        await this.retryInit(() => this.createConsumers());
+        await this.retryInit(() => this.connect());
     }
 
     async stop(): Promise<void> {
-        if (this.producer) {
-            await this.producer.disconnect();
+        if (this.client) {
+            await this.client.quit();
+            this.client = undefined;
         }
-    }
-
-    async getProducer(): Promise<KafkaProducer> {
-        if (!this.producer) {
-            this.producer = await createProducer(this.config);
-        }
-
-        return this.producer;
     }
 
     async check(): Promise<boolean> {
         try {
-            const producer = await this.getProducer();
+            const redis = await this.getClient();
 
-            // await producer.send('healthcheck', [{value: 'ping'}]);
-            await producer.send('healthcheck', 'ping');
+            await redis.ping();
 
             return true;
         } catch (err) {
-            logger.error("Kafka health check failed", err);
+            logger.error("Redis health check failed", err);
+
             return false;
         }
     }
 
-    private async createConsumers(): Promise<void> {
-        createConsumer(this.config, {
-            topic: this.consumersConfig.battleUpdated,
-            handler: this.battleUpdatedConsumer.execute
-        })
+    private async connect(): Promise<void> {
+        if (this.client) {
+            return;
+        }
+
+        const client = new Redis({
+            host: this.config.host,
+            port: this.config.port,
+            password: this.config.password,
+        });
+
+        await new Promise<void>((resolve, reject) => {
+            client.once("connect", resolve);
+            client.once("error", reject);
+        });
+
+        this.client = client;
+
+        logger.info("✅ Redis initialized");
     }
 
     private async retryInit(
@@ -60,12 +79,11 @@ export class CacheService {
             try {
                 await fn();
 
-                logger.info("✅ Kafka initialized");
                 return;
             } catch (err) {
                 logger.warn(
                     {err},
-                    "⏳ Waiting for Kafka topics...",
+                    "⏳ Waiting for Redis...",
                 );
 
                 await sleep(3000);
@@ -74,4 +92,4 @@ export class CacheService {
     }
 }
 
-export default MessageService;
+export default CacheService;

@@ -15,13 +15,6 @@ import {
     messageProducersConfig
 } from "../infrastructure/message/config";
 import {config as jobConfig} from "../infrastructure/job/config";
-import PrismaBattleRepository from "../infrastructure/db/repositories/prisma-battle.repository";
-import GetUseCase from "../application/use-cases/battle/get";
-import GetActiveByProfileUseCase from "../application/use-cases/battle/get-active-by-profile";
-import StartUseCase from "../application/use-cases/battle/start";
-import BattleHandler from "../infrastructure/grpc/handlers/battle.handler";
-import BattleUpdatedConsumer from "../infrastructure/message/consumers/battle-updated";
-import UpdateUseCase from "../application/use-cases/battle/update";
 import AuthService from "../infrastructure/auth/service";
 import {config as authConfig} from "../infrastructure/auth/config";
 import {config as cacheConfig} from "../infrastructure/cache/config";
@@ -36,13 +29,13 @@ function buildApplication() {
     const cacheService = new CacheService(cacheConfig);
 
     // const battleRepository = new PrismaBattleRepository(dbService.client);
-    //
-    // const updateUseCase = new UpdateUseCase(battleRepository);
-    // const battleUpdatedConsumer = new BattleUpdatedConsumer(updateUseCase);
 
-    const messageService = new MessageService(messageConfig, messageConsumersConfig, battleUpdatedConsumer);
+    const battleStartUseCase = new UpdateUseCase(battleRepository);
+    const battleUpdatedConsumer = new BattleUpdatedConsumer(updateUseCase);
+
+    const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);
     //
-    // const getUseCase = new GetUseCase(battleRepository);
+    // const getUseCase = new GetProfileUseCase(battleRepository);
     // const getActiveByProfileUseCase = new GetActiveByProfileUseCase(battleRepository);
     // const startUseCase = new StartUseCase(battleRepository, jobService, messageProducersConfig.battleStarted);
 
