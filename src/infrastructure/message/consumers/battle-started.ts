@@ -1,7 +1,7 @@
 import {BattleObject} from "../../../contracts/proto/battle";
 import UpdateUseCase from "../../../application/use-cases/battle/update";
 
-export class BattleUpdatedConsumer {
+export class BattleStartedConsumer {
     constructor(
         private readonly updateUseCase: UpdateUseCase,
     ) {
@@ -23,5 +23,5 @@ export class BattleUpdatedConsumer {
 
 }
 
-export default BattleUpdatedConsumer;
+export default BattleStartedConsumer;
 

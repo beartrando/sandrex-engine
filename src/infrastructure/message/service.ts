@@ -1,7 +1,7 @@
 import {createConsumer, createProducer, KafkaConfig, KafkaProducer} from "@shared/kafka-manager";
 import logger from "@shared/logger";
 import sleep from "../../utils/sleep";
-import BattleUpdatedConsumer from "./consumers/battle-updated";
+import BattleStartedConsumer from "./consumers/battle-started";
 
 export class MessageService {
 
@@ -10,7 +10,7 @@ export class MessageService {
     constructor(
         private readonly config: KafkaConfig,
         private readonly consumersConfig: Record<string, string>,
-        private readonly battleUpdatedConsumer: BattleUpdatedConsumer,
+        private readonly battleUpdatedConsumer: BattleStartedConsumer,
     ) {
     }
 

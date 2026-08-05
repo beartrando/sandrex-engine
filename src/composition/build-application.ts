@@ -18,7 +18,9 @@ import {config as jobConfig} from "../infrastructure/job/config";
 import AuthService from "../infrastructure/auth/service";
 import {config as authConfig} from "../infrastructure/auth/config";
 import {config as cacheConfig} from "../infrastructure/cache/config";
-import {CacheService} from "../infrastructure/cache/service";
+import CacheService from "../infrastructure/cache/service";
+import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
+import BattleStartedUseCase from "../application/use-cases/engine/battle-started";
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
@@ -30,8 +32,8 @@ function buildApplication() {
 
     // const battleRepository = new PrismaBattleRepository(dbService.client);
 
-    const battleStartUseCase = new UpdateUseCase(battleRepository);
-    const battleUpdatedConsumer = new BattleUpdatedConsumer(updateUseCase);
+    const battleStartedUseCase = new BattleStartedUseCase(battleRepository);
+    const battleStartedConsumer = new BattleStartedConsumer(battleStartedUseCase);
 
     const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);
     //
