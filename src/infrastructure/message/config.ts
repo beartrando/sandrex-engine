@@ -1,15 +1,17 @@
 export const config = {
-    brokers: (process.env.KAFKA_BROKERS?.split(',') ?? ['kafka:9092']),
-    clientId: process.env.KAFKA_CLIENT_ID ?? 'battle-client',
-    groupId: process.env.KAFKA_GROUP_ID ?? 'battle-service',
+    brokers: process.env.KAFKA_BROKERS?.split(',') ?? ['kafka:9092'],
+    clientId: process.env.KAFKA_CLIENT_ID ?? 'engine-client',
+    groupId: process.env.KAFKA_GROUP_ID ?? 'engine-service',
 };
 
-export const messageProducersConfig = {
-    battleStarted: process.env.MESSAGE_TOPIC_BATTLE_STARTED ?? 'battle.started',
+export const messageProducersConfig: Record<string, string> = {
+
+    battleUpdated: process.env.MESSAGE_TOPIC_BATTLE_UPDATED ?? 'battle.updated',
+    battleStarted: process.env.MESSAGE_TOPIC_BATTLE_UPDATED ?? 'battle.updated',
 };
 
 export const messageConsumersConfig: Record<string, string> = {
-    battleUpdated: process.env.MESSAGE_TOPIC_BATTLE_UPDATED ?? 'battle.updated',
+    battleUpdated: process.env.MESSAGE_TOPIC_BATTLE_STARTED ?? 'battle.started',
 };
 
 export default config;
