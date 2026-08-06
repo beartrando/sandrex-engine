@@ -11,12 +11,12 @@ export interface StateStoreConfig {
 }
 
 export class StateStoreService {
-    private _client?: Redis;
-
     constructor(
         private readonly config: StateStoreConfig,
     ) {
     }
+
+    private _client?: Redis;
 
     get client(): Redis {
         if (!this._client) {
@@ -33,6 +33,7 @@ export class StateStoreService {
 
         await this.retryInit(() => this.connect());
     }
+
     async stop(): Promise<void> {
         if (this._client) {
             await this._client.quit();

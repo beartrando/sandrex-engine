@@ -8,7 +8,6 @@ import grpcConfig from "../infrastructure/grpc/config";
 import Application from "../application/application";
 import MessageService from "../infrastructure/message/service";
 import JobService from "../infrastructure/job/service";
-import DbService from "../infrastructure/db/service";
 import {messageConfig, messageConsumersConfig, messageProducersConfig} from "../infrastructure/message/config";
 import jobConfig from "../infrastructure/job/config";
 import AuthService from "../infrastructure/auth/service";
@@ -26,8 +25,7 @@ function buildApplication() {
 
     const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
-    const dbService = new DbService();
-    const cacheService = new StateStoreService(cacheConfig);
+    const stateStoreService = new StateStoreService(cacheConfig);
 
     // const battleRepository = new PrismaBattleRepository(dbService.client);
 
@@ -42,7 +40,7 @@ function buildApplication() {
     // const getActiveByProfileUseCase = new GetActiveByProfileUseCase(battleRepository);
     // const startUseCase = new StartUseCase(battleRepository, jobService, messageProducersConfig.battleStarted);
 
-    const healthUseCase = new HealthUseCase(dbService, messageService, jobService);
+    const healthUseCase = new HealthUseCase(stateStoreService, messageService, jobService);
     const statusUseCase = new StatusUseCase;
     const livezUseCase = new LivezUseCase;
     const readyzUseCase = new ReadyzUseCase;
@@ -57,7 +55,7 @@ function buildApplication() {
 
     const grpcService = new GrpcService(grpcConfig.port, engineHandler, healthHandler);
 
-    return new Application(grpcService, dbService, jobService, messageService, cacheService);
+    return new Application(grpcService, stateStoreService, jobService, messageService);
 }
 
 

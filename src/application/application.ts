@@ -1,6 +1,5 @@
 import logger from "@shared/logger";
 import GrpcService from "../infrastructure/grpc/service";
-import DbService from "../infrastructure/db/service";
 import JobService from "../infrastructure/job/service";
 import MessageService from "../infrastructure/message/service";
 import StateStoreService from "../infrastructure/state-store/service";
@@ -8,10 +7,9 @@ import StateStoreService from "../infrastructure/state-store/service";
 export class Application {
     constructor(
         private readonly grpcService: GrpcService,
-        private readonly dbService: DbService,
+        private readonly stateStoreService: StateStoreService,
         private readonly jobService: JobService,
-        private readonly messageService: MessageService,
-        private readonly cacheService: StateStoreService,
+        private readonly messageService: MessageService
     ) {
     }
 
@@ -20,8 +18,7 @@ export class Application {
         try {
             await this.messageService.start();
             await this.jobService.start();
-            await this.dbService.start();
-            await this.cacheService.start();
+            await this.stateStoreService.start();
             await this.grpcService.start();
             logger.info(
                 '🚀 Engine service started',
@@ -50,8 +47,7 @@ export class Application {
 
     async stop() {
         await this.grpcService.stop();
-        await this.cacheService.stop();
-        await this.dbService.stop();
+        await this.stateStoreService.stop();
         await this.jobService.stop();
         await this.messageService.stop();
     }

@@ -1,22 +1,22 @@
 import * as healthProto from "../../../contracts/proto/common/health";
-import {MessageService} from "../../../infrastructure/message/service";
-import {DbService} from "../../../infrastructure/db/service";
-import {JobService} from "../../../infrastructure/job/service";
+import MessageService from "../../../infrastructure/message/service";
+import JobService from "../../../infrastructure/job/service";
 import appConfig from "../../../infrastructure/app/config";
+import StateStoreService from "../../../infrastructure/state-store/service";
 
 export class HealthUseCase {
     constructor(
-        private readonly dbService: DbService,
+        private readonly stateStoreService: StateStoreService,
         private readonly messageService: MessageService,
         private readonly jobService: JobService,
     ) {
     }
 
     async execute(): Promise<healthProto.HealthReport> {
-        const [dbOk, messageOk, jobOk] = await Promise.all([this.dbService.check(), this.messageService.check(), this.jobService.check()]);
+        const [stateStoreOk, messageOk, jobOk] = await Promise.all([this.stateStoreService.check(), this.messageService.check(), this.jobService.check()]);
 
         const components = {
-            db: dbOk,
+            stateStore: stateStoreOk,
             message: messageOk,
             job: jobOk,
         };

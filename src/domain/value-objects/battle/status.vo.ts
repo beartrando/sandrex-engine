@@ -1,8 +1,8 @@
-import BattleStatusEnum from "../enums/battle-status.enum";
+import StatusEnum from "../../enums/battle/status.enum";
 
 export class BattleStatus {
     constructor(
-        readonly value: BattleStatusEnum,
+        readonly value: StatusEnum,
     ) {
     }
 

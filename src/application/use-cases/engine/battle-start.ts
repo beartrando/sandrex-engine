@@ -1,6 +1,4 @@
 import BattleEntity from "../../../domain/entities/battle.entity";
-import Id from "../../../domain/value-objects/id.vo";
-import PlayerIds from "../../../domain/value-objects/player-ids.vo";
 
 export class BattleStartUseCase {
     constructor(

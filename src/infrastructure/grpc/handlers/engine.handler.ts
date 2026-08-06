@@ -1,18 +1,21 @@
 import * as grpc from '@grpc/grpc-js';
 import * as battleProto from '../../../contracts/proto/battle';
 import * as engineProto from '../../../contracts/proto/engine';
+import * as emptyProto from '../../../contracts/proto/common/empty';
 import logger from "@shared/logger";
 import BattleLeaveUseCase from "../../../application/use-cases/engine/battle-leave";
 import BattleMoveUseCase from "../../../application/use-cases/engine/battle-move";
 import BattleStartUseCase from "../../../application/use-cases/engine/battle-start";
 import BattleEntity from "../../../domain/entities/battle.entity";
 import BattleProtoMapper from "../mappers/battle.proto.mapper";
+import BattleMoveProtoMapper from "../mappers/battle-move.proto.mapper";
+import BattleLeaveProtoMapper from "../mappers/battle-leave.proto.mapper";
 
 
 export class EngineHandler {
     constructor(
-        private readonly battleMoveUseCase: BattleMoveUseCase,
         private readonly battleStartUseCase: BattleStartUseCase,
+        private readonly battleMoveUseCase: BattleMoveUseCase,
         private readonly battleLeaveUseCase: BattleLeaveUseCase
     ) {
     }
@@ -29,22 +32,32 @@ export class EngineHandler {
 
                         // logger.log(battleObj);
                         const battle = BattleProtoMapper.toProto(await this.battleStartUseCase.execute(battleEntity));
-                        if (battle) call.write(engineProto.BattleResponse.create({battle}));
+                        if (battle) {
+                            call.write(engineProto.BattleResponse.create({battle}));
+                        }
 
                     }
 
                     if (event.move) {
-                        const battleMove = event.move as engineProto.BattleMove;
+                        const battleMove = BattleMoveProtoMapper.toDomain(event.move);
 
-                        const battle: battleProto.BattleObject = await this.battleMoveUseCase.execute(battleMove);
+                        const battleEntity = await this.battleMoveUseCase.execute(battleMove);
 
-                        logger.log(battle);
-                        if (battle) call.write(engineProto.BattleResponse.create({battle}));
+                        if (battleEntity) {
+                            const battle = BattleProtoMapper.toProto(battleEntity);
+                            // logger.log(battle);
+                            call.write(engineProto.BattleResponse.create({battle}));
+                        }
                     }
 
                     if (event.leave) {
-                        const battle: battleProto.BattleObject | undefined = await this.battleLeaveUseCase.execute(event.leave.profileId, event.leave.battleId);
-                        if (battle) {
+                        const battleLeave = BattleLeaveProtoMapper.toDomain(event.move);
+
+                        const battleEntity = await this.battleLeaveUseCase.execute(battleLeave);
+
+                        if (battleEntity) {
+                            const battle = BattleProtoMapper.toProto(battleEntity);
+                            // logger.log(battle);
                             call.write(engineProto.BattleResponse.create({battle}));
                         }
                     }

@@ -1,4 +1,4 @@
-import BattleCellValueEnum from "../enums/battle-cell-value.enum";
+import BattleCellValueEnum from "../../enums/battle/cell-value.enum";
 
 export class Board {
     constructor(

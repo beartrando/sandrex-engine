@@ -1,6 +1,6 @@
 // import crypto from "crypto";
 // import { battleStore, battleNew, makeMove } from "../../../../src/orchestration/battle.service";
-// import { BattleCellValue, BattleObject, BattleStatus } from "../../../../src/contracts/proto/battle";
+// import { BattleCellValue, BattleObject, Status } from "../../../../src/contracts/proto/battle";
 // import { BattleMove } from "../../../../src/contracts/proto/engine";
 //
 //
@@ -17,7 +17,7 @@
 //       id: crypto.randomUUID(),
 //       players: [userId1, userId2],
 //       cells: [],
-//       status: BattleStatus.ACTIVE,
+//       status: Status.ACTIVE,
 //       winnerId: "",
 //     };
 //
@@ -29,7 +29,7 @@
 //
 //     expect(stored).not.toBeNull();
 //     expect(stored?.cells).toEqual(Array(9).fill(BattleCellValue.CELL_EMPTY));
-//     expect(stored?.status).toBe(BattleStatus.ACTIVE);
+//     expect(stored?.status).toBe(Status.ACTIVE);
 //   });
 //
 //   test("игрок делает корректный ход", async () => {
