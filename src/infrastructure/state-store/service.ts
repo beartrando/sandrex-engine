@@ -4,42 +4,45 @@ import logger from "@shared/logger";
 
 import sleep from "../../utils/sleep";
 
-export interface RedisConfig {
+export interface StateStoreConfig {
     host: string;
     port: number;
     password?: string;
 }
 
-export class CacheService {
-    private client?: Redis;
+export class StateStoreService {
+    private _client?: Redis;
 
     constructor(
-        private readonly config: RedisConfig,
+        private readonly config: StateStoreConfig,
     ) {
     }
 
     get client(): Redis {
         if (!this._client) {
-            throw new Error("CacheService is not started");
+            throw new Error("StateStoreService is not started");
         }
 
         return this._client;
     }
 
     async start(): Promise<void> {
+        if (this._client) {
+            return;
+        }
+
         await this.retryInit(() => this.connect());
     }
-
     async stop(): Promise<void> {
-        if (this.client) {
-            await this.client.quit();
-            this.client = undefined;
+        if (this._client) {
+            await this._client.quit();
+            this._client = undefined;
         }
     }
 
     async check(): Promise<boolean> {
         try {
-            const redis = await this.getClient();
+            const redis = this.client;
 
             await redis.ping();
 
@@ -67,7 +70,7 @@ export class CacheService {
             client.once("error", reject);
         });
 
-        this.client = client;
+        this._client = client;
 
         logger.info("✅ Redis initialized");
     }
@@ -83,7 +86,7 @@ export class CacheService {
             } catch (err) {
                 logger.warn(
                     {err},
-                    "⏳ Waiting for Redis...",
+                    "Redis unavailable. Retrying in 3 seconds..."
                 );
 
                 await sleep(3000);
@@ -92,4 +95,4 @@ export class CacheService {
     }
 }
 
-export default CacheService;
+export default StateStoreService;

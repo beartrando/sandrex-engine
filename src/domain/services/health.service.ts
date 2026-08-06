@@ -1,6 +1,6 @@
 import prisma from '../lib/prisma';
 import logger from '@shared/logger';
-import messageConfig from '../config/kafka.config';
+import messageConfig from '../config/kafka.appConfig';
 import {createProducer} from '@shared/kafka-manager';
 import * as healthProto from '../grpc/generated/common/health';
 

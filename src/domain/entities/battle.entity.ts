@@ -11,8 +11,6 @@ type BattleEntityProps = {
     status?: BattleStatus;
     winnerId?: Id | null;
     lastMoveAt?: Date | null;
-    createdAt?: Date;
-    updatedAt?: Date;
 };
 
 export class BattleEntity {
@@ -23,8 +21,6 @@ export class BattleEntity {
         readonly status: BattleStatus,
         readonly winnerId: Id | null,
         readonly lastMoveAt: Date | null,
-        readonly createdAt: Date,
-        readonly updatedAt: Date,
     ) {
     }
 
@@ -38,8 +34,6 @@ export class BattleEntity {
             props.status ?? new BattleStatus(BattleStatusEnum.New),
             props.winnerId ?? null,
             props.lastMoveAt ?? null,
-            props.createdAt ?? now,
-            props.updatedAt ?? now,
         );
     }
 

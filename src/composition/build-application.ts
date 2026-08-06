@@ -4,23 +4,22 @@ import LivezUseCase from "../application/use-cases/health/livez";
 import ReadyzUseCase from "../application/use-cases/health/readyz";
 import HealthHandler from "../infrastructure/grpc/handlers/health.handler";
 import GrpcService from "../infrastructure/grpc/service";
-import {config as grpcConfig} from "../infrastructure/grpc/config";
+import grpcConfig from "../infrastructure/grpc/config";
 import Application from "../application/application";
 import MessageService from "../infrastructure/message/service";
 import JobService from "../infrastructure/job/service";
 import DbService from "../infrastructure/db/service";
-import {
-    config as messageConfig,
-    messageConsumersConfig,
-    messageProducersConfig
-} from "../infrastructure/message/config";
-import {config as jobConfig} from "../infrastructure/job/config";
+import {messageConfig, messageConsumersConfig, messageProducersConfig} from "../infrastructure/message/config";
+import jobConfig from "../infrastructure/job/config";
 import AuthService from "../infrastructure/auth/service";
-import {config as authConfig} from "../infrastructure/auth/config";
-import {config as cacheConfig} from "../infrastructure/cache/config";
-import CacheService from "../infrastructure/cache/service";
+import authConfig from "../infrastructure/auth/config";
+import cacheConfig from "../infrastructure/state-store/config";
+import StateStoreService from "../infrastructure/state-store/service";
 import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
-import BattleStartedUseCase from "../application/use-cases/engine/battle-started";
+import BattleStartUseCase from "../application/use-cases/engine/battle-start";
+import EngineHandler from "../infrastructure/grpc/handlers/engine.handler";
+import BattleMoveUseCase from "../application/use-cases/engine/battle-move";
+import BattleLeaveUseCase from "../application/use-cases/engine/battle-leave";
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
@@ -28,15 +27,17 @@ function buildApplication() {
     const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
     const dbService = new DbService();
-    const cacheService = new CacheService(cacheConfig);
+    const cacheService = new StateStoreService(cacheConfig);
 
     // const battleRepository = new PrismaBattleRepository(dbService.client);
 
-    const battleStartedUseCase = new BattleStartedUseCase(battleRepository);
-    const battleStartedConsumer = new BattleStartedConsumer(battleStartedUseCase);
+    const battleStartUseCase = new BattleStartUseCase();
+    const battleMoveUseCase = new BattleMoveUseCase();
+    const battleLeaveUseCase = new BattleLeaveUseCase();
+    const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
 
     const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);
-    //
+
     // const getUseCase = new GetProfileUseCase(battleRepository);
     // const getActiveByProfileUseCase = new GetActiveByProfileUseCase(battleRepository);
     // const startUseCase = new StartUseCase(battleRepository, jobService, messageProducersConfig.battleStarted);
@@ -47,9 +48,9 @@ function buildApplication() {
     const readyzUseCase = new ReadyzUseCase;
 
     const engineHandler = new EngineHandler(
-        // getUseCase,
-        // getActiveByProfileUseCase,
-        // startUseCase,
+        battleStartUseCase,
+        battleMoveUseCase,
+        battleLeaveUseCase,
     );
 
     const healthHandler = new HealthHandler(healthUseCase, statusUseCase, livezUseCase, readyzUseCase);

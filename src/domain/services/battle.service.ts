@@ -1,4 +1,4 @@
-import {messageProducersConfig} from "../config/kafka.config";
+import {messageProducersConfig} from "../config/kafka.appConfig";
 import {StoreRegistry, stores} from "./store-registry";
 import * as battleProto from "../grpc/generated/battle";
 import * as engineProto from "../grpc/generated/engine";
@@ -6,11 +6,11 @@ import {BattleStateStore} from "../stores/battleStateStore";
 import pgBossManager from "@shared/pg-boss-manager";
 
 import logger from "@shared/logger";
-import config from "../config/config";
+import domainConfig from "../config/config";
 
 const moveTimers = new Map<string, NodeJS.Timeout>();
 
-const moveTimeoutMs = (1000 * config.battleTurnTimeLimit);
+const moveTimeoutMs = (1000 * domainConfig.battleTurnTimeLimit);
 
 function startMoveTimer(battle: battleProto.BattleObject) {
     stopMoveTimer(battle.id);

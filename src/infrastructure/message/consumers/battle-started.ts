@@ -1,9 +1,9 @@
 import {BattleObject} from "../../../contracts/proto/battle";
-import UpdateUseCase from "../../../application/use-cases/battle/update";
+import BattleStartUseCase from "../../../application/use-cases/engine/battle-start";
 
 export class BattleStartedConsumer {
     constructor(
-        private readonly updateUseCase: UpdateUseCase,
+        private readonly updateUseCase: BattleStartUseCase,
     ) {
     }
 

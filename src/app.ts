@@ -17,12 +17,12 @@ application.start();
 // import logger from '@shared/logger';
 // import {StoreRegistry} from "./services/store-registry";
 //
-// import messageConfig, {messageConsumersConfig, messageProducersConfig,} from './config/kafka.config';
+// import messageConfig, {messageConsumersConfig, messageProducersConfig,} from './appConfig/kafka.appConfig';
 //
 // import {createConsumer} from '@shared/kafka-manager';
 //
 // import pgBossManager from '@shared/pg-boss-manager';
-// import pgBossConfig from './config/pg-boss.config';
+// import pgBossConfig from './appConfig/pg-boss.appConfig';
 //
 // const GRPC_PORT =
 //     process.env.GRPC_PORT ?? '50051';

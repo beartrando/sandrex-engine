@@ -3,7 +3,7 @@ import GrpcService from "../infrastructure/grpc/service";
 import DbService from "../infrastructure/db/service";
 import JobService from "../infrastructure/job/service";
 import MessageService from "../infrastructure/message/service";
-import CacheService from "../infrastructure/cache/service";
+import StateStoreService from "../infrastructure/state-store/service";
 
 export class Application {
     constructor(
@@ -11,7 +11,7 @@ export class Application {
         private readonly dbService: DbService,
         private readonly jobService: JobService,
         private readonly messageService: MessageService,
-        private readonly cacheService: CacheService,
+        private readonly cacheService: StateStoreService,
     ) {
     }
 

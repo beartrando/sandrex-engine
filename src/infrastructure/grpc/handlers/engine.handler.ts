@@ -1,67 +1,84 @@
 import * as grpc from '@grpc/grpc-js';
-import * as battleProto from '../generated/battle';
-import * as engineProto from '../generated/engine';
-import * as emptyProto from '../generated/common/empty';
-import * as battleService from '../../services/battle.service';
+import * as battleProto from '../../../contracts/proto/battle';
+import * as engineProto from '../../../contracts/proto/engine';
 import logger from "@shared/logger";
+import BattleLeaveUseCase from "../../../application/use-cases/engine/battle-leave";
+import BattleMoveUseCase from "../../../application/use-cases/engine/battle-move";
+import BattleStartUseCase from "../../../application/use-cases/engine/battle-start";
+import BattleEntity from "../../../domain/entities/battle.entity";
+import BattleProtoMapper from "../mappers/battle.proto.mapper";
 
 
-export async function battleChannel(
-    call: grpc.ServerDuplexStream<engineProto.BattleRequest, engineProto.BattleResponse>
-) {
-    try {
-        // слушаем входящие события от Streaming
-        call.on("data", async (event: engineProto.BattleRequest) => {
-            try {
-                if (event.start) {
-                    const battleObj: battleProto.BattleObject = event.start as battleProto.BattleObject;
+export class EngineHandler {
+    constructor(
+        private readonly battleMoveUseCase: BattleMoveUseCase,
+        private readonly battleStartUseCase: BattleStartUseCase,
+        private readonly battleLeaveUseCase: BattleLeaveUseCase
+    ) {
+    }
 
-                    // logger.log(battleObj);
-                    const battle: battleProto.BattleObject = await battleService.battleNew(battleObj);
-                    if (battle) call.write(engineProto.BattleResponse.create({battle}));
+    async battleChannel(
+        call: grpc.ServerDuplexStream<engineProto.BattleRequest, engineProto.BattleResponse>
+    ) {
+        try {
+            // слушаем входящие события от Streaming
+            call.on("data", async (event: engineProto.BattleRequest) => {
+                try {
+                    if (event.start) {
+                        const battle: BattleEntity = BattleProtoMapper.toDomain battleProto.BattleObject = event.start as battleProto.BattleObject;
 
-                }
+                        // logger.log(battleObj);
+                        const battle: battleProto.BattleObject = await this.battleStartUseCase.execute(battleObj);
+                        if (battle) call.write(engineProto.BattleResponse.create({battle}));
 
-                if (event.move) {
-                    const battleMove = event.move as engineProto.BattleMove;
-
-                    const battle: battleProto.BattleObject = await battleService.makeMove(battleMove);
-
-                    logger.log(battle);
-                    if (battle) call.write(engineProto.BattleResponse.create({battle}));
-                }
-
-                if (event.leave) {
-                    const battle: battleProto.BattleObject | undefined = await battleService.leaveBattle(event.leave.profileId, event.leave.battleId);
-                    if (battle) {
-                        call.write(engineProto.BattleResponse.create({battle}));
                     }
+
+                    if (event.move) {
+                        const battleMove = event.move as engineProto.BattleMove;
+
+                        const battle: battleProto.BattleObject = await this.battleMoveUseCase.execute(battleMove);
+
+                        logger.log(battle);
+                        if (battle) call.write(engineProto.BattleResponse.create({battle}));
+                    }
+
+                    if (event.leave) {
+                        const battle: battleProto.BattleObject | undefined = await this.battleLeaveUseCase.execute(event.leave.profileId, event.leave.battleId);
+                        if (battle) {
+                            call.write(engineProto.BattleResponse.create({battle}));
+                        }
+                    }
+
+                    if (event.ping) {
+                        // logger.info('Streaming-engine stream Ping');
+                        const ping = emptyProto.Empty.create({});
+                        call.write(engineProto.BattleResponse.create({ping}));
+
+                        // heartbeat — можно просто игнорировать или логировать
+                    }
+                } catch (err: any) {
+                    console.error("Event error:", err);
                 }
+            });
 
-                if (event.ping) {
-                    // logger.info('Streaming-engine stream Ping');
-                    const ping = emptyProto.Empty.create({});
-                    call.write(engineProto.BattleResponse.create({ping}));
+            call.on("end", () => {
+                call.end();
+            });
 
-                    // heartbeat — можно просто игнорировать или логировать
-                }
-            } catch (err: any) {
-                console.error("Event error:", err);
-            }
-        });
+            call.on("error", (err) => {
+                console.error("Stream error:", err);
+                call.end();
+            });
 
-        call.on("end", () => {
+            logger.log('Grpc streaming connection established');
+        } catch (err: any) {
+            console.error("battleChannel error:", err);
+            // callbackError(callback, err);
             call.end();
-        });
-
-        call.on("error", (err) => {
-            console.error("Stream error:", err);
-            call.end();
-        });
-
-        logger.log('Grpc streaming connection established');
-    } catch (err: any) {
-        console.error("battleChannel error:", err);
-        call.end();
+        }
     }
 }
+
+export default EngineHandler;
+
+

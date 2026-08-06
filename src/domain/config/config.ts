@@ -1,7 +1,7 @@
-export const config = {
+export const domainConfig = {
     accessSecret: process.env.ACCESS_SECRET!,
     battleTurnTimeLimit: Number(process.env.BATTLE_TURN_TIME_LIMIT) ?? 40,
 };
 
-export default config;
+export default domainConfig;
 
