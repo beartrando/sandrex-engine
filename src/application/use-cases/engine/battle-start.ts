@@ -10,8 +10,8 @@ export class BattleStartUseCase {
     ) {
     }
 
-    async execute(): Promise<BattleEntity> {
-        return BattleEntity.create({playerIds: new PlayerIds([new Id('1')])});
+    async execute(battle: BattleEntity): Promise<BattleEntity> {
+        return battle.start();
     }
 }
 

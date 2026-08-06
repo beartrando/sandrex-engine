@@ -37,10 +37,9 @@ export class BattleEntity {
         );
     }
 
-    static createNew(profileId: Id): BattleEntity {
-        return BattleEntity.create({playerIds: new PlayerIds([profileId])});
+    start(): BattleEntity {
+        return this;
     }
-
 }
 
 export default BattleEntity;
