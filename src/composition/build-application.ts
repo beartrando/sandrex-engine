@@ -23,11 +23,14 @@ import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redi
 import CacheStore from "../infrastructure/cache/cache-store";
 import CacheService from "../infrastructure/cache/service";
 import redisConfig from "../infrastructure/cache/config/redis.config";
+import messageConfig from "../infrastructure/message/config/message.config";
+import messageProducersConfig from "../infrastructure/message/config/producers.config";
+import messageConsumersConfig from "../infrastructure/message/config/consumers.config";
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
 
-    // const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
+    const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
     const cacheService = new CacheService(redisConfig);
 
@@ -45,18 +48,14 @@ function buildApplication() {
 
     stateStoreService.register("battle", battleStateStore);
 
-
-
-
-
-    const battleStartUseCase = new BattleStartUseCase(battleStateStore, messageService);
-    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore, messageService);
-    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore, messageService);
+    const battleStartUseCase = new BattleStartUseCase(battleStateStore, jobService);
+    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore, jobService);
+    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore, jobService);
     const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
 
     const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);
 
-    const healthUseCase = new HealthUseCase(stateStoreService, messageService, jobService);
+    const healthUseCase = new HealthUseCase(messageService, jobService, cacheService);
     const statusUseCase = new StatusUseCase;
     const livezUseCase = new LivezUseCase;
     const readyzUseCase = new ReadyzUseCase;
@@ -71,7 +70,7 @@ function buildApplication() {
 
     const grpcService = new GrpcService(grpcConfig.port, engineHandler, healthHandler);
 
-    return new Application(grpcService, stateStoreService, jobService, messageService);
+    return new Application(grpcService, stateStoreService, jobService, messageService, cacheService);
 }
 
 

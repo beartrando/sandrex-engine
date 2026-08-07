@@ -17,7 +17,7 @@ application.start();
 // import logger from '@shared/logger';
 // import {StoreRegistry} from "./services/store-registry";
 //
-// import messageConfig, {messageConsumersConfig, messageProducersConfig,} from './appConfig/kafka.appConfig';
+// import config, {messageConsumersConfig, messageProducersConfig,} from './appConfig/kafka.appConfig';
 //
 // import {createConsumer} from '@shared/kafka-manager';
 //
@@ -69,7 +69,7 @@ application.start();
 //         try {
 //             for (const topic of topics) {
 //                 await pgBossManager.kafka.start(
-//                     messageConfig,
+//                     config,
 //                     topic,
 //                 );
 //             }
@@ -117,7 +117,7 @@ application.start();
 //                 configs.map(
 //                     async ({topic, handler}) => {
 //                         await createConsumer(
-//                             messageConfig,
+//                             config,
 //                             {
 //                                 topic,
 //                                 handler,

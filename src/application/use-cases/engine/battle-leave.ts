@@ -4,11 +4,12 @@ import PlayerIds from "../../../domain/value-objects/battle/player-ids.vo";
 import BattleLeave from "../../../domain/value-objects/battle-leave.vo";
 import StateStoreInterface from "../../../infrastructure/state-store/interfaces/state-store.interface";
 import MessageService from "../../../infrastructure/message/service";
+import JobService from "../../../infrastructure/job/service";
 
 export class BattleLeaveUseCase {
     constructor(
         private readonly battleStateStore: StateStoreInterface<BattleEntity>,
-        private readonly messageService: MessageService,
+        private readonly jobService: JobService,
     ) {
     }
 

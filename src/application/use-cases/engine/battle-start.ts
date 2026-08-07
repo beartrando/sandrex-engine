@@ -4,11 +4,12 @@ import BattleStateStore from "../../../infrastructure/state-store/stores/battle-
 import redisConfig from "../../../infrastructure/state-store/config/redis.config";
 import StateStoreInterface from "../../../infrastructure/state-store/interfaces/state-store.interface";
 import MessageService from "../../../infrastructure/message/service";
+import JobService from "../../../infrastructure/job/service";
 
 export class BattleStartUseCase {
     constructor(
         private readonly battleStateStore: StateStoreInterface<BattleEntity>,
-        private readonly messageService: MessageService,
+        private readonly jobService: JobService,
     ) {
     }
 

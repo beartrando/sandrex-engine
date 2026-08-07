@@ -2,23 +2,27 @@ import * as healthProto from "../../../contracts/proto/common/health";
 import MessageService from "../../../infrastructure/message/service";
 import JobService from "../../../infrastructure/job/service";
 import appConfig from "../../../infrastructure/app/app.config";
-import StateStoreService from "../../../infrastructure/state-store/service";
+import CacheService from "../../../infrastructure/cache/service";
 
 export class HealthUseCase {
     constructor(
-        private readonly stateStoreService: StateStoreService,
         private readonly messageService: MessageService,
         private readonly jobService: JobService,
+        private readonly cacheService: CacheService,
     ) {
     }
 
     async execute(): Promise<healthProto.HealthReport> {
-        const [stateStoreOk, messageOk, jobOk] = await Promise.all([this.stateStoreService.check(), this.messageService.check(), this.jobService.check()]);
+        const [messageOk, jobOk, cacheOk] = await Promise.all([
+            this.messageService.check(),
+            this.jobService.check(),
+            this.cacheService.check()
+        ]);
 
         const components = {
-            stateStore: stateStoreOk,
             message: messageOk,
             job: jobOk,
+            cache: cacheOk,
         };
 
         return {

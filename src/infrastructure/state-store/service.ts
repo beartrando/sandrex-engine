@@ -4,7 +4,7 @@ import logger from "@shared/logger";
 
 import sleep from "../../utils/sleep";
 import StateStoreInterface from "./interfaces/state-store.interface";
-import {StateStoreKey, StateStoreMap} from "./config/state-store.config";
+import {StateStoreKey} from "./config/state-store.config";
 
 
 export class StateStoreService {
@@ -15,17 +15,11 @@ export class StateStoreService {
     >();
 
     async start(): Promise<void> {
-        // await this.retryInit(async () => {
-        //     await this.connect();
-        //     this.initStores();
-        // });
+        await this.loadAll();
     }
 
     async stop(): Promise<void> {
-        // if (this._client) {
-        //     await this._client.quit();
-        //     this._client = undefined;
-        // }
+        await this.clearAll();
     }
 
     register<K extends StateStoreKey>(
@@ -61,25 +55,6 @@ export class StateStoreService {
         }
     }
 
-    private async retryInit(
-        fn: () => Promise<void>,
-    ): Promise<void> {
-        // while (true) {
-        //     try {
-        //         await fn();
-        //
-        //         return;
-        //     } catch (err) {
-        //         logger.warn(
-        //             {err},
-        //             "Redis unavailable. Retrying in 3 seconds..."
-        //         );
-        //
-        //         await sleep(3000);
-        //     }
-        // }
-    }
-
     store<K extends StateStoreKey>(
         key: K,
     ): StateStoreInterface<StateStoreMap[K]> {
@@ -92,6 +67,12 @@ export class StateStoreService {
         }
 
         return store as StateStoreInterface<StateStoreMap[K]>;
+    }
+
+    async clearAll(): Promise<void> {
+        for (const store of this.registry.values()) {
+            await store.clear();
+        }
     }
 
     async loadAll(): Promise<void> {

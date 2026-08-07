@@ -1,38 +1,76 @@
-import ProducerService from "./producer.service";
-import ConsumerService from "./consumer.service";
+import {createConsumer, createProducer, KafkaConfig, KafkaProducer} from "@shared/kafka-manager";
+import logger from "@shared/logger";
+import sleep from "../../utils/sleep";
+import BattleStartedConsumer from "./consumers/battle-started";
 
 export class MessageService {
 
-    private started = false;
+    private producer?: KafkaProducer;
 
     constructor(
-        private readonly producerService: ProducerService,
-        private readonly consumerService: ConsumerService,
+        private readonly config: KafkaConfig,
+        private readonly consumersConfig: Record<string, string>,
+        private readonly battleUpdatedConsumer: BattleStartedConsumer,
     ) {
     }
 
     async start(): Promise<void> {
-
-        if (this.started) {
-            return;
-        }
-
-        await this.producerService.start();
-        await this.consumerService.start();
-
-        this.started = true;
+        await this.retryInit(() => this.createConsumers());
     }
 
     async stop(): Promise<void> {
-        await this.consumerService.stop();
-        await this.producerService.stop();
+        if (this.producer) {
+            await this.producer.disconnect();
+        }
+    }
+
+    async getProducer(): Promise<KafkaProducer> {
+        if (!this.producer) {
+            this.producer = await createProducer(this.config);
+        }
+
+        return this.producer;
     }
 
     async check(): Promise<boolean> {
-        const producer = await this.producerService.check();
-        const consumer = await this.consumerService.check();
+        try {
+            const producer = await this.getProducer();
 
-        return producer && consumer;
+            // await producer.send('healthcheck', [{value: 'ping'}]);
+            await producer.send('healthcheck', 'ping');
+
+            return true;
+        } catch (err) {
+            logger.error("Kafka health check failed", err);
+            return false;
+        }
+    }
+
+    private async createConsumers(): Promise<void> {
+        createConsumer(this.config, {
+            topic: this.consumersConfig.battleUpdated,
+            handler: this.battleUpdatedConsumer.execute
+        })
+    }
+
+    private async retryInit(
+        fn: () => Promise<void>,
+    ): Promise<void> {
+        while (true) {
+            try {
+                await fn();
+
+                logger.info("✅ Kafka initialized");
+                return;
+            } catch (err) {
+                logger.warn(
+                    {err},
+                    "⏳ Waiting for Kafka topics...",
+                );
+
+                await sleep(3000);
+            }
+        }
     }
 }
 
