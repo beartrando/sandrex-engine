@@ -3,12 +3,9 @@ import Redis from "ioredis";
 import logger from "@shared/logger";
 
 import sleep from "../../utils/sleep";
+import StateStoreConfig from "./interfaces/state-store-config";
 
-export interface StateStoreConfig {
-    host: string;
-    port: number;
-    password?: string;
-}
+
 
 export class StateStoreService {
     constructor(
@@ -27,10 +24,6 @@ export class StateStoreService {
     }
 
     async start(): Promise<void> {
-        if (this._client) {
-            return;
-        }
-
         await this.retryInit(() => this.connect());
     }
 
@@ -56,7 +49,7 @@ export class StateStoreService {
     }
 
     private async connect(): Promise<void> {
-        if (this.client) {
+        if (this._client) {
             return;
         }
 
@@ -67,7 +60,7 @@ export class StateStoreService {
         });
 
         await new Promise<void>((resolve, reject) => {
-            client.once("connect", resolve);
+            client.once("ready", resolve);
             client.once("error", reject);
         });
 
@@ -93,6 +86,14 @@ export class StateStoreService {
                 await sleep(3000);
             }
         }
+    }
+
+    get store(name: StateStoreKey) {
+
+    }
+
+    async restore(): Promise<void> {
+        // await this.retryInit(() => this.connect());
     }
 }
 
