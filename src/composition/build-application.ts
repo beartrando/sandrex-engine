@@ -19,6 +19,8 @@ import BattleStartUseCase from "../application/use-cases/engine/battle-start";
 import EngineHandler from "../infrastructure/grpc/handlers/engine.handler";
 import BattleMoveUseCase from "../application/use-cases/engine/battle-move";
 import BattleLeaveUseCase from "../application/use-cases/engine/battle-leave";
+import BattleStateStore from "../infrastructure/state-store/stores/battle-state-store";
+import stateStoresList from "../infrastructure/state-store/config/state-store-list";
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
@@ -27,7 +29,9 @@ function buildApplication() {
 
     const stateStoreService = new StateStoreService(cacheConfig);
 
-    // const battleRepository = new PrismaBattleRepository(dbService.client);
+    const battleStore = new BattleStateStore(stateStoreService.client);
+
+    stateStore.register(stateStoresList.battle, battleStore);
 
     const battleStartUseCase = new BattleStartUseCase();
     const battleMoveUseCase = new BattleMoveUseCase();
@@ -35,10 +39,6 @@ function buildApplication() {
     const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
 
     const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);
-
-    // const getUseCase = new GetProfileUseCase(battleRepository);
-    // const getActiveByProfileUseCase = new GetActiveByProfileUseCase(battleRepository);
-    // const startUseCase = new StartUseCase(battleRepository, jobService, messageProducersConfig.battleStarted);
 
     const healthUseCase = new HealthUseCase(stateStoreService, messageService, jobService);
     const statusUseCase = new StatusUseCase;
