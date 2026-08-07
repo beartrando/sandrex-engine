@@ -8,8 +8,8 @@ import BattleMoveUseCase from "../../../application/use-cases/engine/battle-move
 import BattleStartUseCase from "../../../application/use-cases/engine/battle-start";
 import BattleEntity from "../../../domain/entities/battle.entity";
 import BattleProtoMapper from "../mappers/battle.proto.mapper";
-import BattleMoveProtoMapper from "../mappers/battle-move.proto.mapper";
-import BattleLeaveProtoMapper from "../mappers/battle-leave.proto.mapper";
+import BattleMoveRedisMapper from "../mappers/battle-move.proto.mapper";
+import BattleLeaveRedisMapper from "../mappers/battle-leave.proto.mapper";
 
 
 export class EngineHandler {
@@ -39,7 +39,7 @@ export class EngineHandler {
                     }
 
                     if (event.move) {
-                        const battleMove = BattleMoveProtoMapper.toDomain(event.move);
+                        const battleMove = BattleMoveRedisMapper.toDomain(event.move);
 
                         const battleEntity = await this.battleMoveUseCase.execute(battleMove);
 
@@ -51,7 +51,7 @@ export class EngineHandler {
                     }
 
                     if (event.leave) {
-                        const battleLeave = BattleLeaveProtoMapper.toDomain(event.leave);
+                        const battleLeave = BattleLeaveRedisMapper.toDomain(event.leave);
 
                         const battleEntity = await this.battleLeaveUseCase.execute(battleLeave);
 

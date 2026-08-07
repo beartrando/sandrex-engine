@@ -5,8 +5,10 @@ import Id from "../../../domain/value-objects/id.vo";
 
 import StateStore from "../state-store.interface";
 
-export class BattleStateStore implements StateStore<BattleEntity> {
+const BATTLE_PREFIX = "battle:";
+const BATTLE_INDEX = "battle:index";
 
+export class BattleStateStore implements StateStore<BattleEntity> {
     constructor(
         private readonly redis: Redis,
     ) {
@@ -15,9 +17,16 @@ export class BattleStateStore implements StateStore<BattleEntity> {
     async save(
         battle: BattleEntity,
     ): Promise<void> {
+        const key = `${BATTLE_PREFIX}${battle.id.value}`;
+
         await this.redis.set(
-            `battle:${battle.id.value}`,
+            key,
             JSON.stringify(battle),
+        );
+
+        await this.redis.sadd(
+            BATTLE_INDEX,
+            battle.id.value,
         );
     }
 
@@ -25,7 +34,7 @@ export class BattleStateStore implements StateStore<BattleEntity> {
         id: Id,
     ): Promise<BattleEntity | null> {
         const data = await this.redis.get(
-            `battle:${id.value}`,
+            `${BATTLE_PREFIX}${id.value}`,
         );
 
         if (!data) {
@@ -39,22 +48,35 @@ export class BattleStateStore implements StateStore<BattleEntity> {
         id: Id,
     ): Promise<void> {
         await this.redis.del(
-            `battle:${id.value}`,
+            `${BATTLE_PREFIX}${id.value}`,
+        );
+
+        await this.redis.srem(
+            BATTLE_INDEX,
+            id.value,
         );
     }
 
     async loadAll(): Promise<BattleEntity[]> {
-        const keys = await this.redis.keys("battle:*");
+        const ids = await this.redis.smembers(
+            BATTLE_INDEX,
+        );
 
-        if (!keys.length) {
+        if (!ids.length) {
             return [];
         }
+
+        const keys = ids.map(
+            id => `${BATTLE_PREFIX}${id}`,
+        );
 
         const values = await this.redis.mget(keys);
 
         return values
             .filter(Boolean)
-            .map(value => JSON.parse(value!) as BattleEntity);
+            .map(
+                value => JSON.parse(value!) as BattleEntity,
+            );
     }
 }
 

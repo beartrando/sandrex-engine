@@ -4,7 +4,7 @@ import BattleRepository from "../../../domain/repositories/battle.repository";
 import BattleEntity from "../../../domain/entities/battle.entity";
 
 import Id from "../../../domain/value-objects/id.vo";
-import BattleDbMapper from "../mappers/battle.mapper";
+import BattleDbMapper from "../mappers/battle.redis.mapper";
 
 export class PrismaBattleRepository implements BattleRepository {
 
