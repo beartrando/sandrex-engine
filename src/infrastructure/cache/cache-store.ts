@@ -2,6 +2,7 @@ import Id from "../../domain/value-objects/id.vo";
 
 import CacheStoreInterface from "./interfaces/cache-store.interface";
 import CacheStoreMapper from "./interfaces/cache-store-mapper";
+import Redis from "ioredis";
 
 export class CacheStore<TEntity extends { id: Id }> implements CacheStoreInterface<TEntity> {
 
@@ -26,9 +27,7 @@ export class CacheStore<TEntity extends { id: Id }> implements CacheStoreInterfa
         this._client = client;
     }
 
-    async save(
-        entity: TEntity,
-    ): Promise<void> {
+    async set(entity: TEntity): Promise<void> {
         const key = `${this.prefix}${entity.id.value}`;
 
         await this.client.set(
@@ -42,9 +41,7 @@ export class CacheStore<TEntity extends { id: Id }> implements CacheStoreInterfa
         );
     }
 
-    async get(
-        id: Id,
-    ): Promise<TEntity | null> {
+    async get(id: Id): Promise<TEntity | null> {
         const data = await this.client.get(
             `${this.prefix}${id.value}`,
         );
@@ -56,9 +53,13 @@ export class CacheStore<TEntity extends { id: Id }> implements CacheStoreInterfa
         return this.mapper.toDomain(JSON.parse(data));
     }
 
-    async drop(
-        id: Id,
-    ): Promise<void> {
+    async exists(id: Id): Promise<boolean> {
+        return this.client.exists(
+            `${this.prefix}${id.value}`,
+        ).then(Boolean);
+    }
+
+    async invalidate(id: Id): Promise<void> {
         await this.client.del(
             `${this.prefix}${id.value}`,
         );

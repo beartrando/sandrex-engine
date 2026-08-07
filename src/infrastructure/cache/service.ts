@@ -5,7 +5,7 @@ import logger from "@shared/logger";
 import sleep from "../../utils/sleep";
 import RedisConfig from "./interfaces/redis-config";
 import CacheStoreInterface from "./interfaces/cache-store.interface";
-import {CacheStoreKey, StateStoreMap} from "./config/cache-store.config";
+import {CacheStoreKey, CacheStoreMap} from "./config/cache-store.config";
 
 
 export class CacheService {
@@ -24,7 +24,7 @@ export class CacheService {
 
     get client(): Redis {
         if (!this._client) {
-            throw new Error("StateStoreService is not started");
+            throw new Error("CacheStoreService is not started");
         }
 
         return this._client;
@@ -46,11 +46,11 @@ export class CacheService {
 
     register<K extends CacheStoreKey>(
         key: K,
-        store: CacheStoreInterface<StateStoreMap[K]>,
+        store: CacheStoreInterface<CacheStoreMap[K]>,
     ): void {
         if (this.registry.has(key)) {
             throw new Error(
-                `State store "${key}" is already registered`,
+                `Cache store "${key}" is already registered`,
             );
         }
 
@@ -119,16 +119,16 @@ export class CacheService {
 
     store<K extends CacheStoreKey>(
         key: K,
-    ): CacheStoreInterface<StateStoreMap[K]> {
+    ): CacheStoreInterface<CacheStoreMap[K]> {
         const store = this.registry.get(key);
 
         if (!store) {
             throw new Error(
-                `State store "${key}" is not registered`,
+                `Cache store "${key}" is not registered`,
             );
         }
 
-        return store as CacheStoreInterface<StateStoreMap[K]>;
+        return store as CacheStoreInterface<CacheStoreMap[K]>;
     }
 
     async loadAll(): Promise<void> {

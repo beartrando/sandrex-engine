@@ -29,7 +29,7 @@ function buildApplication() {
 
     // const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
-    const cacheStoreService = new CacheService(redisConfig);
+    const cacheService = new CacheService(redisConfig);
 
     const battleStore = new CacheStore(
         "battle:",
@@ -37,7 +37,14 @@ function buildApplication() {
         BattleRedisMapper,
     );
 
-    cacheStoreService.register("battle", battleStore);
+    cacheService.register("battle", battleStore);
+
+    const stateStoreService = new StateStoreService();
+
+
+
+
+
 
     const battleStartUseCase = new BattleStartUseCase(stateStoreService.store("battle"), messageService);
     const battleMoveUseCase = new BattleMoveUseCase(stateStoreService.store("battle"), messageService);
