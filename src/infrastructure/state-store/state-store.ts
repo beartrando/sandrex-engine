@@ -36,10 +36,10 @@ export class StateStore<TEntity extends { id: Id }> implements StateStoreInterfa
         await this.cacheStore.invalidate(id);
     }
 
-    async claar(): Promise<void> {
+    async clear(): Promise<void> {
         this._registry.clear();
 
-        await this.cacheStore.cleinvalidate(id);
+        await this.cacheStore.clear();
     }
 
     async restore(): Promise<TEntity[]> {
@@ -59,5 +59,3 @@ export class StateStore<TEntity extends { id: Id }> implements StateStoreInterfa
 }
 
 export default StateStore;
-
-

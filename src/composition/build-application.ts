@@ -49,9 +49,9 @@ function buildApplication() {
 
 
 
-    const battleStartUseCase = new BattleStartUseCase(stateStoreService.store("battle"), messageService);
-    const battleMoveUseCase = new BattleMoveUseCase(stateStoreService.store("battle"), messageService);
-    const battleLeaveUseCase = new BattleLeaveUseCase(stateStoreService.store("battle"), messageService);
+    const battleStartUseCase = new BattleStartUseCase(battleStateStore, messageService);
+    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore, messageService);
+    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore, messageService);
     const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
 
     const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);
