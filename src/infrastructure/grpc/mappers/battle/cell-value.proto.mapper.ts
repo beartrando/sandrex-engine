@@ -1,16 +1,16 @@
-import * as battleProto from "../../../contracts/proto/battle";
+import * as battleProto from "../../../../contracts/proto/battle";
 
-import BattleCellValueEnum from "../../../domain/enums/battle/cell-value.enum";
+import CellValueEnum from "../../../../domain/enums/battle/cell-value.enum";
 
-export class BattleCellValueProtoMapper {
+export class CellValueProtoMapper {
 
-    static toProto(cell: BattleCellValueEnum): battleProto.BattleCellValue {
+    static toProto(cell: CellValueEnum): battleProto.BattleCellValue {
         switch (cell) {
-            case BattleCellValueEnum.EMPTY:
+            case CellValueEnum.EMPTY:
                 return battleProto.BattleCellValue.CELL_EMPTY;
-            case BattleCellValueEnum.X:
+            case CellValueEnum.X:
                 return battleProto.BattleCellValue.CELL_X;
-            case BattleCellValueEnum.O:
+            case CellValueEnum.O:
                 return battleProto.BattleCellValue.CELL_O;
             default:
                 throw new Error(`Unknown BattleCellValueEnum: ${cell}`);
@@ -19,14 +19,14 @@ export class BattleCellValueProtoMapper {
 
     }
 
-    static toDomain(cell: battleProto.BattleCellValue): BattleCellValueEnum {
+    static toDomain(cell: battleProto.BattleCellValue): CellValueEnum {
         switch (cell) {
             case battleProto.BattleCellValue.CELL_EMPTY:
-                return BattleCellValueEnum.EMPTY;
+                return CellValueEnum.EMPTY;
             case battleProto.BattleCellValue.CELL_X:
-                return BattleCellValueEnum.X;
+                return CellValueEnum.X;
             case battleProto.BattleCellValue.CELL_O:
-                return BattleCellValueEnum.O;
+                return CellValueEnum.O;
             default:
                 throw new Error(`Unknown BattleCellValueEnum: ${cell}`);
         }
@@ -34,4 +34,4 @@ export class BattleCellValueProtoMapper {
 
 }
 
-export default BattleCellValueProtoMapper;
+export default CellValueProtoMapper;

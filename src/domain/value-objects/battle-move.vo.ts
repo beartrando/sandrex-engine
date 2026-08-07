@@ -1,5 +1,5 @@
 import Id from "./id.vo";
-import CellIdx from "./cell-idx.vo";
+import CellIdx from "./battle/move/cell-idx.vo";
 
 export type MoveProps = {
     battleId: Id;

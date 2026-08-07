@@ -1,18 +1,18 @@
 import * as battleProto from "../../../../contracts/proto/battle";
-import BattleStatus from "../../../../domain/value-objects/battle-status.vo";
-import BattleStatusEnum from "../../../../domain/enums/battle/status.enum";
+import Status from "../../../../domain/value-objects/battle/status.vo";
+import StatusEnum from "../../../../domain/enums/battle/status.enum";
 
-export class BattleStatusProtoMapper {
+export class StatusProtoMapper {
 
     static toProto(
-        status: BattleStatus,
+        status: Status,
     ): battleProto.BattleStatus {
         switch (status.value) {
-            case BattleStatusEnum.New:
+            case StatusEnum.New:
                 return battleProto.BattleStatus.NEW;
-            case BattleStatusEnum.Active:
+            case StatusEnum.Active:
                 return battleProto.BattleStatus.ACTIVE;
-            case BattleStatusEnum.Finished:
+            case StatusEnum.Finished:
                 return battleProto.BattleStatus.FINISHED;
             default:
                 return battleProto.BattleStatus.UNKNOWN;
@@ -21,18 +21,18 @@ export class BattleStatusProtoMapper {
 
     static toDomain(
         status: battleProto.BattleStatus,
-    ): BattleStatus {
+    ): Status {
         switch (status) {
             case battleProto.BattleStatus.NEW:
-                return new BattleStatus(BattleStatusEnum.New);
+                return new Status(StatusEnum.New);
             case battleProto.BattleStatus.ACTIVE:
-                return new BattleStatus(BattleStatusEnum.Active);
+                return new Status(StatusEnum.Active);
             case battleProto.BattleStatus.FINISHED:
-                return new BattleStatus(BattleStatusEnum.Finished);
+                return new Status(StatusEnum.Finished);
             default:
-                return new BattleStatus(BattleStatusEnum.Unknown);
+                return new Status(StatusEnum.Unknown);
         }
     }
 }
 
-export default BattleStatusProtoMapper;
+export default StatusProtoMapper;

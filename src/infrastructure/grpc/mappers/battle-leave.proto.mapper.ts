@@ -1,16 +1,17 @@
 import * as battleProto from "../../../contracts/proto/battle";
+import * as engineProto from "../../../contracts/proto/engine";
 import Id from "../../../domain/value-objects/id.vo";
 import BattleLeave from "../../../domain/value-objects/battle-leave.vo";
 
 export class BattleLeaveProtoMapper {
-    static toProto(move: BattleLeave): battleProto.MoveObject {
-        return battleProto.MoveObject.create({
+    static toProto(move: BattleLeave): engineProto.BattleLeave {
+        return engineProto.BattleLeave.create({
             battleId: move.battleId.value,
             profileId: move.profileId.value,
         });
     }
 
-    static toDomain(move: battleProto.MoveObject): BattleLeave {
+    static toDomain(move: engineProto.BattleLeave): BattleLeave {
         return BattleLeave.create({
             battleId: new Id(move.battleId),
             profileId: new Id(move.profileId),

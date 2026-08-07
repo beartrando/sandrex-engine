@@ -1,5 +1,5 @@
 import Id from "./id.vo";
-import CellIdx from "./cell-idx.vo";
+import CellIdx from "./battle/move/cell-idx.vo";
 
 export type LeaveProps = {
     battleId: Id;
@@ -10,15 +10,13 @@ export class BattleLeave {
     private constructor(
         public readonly battleId: Id,
         public readonly profileId: Id,
-        public readonly cellIdx: CellIdx,
     ) {
     }
 
-    static create(props: MoveProps): Move {
-        return new Move(
+    static create(props: LeaveProps): BattleLeave {
+        return new BattleLeave(
             props.battleId,
             props.profileId,
-            props.cellIdx,
         );
     }
 }

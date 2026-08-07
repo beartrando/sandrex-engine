@@ -51,7 +51,7 @@ export class EngineHandler {
                     }
 
                     if (event.leave) {
-                        const battleLeave = BattleLeaveProtoMapper.toDomain(event.move);
+                        const battleLeave = BattleLeaveProtoMapper.toDomain(event.leave);
 
                         const battleEntity = await this.battleLeaveUseCase.execute(battleLeave);
 
