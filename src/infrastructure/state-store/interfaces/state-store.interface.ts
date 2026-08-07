@@ -1,5 +1,4 @@
 import Id from "../../../domain/value-objects/id.vo";
-import Redis from "ioredis";
 
 export default interface StateStoreInterface<TEntity extends { id: Id }> {
     save(entity: TEntity): Promise<void>;
@@ -8,7 +7,9 @@ export default interface StateStoreInterface<TEntity extends { id: Id }> {
 
     drop(id: Id): Promise<void>;
 
-    loadAll(): Promise<TEntity[]>;
+    clear(): Promise<void>;
+
+    restore(): Promise<TEntity[]>;
 }
 
 export default StateStoreInterface;

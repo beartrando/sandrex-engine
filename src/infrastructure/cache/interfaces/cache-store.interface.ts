@@ -13,6 +13,8 @@ export default interface CacheStoreInterface<TEntity extends { id: Id }> {
     exists(id: Id): Promise<boolean>;
 
     loadAll(): Promise<TEntity[]>;
+
+    clear(): Promise<void>;
 }
 
 export default CacheStoreInterface;

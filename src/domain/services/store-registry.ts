@@ -40,7 +40,7 @@ export class StoreRegistry {
 
     static async loadAll(): Promise<void> {
         for (const store of this.stores.values()) {
-            if (typeof store.loadAll === "function") {
+            if (typeof store.restoreAll === "function") {
                 await store.loadAll();
             }
         }

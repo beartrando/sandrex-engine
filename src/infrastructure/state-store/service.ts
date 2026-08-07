@@ -96,7 +96,7 @@ export class StateStoreService {
 
     async loadAll(): Promise<void> {
         for (const store of this.registry.values()) {
-            await store.loadAll();
+            await store.restoreAll();
         }
     }
 }

@@ -59,6 +59,21 @@ export class CacheStore<TEntity extends { id: Id }> implements CacheStoreInterfa
         ).then(Boolean);
     }
 
+    async clear(): Promise<void> {
+        const ids = await this.client.smembers(this.index);
+
+        if (!ids.length) {
+            return;
+        }
+
+        const keys = ids.map(
+            id => `${this.prefix}${id}`,
+        );
+
+        await this.client.del(...keys);
+        await this.client.del(this.index);
+    }
+
     async invalidate(id: Id): Promise<void> {
         await this.client.del(
             `${this.prefix}${id.value}`,

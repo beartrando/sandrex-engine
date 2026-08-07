@@ -43,6 +43,7 @@ function buildApplication() {
 
     const battleStateStore = new StateStore(battleCacheStore);
 
+    stateStoreService.register("battle", battleStateStore);
 
 
 
