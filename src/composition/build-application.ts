@@ -21,21 +21,23 @@ import BattleLeaveUseCase from "../application/use-cases/engine/battle-leave";
 import stateStoreConfig from "../infrastructure/state-store/config/state-store.config";
 import StateStore from "../infrastructure/state-store/state-store";
 import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redis.mapper";
+import CacheStore from "../infrastructure/cache/cache-store";
+import CacheService from "../infrastructure/cache/service";
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
 
     // const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
-    const stateStoreService = new StateStoreService(redisConfig);
+    const cacheStoreService = new CacheService(redisConfig);
 
-    const battleStore = new StateStore(
+    const battleStore = new CacheStore(
         "battle:",
         "battle:index",
         BattleRedisMapper,
     );
 
-    stateStoreService.register("battle", battleStore);
+    cacheStoreService.register("battle", battleStore);
 
     const battleStartUseCase = new BattleStartUseCase(stateStoreService.store("battle"), messageService);
     const battleMoveUseCase = new BattleMoveUseCase(stateStoreService.store("battle"), messageService);
