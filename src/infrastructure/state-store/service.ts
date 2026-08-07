@@ -4,10 +4,17 @@ import logger from "@shared/logger";
 
 import sleep from "../../utils/sleep";
 import StateStoreConfig from "./interfaces/state-store-config";
-
+import StateStore from "./interfaces/state-store";
+import {StateStoreKey, StateStoreMap} from "./config/state-store-list";
 
 
 export class StateStoreService {
+
+    private readonly registry = new Map<
+        StateStoreKey,
+        StateStore<any>
+    >();
+
     constructor(
         private readonly config: StateStoreConfig,
     ) {
@@ -24,7 +31,10 @@ export class StateStoreService {
     }
 
     async start(): Promise<void> {
-        await this.retryInit(() => this.connect());
+        await this.retryInit(async () => {
+            await this.connect();
+            this.initStores();
+        });
     }
 
     async stop(): Promise<void> {
@@ -32,6 +42,19 @@ export class StateStoreService {
             await this._client.quit();
             this._client = undefined;
         }
+    }
+
+    register<K extends StateStoreKey>(
+        key: K,
+        store: StateStore<StateStoreMap[K]>,
+    ): void {
+        if (this.registry.has(key)) {
+            throw new Error(
+                `State store "${key}" is already registered`,
+            );
+        }
+
+        this.registry.set(key, store);
     }
 
     async check(): Promise<boolean> {
@@ -69,6 +92,12 @@ export class StateStoreService {
         logger.info("✅ Redis initialized");
     }
 
+    private initStores() {
+        for (const store of this.registry.values()) {
+            store.setClient(this.client);
+        }
+    }
+
     private async retryInit(
         fn: () => Promise<void>,
     ): Promise<void> {
@@ -88,12 +117,24 @@ export class StateStoreService {
         }
     }
 
-    get store(name: StateStoreKey) {
+    store<K extends StateStoreKey>(
+        key: K,
+    ): StateStore<StateStoreMap[K]> {
+        const store = this.registry.get(key);
 
+        if (!store) {
+            throw new Error(
+                `State store "${key}" is not registered`,
+            );
+        }
+
+        return store as StateStore<StateStoreMap[K]>;
     }
 
-    async restore(): Promise<void> {
-        // await this.retryInit(() => this.connect());
+    async loadAll(): Promise<void> {
+        for (const store of this.registry.values()) {
+            await store.loadAll();
+        }
     }
 }
 

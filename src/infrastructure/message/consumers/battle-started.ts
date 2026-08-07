@@ -1,6 +1,7 @@
-import {BattleObject} from "../../../contracts/proto/battle";
+import * as battleProto from "../../../contracts/proto/battle";
 import BattleStartUseCase from "../../../application/use-cases/engine/battle-start";
 import BattleProtoMapper from "../../grpc/mappers/battle.proto.mapper";
+import logger from "@shared/logger";
 
 export class BattleStartedConsumer {
     constructor(
@@ -8,15 +9,15 @@ export class BattleStartedConsumer {
     ) {
     }
 
-    async execute(topic: string, partition: number, message: BattleObject): Promise<void> {
+    async execute(topic: string, partition: number, message: battleProto.BattleObject): Promise<void> {
         try {
-            // logger.log('battleUpdated');
+            // logger.log('BattleStartedConsumer');
             // logger.log(message);
             const battle = BattleProtoMapper.toDomain(message);
             await this.battleStartUseCase.execute(battle);
         } catch (error) {
             logger.error(`[Kafka] Failed to process message`, {
-                rawValue: message.userId,
+                rawValue: message.id,
                 error,
             });
         }

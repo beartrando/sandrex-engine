@@ -29,7 +29,7 @@ export class Application {
             await this.messageService.start();
             await this.jobService.start();
             await this.stateStoreService.start();
-            await this.stateStoreService.restore();
+            await this.stateStoreService.loadAll();
             await this.grpcService.start();
             logger.info(
                 '🚀 Engine service started',

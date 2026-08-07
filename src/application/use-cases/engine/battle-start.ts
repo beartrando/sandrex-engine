@@ -1,19 +1,18 @@
 import BattleEntity from "../../../domain/entities/battle.entity";
 import StateStoreService from "../../../infrastructure/state-store/service";
-import stateStoreConfig, {stateStoresList} from "../../../infrastructure/state-store/config";
+import BattleStateStore from "../../../infrastructure/state-store/stores/battle-state-store";
+import stateStoreConfig from "../../../infrastructure/state-store/config/state-store.config";
+import StateStore from "../../../infrastructure/state-store/interfaces/state-store";
 
 export class BattleStartUseCase {
     constructor(
-        private readonly stateStoreService: StateStoreService,
-        private readonly stateStoresList: StateStoreService,
-        // private readonly jobService: JobService,
-        // private readonly battleStartedTopik: string,
+        private readonly battleStateStore: StateStore<BattleEntity>,
     ) {
     }
 
-    async execute(battle: BattleEntity): Promise<BattleEntity> {
+    async execute(battle: BattleEntity): Promise<void> {
         battle.start();
-        stateStoreService.save(stateStoreConfig.battle, battle);
+        this.battleStateStore.save(battle);
     }
 }
 

@@ -12,7 +12,7 @@ import {messageConfig, messageConsumersConfig, messageProducersConfig} from "../
 import jobConfig from "../infrastructure/job/config";
 import AuthService from "../infrastructure/auth/service";
 import authConfig from "../infrastructure/auth/config";
-import cacheConfig from "../infrastructure/state-store/config";
+import stateStoreConfig from "../infrastructure/state-store/config/state-store.config";
 import StateStoreService from "../infrastructure/state-store/service";
 import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
 import BattleStartUseCase from "../application/use-cases/engine/battle-start";
@@ -27,13 +27,13 @@ function buildApplication() {
 
     const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
-    const stateStoreService = new StateStoreService(cacheConfig);
+    const stateStoreService = new StateStoreService(stateStoreConfig);
 
-    const battleStore = new BattleStateStore(stateStoreService.client);
+    const battleStore = new BattleStateStore();
 
-    stateStore.register(stateStoresList.battle, battleStore);
+    stateStoreService.register(stateStoresList.battle, battleStore);
 
-    const battleStartUseCase = new BattleStartUseCase();
+    const battleStartUseCase = new BattleStartUseCase(stateStoreService.store(stateStoresList.battle));
     const battleMoveUseCase = new BattleMoveUseCase();
     const battleLeaveUseCase = new BattleLeaveUseCase();
     const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
