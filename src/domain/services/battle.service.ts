@@ -44,7 +44,7 @@ export function battleStore(): BattleStateStore {
     const battleStore = StoreRegistry.getStore<BattleStateStore>(stores.BattleStateStore.key);
 
     if (!battleStore) {
-        throw new Error('BattleStateStore is not registered. StoreRegistry.start() was not called.');
+        throw new Error('StateStoreInterface is not registered. StoreRegistry.start() was not called.');
     }
 
     return battleStore;

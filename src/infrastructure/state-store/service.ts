@@ -4,15 +4,15 @@ import logger from "@shared/logger";
 
 import sleep from "../../utils/sleep";
 import StateStoreConfig from "./interfaces/state-store-config";
-import StateStore from "./interfaces/state-store";
-import {StateStoreKey, StateStoreMap} from "./config/state-store-list";
+import StateStoreInterface from "./interfaces/state-store.interface";
+import {StateStoreKey, StateStoreMap} from "./config/state-store.config";
 
 
 export class StateStoreService {
 
     private readonly registry = new Map<
         StateStoreKey,
-        StateStore<any>
+        StateStoreInterface<any>
     >();
 
     constructor(
@@ -46,7 +46,7 @@ export class StateStoreService {
 
     register<K extends StateStoreKey>(
         key: K,
-        store: StateStore<StateStoreMap[K]>,
+        store: StateStoreInterface<StateStoreMap[K]>,
     ): void {
         if (this.registry.has(key)) {
             throw new Error(
@@ -119,7 +119,7 @@ export class StateStoreService {
 
     store<K extends StateStoreKey>(
         key: K,
-    ): StateStore<StateStoreMap[K]> {
+    ): StateStoreInterface<StateStoreMap[K]> {
         const store = this.registry.get(key);
 
         if (!store) {
@@ -128,7 +128,7 @@ export class StateStoreService {
             );
         }
 
-        return store as StateStore<StateStoreMap[K]>;
+        return store as StateStoreInterface<StateStoreMap[K]>;
     }
 
     async loadAll(): Promise<void> {

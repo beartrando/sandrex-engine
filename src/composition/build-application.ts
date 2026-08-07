@@ -4,38 +4,42 @@ import LivezUseCase from "../application/use-cases/health/livez";
 import ReadyzUseCase from "../application/use-cases/health/readyz";
 import HealthHandler from "../infrastructure/grpc/handlers/health.handler";
 import GrpcService from "../infrastructure/grpc/service";
-import grpcConfig from "../infrastructure/grpc/config";
+import grpcConfig from "../infrastructure/grpc/grpc.config";
 import Application from "../application/application";
 import MessageService from "../infrastructure/message/service";
 import JobService from "../infrastructure/job/service";
-import {messageConfig, messageConsumersConfig, messageProducersConfig} from "../infrastructure/message/config";
-import jobConfig from "../infrastructure/job/config";
+import jobConfig from "../infrastructure/job/job.config";
 import AuthService from "../infrastructure/auth/service";
-import authConfig from "../infrastructure/auth/config";
-import stateStoreConfig from "../infrastructure/state-store/config/state-store.config";
+import authConfig from "../infrastructure/auth/auth.config";
+import redisConfig from "../infrastructure/state-store/config/redis.config";
 import StateStoreService from "../infrastructure/state-store/service";
 import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
 import BattleStartUseCase from "../application/use-cases/engine/battle-start";
 import EngineHandler from "../infrastructure/grpc/handlers/engine.handler";
 import BattleMoveUseCase from "../application/use-cases/engine/battle-move";
 import BattleLeaveUseCase from "../application/use-cases/engine/battle-leave";
-import BattleStateStore from "../infrastructure/state-store/stores/battle-state-store";
-import stateStoresList from "../infrastructure/state-store/config/state-store-list";
+import stateStoreConfig from "../infrastructure/state-store/config/state-store.config";
+import StateStore from "../infrastructure/state-store/state-store";
+import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redis.mapper";
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
 
-    const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
+    // const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
-    const stateStoreService = new StateStoreService(stateStoreConfig);
+    const stateStoreService = new StateStoreService(redisConfig);
 
-    const battleStore = new BattleStateStore();
+    const battleStore = new StateStore(
+        "battle:",
+        "battle:index",
+        BattleRedisMapper,
+    );
 
-    stateStoreService.register(stateStoresList.battle, battleStore);
+    stateStoreService.register("battle", battleStore);
 
-    const battleStartUseCase = new BattleStartUseCase(stateStoreService.store(stateStoresList.battle));
-    const battleMoveUseCase = new BattleMoveUseCase();
-    const battleLeaveUseCase = new BattleLeaveUseCase();
+    const battleStartUseCase = new BattleStartUseCase(stateStoreService.store("battle"), messageService);
+    const battleMoveUseCase = new BattleMoveUseCase(stateStoreService.store("battle"), messageService);
+    const battleLeaveUseCase = new BattleLeaveUseCase(stateStoreService.store("battle"), messageService);
     const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
 
     const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);

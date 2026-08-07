@@ -1,5 +1,5 @@
 import * as healthProto from "../../../contracts/proto/common/health";
-import appConfig from "../../../infrastructure/app/config";
+import appConfig from "../../../infrastructure/app/app.config";
 
 const startedAt = Date.now();
 

@@ -1,7 +1,7 @@
 import * as healthProto from "../../../contracts/proto/common/health";
 import MessageService from "../../../infrastructure/message/service";
 import JobService from "../../../infrastructure/job/service";
-import appConfig from "../../../infrastructure/app/config";
+import appConfig from "../../../infrastructure/app/app.config";
 import StateStoreService from "../../../infrastructure/state-store/service";
 
 export class HealthUseCase {

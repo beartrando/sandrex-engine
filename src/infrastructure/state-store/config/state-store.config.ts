@@ -1,9 +1,11 @@
-import StateStoreConfig from "../interfaces/state-store-config";
+import BattleEntity from "../../../domain/entities/battle.entity";
 
-export const stateStoreConfig: StateStoreConfig = {
-    host: process.env.REDIS_HOST ?? "redis",
-    port: Number(process.env.REDIS_PORT) ?? 6379,
-    password: process.env.REDIS_PASSWORD ?? "",
-};
+export const stateStoreConfig = {
+    battle: {} as BattleEntity,
+} as const;
+
+export type StateStoreKey = keyof typeof stateStoreConfig;
+
+export type StateStoreEntity<K extends StateStoreKey> = typeof stateStoreConfig[K];
 
 export default stateStoreConfig;

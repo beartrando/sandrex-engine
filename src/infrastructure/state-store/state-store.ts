@@ -1,15 +1,18 @@
-import BattleEntity from "../../../domain/entities/battle.entity";
-import Id from "../../../domain/value-objects/id.vo";
+import Id from "../../domain/value-objects/id.vo";
 
-import StateStore from "../interface/state-store.interface";
-import BattleRedisMapper from "../mappers/battle.redis.mapper";
+import StateStoreInterface from "./interfaces/state-store.interface";
+import StateStoreMapper from "./interfaces/state-store-mapper";
 
-const BATTLE_PREFIX = "battle:";
-const BATTLE_INDEX = "battle:index";
-
-export class BattleStateStore implements StateStore<BattleEntity> {
+export class StateStore<TEntity extends { id: Id }> implements StateStoreInterface<TEntity> {
 
     private _client?: Redis;
+
+    constructor(
+        private readonly prefix: string,
+        private readonly index: string,
+        private readonly mapper: StateStoreMapper<TEntity>,
+    ) {
+    }
 
     protected get client(): Redis {
         if (!this._client) {
@@ -22,53 +25,53 @@ export class BattleStateStore implements StateStore<BattleEntity> {
     setClient(client: Redis): void {
         this._client = client;
     }
-    
+
     async save(
-        battle: BattleEntity,
+        entity: TEntity,
     ): Promise<void> {
-        const key = `${BATTLE_PREFIX}${battle.id.value}`;
+        const key = `${this.prefix}${entity.id.value}`;
 
         await this.client.set(
             key,
-            JSON.stringify(BattleRedisMapper.toPersistence(battle))
+            JSON.stringify(this.mapper.toPersistence(entity))
         );
 
         await this.client.sadd(
-            BATTLE_INDEX,
-            battle.id.value,
+            this.index,
+            entity.id.value,
         );
     }
 
     async get(
         id: Id,
-    ): Promise<BattleEntity | null> {
+    ): Promise<TEntity | null> {
         const data = await this.client.get(
-            `${BATTLE_PREFIX}${id.value}`,
+            `${this.prefix}${id.value}`,
         );
 
         if (!data) {
             return null;
         }
 
-        return BattleRedisMapper.toDomain(JSON.parse(data));
+        return this.mapper.toDomain(JSON.parse(data));
     }
 
     async drop(
         id: Id,
     ): Promise<void> {
         await this.client.del(
-            `${BATTLE_PREFIX}${id.value}`,
+            `${this.prefix}${id.value}`,
         );
 
         await this.client.srem(
-            BATTLE_INDEX,
+            this.index,
             id.value,
         );
     }
 
-    async loadAll(): Promise<BattleEntity[]> {
+    async loadAll(): Promise<TEntity[]> {
         const ids = await this.client.smembers(
-            BATTLE_INDEX,
+            this.index,
         );
 
         if (!ids.length) {
@@ -76,7 +79,7 @@ export class BattleStateStore implements StateStore<BattleEntity> {
         }
 
         const keys = ids.map(
-            id => `${BATTLE_PREFIX}${id}`,
+            id => `${this.prefix}${id}`,
         );
 
         const values = await this.client.mget(keys);
@@ -86,9 +89,9 @@ export class BattleStateStore implements StateStore<BattleEntity> {
                 (value): value is string => value !== null,
             )
             .map(
-                value => BattleRedisMapper.toDomain(JSON.parse(value)),
+                value => this.mapper.toDomain(JSON.parse(value)),
             );
     }
 }
 
-export default BattleStateStore;
+export default StateStore;
