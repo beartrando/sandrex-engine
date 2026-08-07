@@ -11,7 +11,6 @@ import JobService from "../infrastructure/job/service";
 import jobConfig from "../infrastructure/job/job.config";
 import AuthService from "../infrastructure/auth/service";
 import authConfig from "../infrastructure/auth/auth.config";
-import redisConfig from "../infrastructure/state-store/config/redis.config";
 import StateStoreService from "../infrastructure/state-store/service";
 import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
 import BattleStartUseCase from "../application/use-cases/engine/battle-start";
@@ -23,6 +22,7 @@ import StateStore from "../infrastructure/state-store/state-store";
 import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redis.mapper";
 import CacheStore from "../infrastructure/cache/cache-store";
 import CacheService from "../infrastructure/cache/service";
+import redisConfig from "../infrastructure/cache/config/redis.config";
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
@@ -31,15 +31,17 @@ function buildApplication() {
 
     const cacheService = new CacheService(redisConfig);
 
-    const battleStore = new CacheStore(
+    const battleCacheStore = new CacheStore(
         "battle:",
         "battle:index",
         BattleRedisMapper,
     );
 
-    cacheService.register("battle", battleStore);
+    cacheService.register("battle", battleCacheStore);
 
     const stateStoreService = new StateStoreService();
+
+    const battleStateStore = new StateStore(battleCacheStore);
 
 
 
