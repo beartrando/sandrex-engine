@@ -28,6 +28,7 @@ import messageConsumersConfig from "../infrastructure/message/config/consumers.c
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
+    const timerService = new AuthService(authConfig);
 
     const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
@@ -47,9 +48,9 @@ function buildApplication() {
 
     stateStoreService.register("battle", battleStateStore);
 
-    const battleStartUseCase = new BattleStartUseCase(battleStateStore, jobService);
-    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore, jobService);
-    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore, jobService);
+    const battleStartUseCase = new BattleStartUseCase(battleStateStore, jobService, timerService);
+    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore, jobService, timerService);
+    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore, jobService, timerService);
     const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
 
     const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);

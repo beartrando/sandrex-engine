@@ -42,6 +42,7 @@ export class BattleEntity {
     start(): BattleEntity {
         return this;
     }
+
     leave(leave: BattleLeave): BattleEntity {
         return this;
     }
