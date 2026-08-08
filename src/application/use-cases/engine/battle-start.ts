@@ -1,9 +1,5 @@
 import BattleEntity from "../../../domain/entities/battle.entity";
-import StateStoreService from "../../../infrastructure/state-store/service";
-import BattleStateStore from "../../../infrastructure/state-store/stores/battle-state-store";
-import redisConfig from "../../../infrastructure/state-store/config/redis.config";
 import StateStoreInterface from "../../../infrastructure/state-store/interfaces/state-store.interface";
-import MessageService from "../../../infrastructure/message/service";
 import JobService from "../../../infrastructure/job/service";
 
 export class BattleStartUseCase {
@@ -13,9 +9,10 @@ export class BattleStartUseCase {
     ) {
     }
 
-    async execute(battle: BattleEntity): Promise<void> {
+    async execute(battle: BattleEntity): Promise<BattleEntity> {
         battle.start();
-        this.battleStateStore.save(battle);
+        await this.battleStateStore.save(battle);
+        return battle;
     }
 }
 

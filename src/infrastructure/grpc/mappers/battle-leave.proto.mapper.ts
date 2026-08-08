@@ -1,4 +1,3 @@
-import * as battleProto from "../../../contracts/proto/battle";
 import * as engineProto from "../../../contracts/proto/engine";
 import Id from "../../../domain/value-objects/id.vo";
 import BattleLeave from "../../../domain/value-objects/battle-leave.vo";

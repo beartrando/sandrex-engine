@@ -17,7 +17,6 @@ import BattleStartUseCase from "../application/use-cases/engine/battle-start";
 import EngineHandler from "../infrastructure/grpc/handlers/engine.handler";
 import BattleMoveUseCase from "../application/use-cases/engine/battle-move";
 import BattleLeaveUseCase from "../application/use-cases/engine/battle-leave";
-import stateStoreConfig from "../infrastructure/state-store/config/state-store.config";
 import StateStore from "../infrastructure/state-store/state-store";
 import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redis.mapper";
 import CacheStore from "../infrastructure/cache/cache-store";

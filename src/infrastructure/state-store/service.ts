@@ -1,10 +1,5 @@
-import Redis from "ioredis";
-
-import logger from "@shared/logger";
-
-import sleep from "../../utils/sleep";
 import StateStoreInterface from "./interfaces/state-store.interface";
-import {StateStoreKey} from "./config/state-store.config";
+import {StateStoreEntity, StateStoreKey} from "./config/state-store.config";
 
 
 export class StateStoreService {
@@ -15,7 +10,7 @@ export class StateStoreService {
     >();
 
     async start(): Promise<void> {
-        await this.loadAll();
+        await this.restore();
     }
 
     async stop(): Promise<void> {
@@ -24,7 +19,7 @@ export class StateStoreService {
 
     register<K extends StateStoreKey>(
         key: K,
-        store: StateStoreInterface<StateStoreMap[K]>,
+        store: StateStoreInterface<StateStoreEntity<K>>,
     ): void {
         if (this.registry.has(key)) {
             throw new Error(
@@ -36,28 +31,12 @@ export class StateStoreService {
     }
 
     async check(): Promise<boolean> {
-        try {
-            const redis = this.client;
-
-            await redis.ping();
-
-            return true;
-        } catch (err) {
-            logger.error("Redis health check failed", err);
-
-            return false;
-        }
-    }
-
-    private initStores() {
-        for (const store of this.registry.values()) {
-            store.setClient(this.client);
-        }
+        return true;
     }
 
     store<K extends StateStoreKey>(
         key: K,
-    ): StateStoreInterface<StateStoreMap[K]> {
+    ): StateStoreInterface<StateStoreEntity<K>> {
         const store = this.registry.get(key);
 
         if (!store) {
@@ -66,7 +45,7 @@ export class StateStoreService {
             );
         }
 
-        return store as StateStoreInterface<StateStoreMap[K]>;
+        return store as StateStoreInterface<StateStoreEntity<K>>;
     }
 
     async clearAll(): Promise<void> {
@@ -75,9 +54,9 @@ export class StateStoreService {
         }
     }
 
-    async loadAll(): Promise<void> {
+    async restore(): Promise<void> {
         for (const store of this.registry.values()) {
-            await store.restoreAll();
+            await store.restore();
         }
     }
 }

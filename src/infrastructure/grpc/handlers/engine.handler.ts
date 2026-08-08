@@ -1,5 +1,4 @@
 import * as grpc from '@grpc/grpc-js';
-import * as battleProto from '../../../contracts/proto/battle';
 import * as engineProto from '../../../contracts/proto/engine';
 import * as emptyProto from '../../../contracts/proto/common/empty';
 import logger from "@shared/logger";
@@ -53,13 +52,7 @@ export class EngineHandler {
                     if (event.leave) {
                         const battleLeave = BattleLeaveRedisMapper.toDomain(event.leave);
 
-                        const battleEntity = await this.battleLeaveUseCase.execute(battleLeave);
-
-                        if (battleEntity) {
-                            const battle = BattleProtoMapper.toProto(battleEntity);
-                            // logger.log(battle);
-                            call.write(engineProto.BattleResponse.create({battle}));
-                        }
+                        await this.battleLeaveUseCase.execute(battleLeave);
                     }
 
                     if (event.ping) {

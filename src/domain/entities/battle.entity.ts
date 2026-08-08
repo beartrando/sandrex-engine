@@ -3,6 +3,8 @@ import Board from "../value-objects/battle/board.vo";
 import PlayerIds from "../value-objects/battle/player-ids.vo";
 import BattleStatus from "../value-objects/battle/status.vo";
 import BattleStatusEnum from "../enums/battle/status.enum";
+import BattleMove from "../value-objects/battle-move.vo";
+import BattleLeave from "../value-objects/battle-leave.vo";
 
 export type BattleEntityProps = {
     id?: Id;
@@ -38,6 +40,12 @@ export class BattleEntity {
     }
 
     start(): BattleEntity {
+        return this;
+    }
+    leave(leave: BattleLeave): BattleEntity {
+        return this;
+    }
+    move(move: BattleMove): BattleEntity {
         return this;
     }
 }

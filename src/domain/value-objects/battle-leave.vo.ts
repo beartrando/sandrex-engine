@@ -1,5 +1,4 @@
 import Id from "./id.vo";
-import CellIdx from "./battle/move/cell-idx.vo";
 
 export type LeaveProps = {
     battleId: Id;

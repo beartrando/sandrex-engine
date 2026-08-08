@@ -6,14 +6,14 @@ import Redis from "ioredis";
 
 export class CacheStore<TEntity extends { id: Id }> implements CacheStoreInterface<TEntity> {
 
-    private _client?: Redis;
-
     constructor(
         private readonly prefix: string,
         private readonly index: string,
         private readonly mapper: CacheStoreMapper<TEntity>,
     ) {
     }
+
+    private _client?: Redis;
 
     protected get client(): Redis {
         if (!this._client) {

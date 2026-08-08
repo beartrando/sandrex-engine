@@ -5,7 +5,9 @@ import logger from "@shared/logger";
 import sleep from "../../utils/sleep";
 import RedisConfig from "./interfaces/redis-config";
 import CacheStoreInterface from "./interfaces/cache-store.interface";
-import {CacheStoreKey, CacheStoreMap} from "./config/cache-store.config";
+import {CacheStoreKey} from "./config/cache-store.config";
+import StateStoreInterface from "../state-store/interfaces/state-store.interface";
+import {StateStoreEntity} from "../state-store/config/state-store.config";
 
 
 export class CacheService {
@@ -46,7 +48,7 @@ export class CacheService {
 
     register<K extends CacheStoreKey>(
         key: K,
-        store: CacheStoreInterface<CacheStoreMap[K]>,
+        store: CacheStoreInterface<StateStoreEntity<K>>,
     ): void {
         if (this.registry.has(key)) {
             throw new Error(
@@ -68,6 +70,26 @@ export class CacheService {
             logger.error("Redis health check failed", err);
 
             return false;
+        }
+    }
+
+    store<K extends CacheStoreKey>(
+        key: K,
+    ): CacheStoreInterface<StateStoreEntity<K>> {
+        const store = this.registry.get(key);
+
+        if (!store) {
+            throw new Error(
+                `Cache store "${key}" is not registered`,
+            );
+        }
+
+        return store as CacheStoreInterface<StateStoreEntity<K>>;
+    }
+
+    async loadAll(): Promise<void> {
+        for (const store of this.registry.values()) {
+            await store.loadAll();
         }
     }
 
@@ -114,26 +136,6 @@ export class CacheService {
 
                 await sleep(3000);
             }
-        }
-    }
-
-    store<K extends CacheStoreKey>(
-        key: K,
-    ): CacheStoreInterface<CacheStoreMap[K]> {
-        const store = this.registry.get(key);
-
-        if (!store) {
-            throw new Error(
-                `Cache store "${key}" is not registered`,
-            );
-        }
-
-        return store as CacheStoreInterface<CacheStoreMap[K]>;
-    }
-
-    async loadAll(): Promise<void> {
-        for (const store of this.registry.values()) {
-            await store.loadAll();
         }
     }
 }
