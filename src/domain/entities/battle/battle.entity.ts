@@ -1,10 +1,10 @@
-import Id from "../value-objects/id.vo";
-import Board from "../value-objects/battle/board.vo";
-import PlayerIds from "../value-objects/battle/player-ids.vo";
-import BattleStatus from "../value-objects/battle/status.vo";
-import BattleStatusEnum from "../enums/battle/status.enum";
-import BattleMove from "../value-objects/battle-move.vo";
-import BattleLeave from "../value-objects/battle-leave.vo";
+import Id from "../../value-objects/id.vo";
+import Board from "../../value-objects/battle/board.vo";
+import PlayerIds from "../../value-objects/battle/player-ids.vo";
+import BattleStatus from "../../value-objects/battle/status.vo";
+import BattleStatusEnum from "../../enums/battle/status.enum";
+import BattleMove from "../../value-objects/battle-move.vo";
+import BattleLeave from "../../value-objects/battle-leave.vo";
 
 export type BattleEntityProps = {
     id?: Id;

@@ -25,10 +25,12 @@ import redisConfig from "../infrastructure/cache/config/redis.config";
 import messageConfig from "../infrastructure/message/config/message.config";
 import messageProducersConfig from "../infrastructure/message/config/producers.config";
 import messageConsumersConfig from "../infrastructure/message/config/consumers.config";
+import BattleLeaveCallbackFactory from "../infrastructure/timer/callbacks/battle-leave";
+import TimerService from "../infrastructure/timer/service";
 
 function buildApplication() {
     const authService = new AuthService(authConfig);
-    const timerService = new AuthService(authConfig);
+    const timerService = new TimerService();
 
     const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
 
@@ -42,16 +44,20 @@ function buildApplication() {
 
     cacheService.register("battle", battleCacheStore);
 
+
     const stateStoreService = new StateStoreService();
 
     const battleStateStore = new StateStore(battleCacheStore);
 
     stateStoreService.register("battle", battleStateStore);
 
-    const battleStartUseCase = new BattleStartUseCase(battleStateStore, jobService, timerService);
-    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore, jobService, timerService);
-    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore, jobService, timerService);
+    const battleStartUseCase = new BattleStartUseCase(battleStateStore, timerService, jobService);
+    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore, timerService, jobService);
+    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore, timerService, jobService);
     const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
+
+    const battleLeaveCallbackFactory = new BattleLeaveCallbackFactory(battleLeaveUseCase);
+    timerService.registerFactory(BattleLeaveCallbackFactory.key, battleLeaveCallbackFactory);
 
     const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);
 

@@ -5,7 +5,7 @@ import logger from "@shared/logger";
 import BattleLeaveUseCase from "../../../application/use-cases/engine/battle-leave";
 import BattleMoveUseCase from "../../../application/use-cases/engine/battle-move";
 import BattleStartUseCase from "../../../application/use-cases/engine/battle-start";
-import BattleEntity from "../../../domain/entities/battle.entity";
+import BattleEntity from "../../../domain/entities/battle/battle.entity";
 import BattleProtoMapper from "../mappers/battle.proto.mapper";
 import BattleMoveRedisMapper from "../mappers/battle-move.proto.mapper";
 import BattleLeaveRedisMapper from "../mappers/battle-leave.proto.mapper";

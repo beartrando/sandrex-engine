@@ -15,3 +15,5 @@ export interface TimerServiceInterface {
         callback: () => void | Promise<void>,
     ): void;
 }
+
+export default TimerServiceInterface;

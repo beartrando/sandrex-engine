@@ -6,7 +6,7 @@ export type LeaveProps = {
 };
 
 export class BattleLeave {
-    private constructor(
+    public constructor(
         public readonly battleId: Id,
         public readonly profileId: Id,
     ) {
