@@ -1,4 +1,4 @@
-import TimerKey from "./timer-key.vo";
+import TimerKey from "../value-objects/timer-key.vo";
 
 export interface TimerServiceInterface {
     start(

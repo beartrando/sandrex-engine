@@ -1,5 +1,5 @@
-export class BattleWinRule {
-    check(board: Board): boolean {
-        // winning combinations
-    }
-}
+// export class BattleWinRule {
+//     check(board: Board): boolean {
+//         // winning combinations
+//     }
+// }
