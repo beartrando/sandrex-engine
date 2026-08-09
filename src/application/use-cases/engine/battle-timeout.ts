@@ -5,11 +5,13 @@ import TimerService from "../../../infrastructure/timer/service";
 import BattleDomain from "../../../domain/battle/battle.domain";
 import BattleTimeoutCallbackFactory from "../../../infrastructure/timer/callbacks/battle-timeout-callback-factory";
 import BattleLeave from "../../../domain/battle/value-objects/battle-leave.vo";
+import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-registry";
 
 export class BattleTimeoutUseCase {
     constructor(
         private readonly battleStateStore: StateStoreInterface<BattleEntity>,
         private readonly timerService: TimerService,
+        private readonly timerCallbackFactoryRegistry: TimerCallbackFactoryRegistry,
         private readonly jobService: JobService,
         private readonly topicBattleUpdated: string,
     ) {
@@ -26,7 +28,9 @@ export class BattleTimeoutUseCase {
         const battleLeave = BattleLeave.create({battleId: battle.id, profileId})
         battleDomain.leave(battleLeave);
         await this.battleStateStore.drop(battle.id);
-        this.timerService.stop(BattleTimeoutCallbackFactory.createKey(battle));
+        this.timerService.stop(
+            this.timerCallbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name).createKey(battle)
+        );
         this.jobService.enqueue(this.topicBattleUpdated, battle);
     }
 }

@@ -1,5 +1,5 @@
-export interface TimerCallback {
+export interface TimerCallbackInterface {
     (): void | Promise<void>;
 }
 
-export default TimerCallback;
+export default TimerCallbackInterface;

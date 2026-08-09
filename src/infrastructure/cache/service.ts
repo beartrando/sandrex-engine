@@ -6,7 +6,6 @@ import sleep from "../../utils/sleep";
 import RedisConfig from "./interfaces/redis-config";
 import CacheStoreInterface from "./interfaces/cache-store.interface";
 import {CacheStoreKey} from "./config/cache-store.config";
-import StateStoreInterface from "../state-store/interfaces/state-store.interface";
 import {StateStoreEntity} from "../state-store/config/state-store.config";
 
 

@@ -1,11 +1,11 @@
 import TimerKey from "../value-objects/timer-key.vo";
-import TimerCallback from "./timer-callback.interface";
+import TimerCallbackInterface from "./timer-callback.interface";
 
 export interface TimerServiceInterface {
     start(
         key: TimerKey,
         timeoutMs: number,
-        callback: TimerCallback,
+        callback: TimerCallbackInterface,
     ): void;
 
     stop(key: TimerKey): void;
@@ -13,7 +13,7 @@ export interface TimerServiceInterface {
     restart(
         key: TimerKey,
         timeoutMs: number,
-        callback: TimerCallback,
+        callback: TimerCallbackInterface,
     ): void;
 }
 

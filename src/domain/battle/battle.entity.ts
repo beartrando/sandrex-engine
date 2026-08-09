@@ -55,8 +55,17 @@ export class BattleEntity {
 
     leave(leave: BattleLeave): BattleEntity {
         this.status = new BattleStatus(BattleStatusEnum.Finished);
-        this.winnerId = leave.playerId;
+        this.winnerId = !leave.playerId;
         this.lastMoveAt = new Date();
+
+        return this;
+    }
+
+    finish(playerId?: Id): BattleEntity {
+        this.status = new BattleStatus(BattleStatusEnum.Finished);
+        if (playerId) {
+            this.winnerId = leave.playerId;
+        }
 
         return this;
     }

@@ -21,20 +21,20 @@ export class BattleMoveOperation {
     ): BattleEntity {
         const playerId = move.profileId;
 
-        this.turnRule.calculate(entity, playerId);
-        this.cellRule.calculate(entity, move.cellIdx);
+        if (playerId != this.turnRule.calculate(entity)) {
+            return entity;
+        }
 
-        // применяем ход
+        if (!this.cellRule.calculate(entity, move.cellIdx)) {
+            return entity;
+        }
+
         entity.move(move);
 
         if (this.winRule.calculate(entity)) {
             entity.finish(playerId);
-            return entity;
-        }
-
-        if (this.drawRule.calculate(entity)) {
+        } else if (this.drawRule.calculate(entity)) {
             entity.finish();
-            return entity;
         }
 
         return entity;

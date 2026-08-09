@@ -1,4 +1,4 @@
-import StatusEnum from "../../enums/battle/status.enum";
+import StatusEnum from "../enums/status.enum";
 
 export class BattleStatus {
     constructor(

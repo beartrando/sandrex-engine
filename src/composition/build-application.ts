@@ -38,12 +38,14 @@ import TimerService from "../infrastructure/timer/service";
 import BattleTimeoutCallbackFactory from "../infrastructure/timer/callbacks/battle-timeout-callback-factory";
 import BattleTimeoutUseCase from "../application/use-cases/engine/battle-timeout";
 import domainBattleConfig from "../domain/battle/config/config";
+import TimerCallbackFactoryRegistry from "../infrastructure/timer/callback-factory-registry";
 
 
 function buildApplication() {
     // Infrastructure
     const authService = new AuthService(authConfig);
     const timerService = new TimerService();
+    const timerCallbackFactoryRegistry = new TimerCallbackFactoryRegistry();
 
     const cacheService = new CacheService(redisConfig);
 
@@ -81,6 +83,7 @@ function buildApplication() {
     const battleStartUseCase = new BattleStartUseCase(
         battleStateStore,
         timerService,
+        timerCallbackFactoryRegistry,
         jobService,
         messageProducersConfig.battleStarted,
         domainBattleConfig.battleTurnTimeLimit,
@@ -89,6 +92,7 @@ function buildApplication() {
     const battleMoveUseCase = new BattleMoveUseCase(
         battleStateStore,
         timerService,
+        timerCallbackFactoryRegistry,
         jobService,
         messageProducersConfig.battleUpdated,
         domainBattleConfig.battleTurnTimeLimit,
@@ -97,6 +101,7 @@ function buildApplication() {
     const battleLeaveUseCase = new BattleLeaveUseCase(
         battleStateStore,
         timerService,
+        timerCallbackFactoryRegistry,
         jobService,
         messageProducersConfig.battleUpdated
     );
@@ -104,6 +109,7 @@ function buildApplication() {
     const battleTimeoutUseCase = new BattleTimeoutUseCase(
         battleStateStore,
         timerService,
+        timerCallbackFactoryRegistry,
         jobService,
         messageProducersConfig.battleUpdated,
     );
@@ -111,6 +117,10 @@ function buildApplication() {
     // Timer callbacks
     const battleTimeoutCallbackFactory = new BattleTimeoutCallbackFactory(
         battleTimeoutUseCase,
+    );
+
+    timerCallbackFactoryRegistry.register(
+        battleTimeoutCallbackFactory,
     );
 
     // Message consumers

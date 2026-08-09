@@ -1,6 +1,5 @@
-import TimerCallback from "./interfaces/timer-callback.interface";
+import TimerCallbackInterface from "./interfaces/timer-callback.interface";
 import TimerKey from "./value-objects/timer-key.vo";
-import TimerCallbackFactoryInterface from "./interfaces/timer-callback-factory.interface";
 import TimerServiceInterface from "./interfaces/timer-service.interface";
 
 export class TimerService implements TimerServiceInterface {
@@ -9,7 +8,7 @@ export class TimerService implements TimerServiceInterface {
     start(
         key: TimerKey,
         timeoutMs: number,
-        callback: TimerCallback,
+        callback: TimerCallbackInterface,
     ): void {
         this.stop(key);
 
@@ -35,7 +34,7 @@ export class TimerService implements TimerServiceInterface {
     restart(
         key: TimerKey,
         timeoutMs: number,
-        callback: TimerCallback,
+        callback: TimerCallbackInterface,
     ): void {
         this.start(key, timeoutMs, callback);
     }

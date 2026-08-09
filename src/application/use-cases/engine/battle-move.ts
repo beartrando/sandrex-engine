@@ -10,23 +10,25 @@ export class BattleMoveUseCase {
     constructor(
         private readonly battleStateStore: StateStoreInterface<BattleEntity>,
         private readonly timerService: TimerService,
+        private readonly timerCallbackFactoryRegistry: TimerCallbackFactoryRegistry,
         private readonly jobService: JobService,
         private readonly topicBattleUpdated: string,
         private readonly battleTurnTimeLimit: number,
     ) {
     }
 
-    async execute(move: BattleMove): Promise<BattleEntity|null> {
+    async execute(move: BattleMove): Promise<BattleEntity | null> {
         const battle = await this.battleStateStore.get(move.battleId);
         if (!battle) {
             return null;
         }
         await battle.move(move);
         await this.battleStateStore.save(battle);
+        const callbackFActory = this.timerCallbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name);
         this.timerService.restart(
-            BattleTimeoutCallbackFactory.createKey(battle),
+            callbackFActory.createKey(battle),
             this.battleTurnTimeLimit,
-            BattleTimeoutCallbackFactory.create(battle)
+            callbackFActory.create(battle)
         );
         return battle;
     }
