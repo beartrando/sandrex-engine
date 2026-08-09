@@ -10,7 +10,7 @@ export class MessageService {
     constructor(
         private readonly config: KafkaConfig,
         private readonly consumersConfig: Record<string, string>,
-        private readonly battleUpdatedConsumer: BattleStartedConsumer,
+        private readonly battleStartedConsumer: BattleStartedConsumer,
     ) {
     }
 
@@ -49,7 +49,7 @@ export class MessageService {
     private async createConsumers(): Promise<void> {
         createConsumer(this.config, {
             topic: this.consumersConfig.battleUpdated,
-            handler: this.battleUpdatedConsumer.execute
+            handler: this.battleStartedConsumer.execute
         })
     }
 
