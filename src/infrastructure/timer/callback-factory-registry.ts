@@ -5,7 +5,7 @@ export class TimerCallbackFactoryRegistry implements TimerCallbackFactoryRegistr
     private readonly factories = new Map<string, TimerCallbackFactory<any>>();
 
     register(factory: TimerCallbackFactory<any>): void {
-        const key = factory.registryKey();
+        const key = factory.constructor.name;
         if (this.factories.has(key)) {
             throw new Error(`Timer callback factory "${key}" is already registered`,);
         }

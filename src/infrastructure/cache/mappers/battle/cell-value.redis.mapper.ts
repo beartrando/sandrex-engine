@@ -1,4 +1,4 @@
-import CellValueEnum from "../../../../domain/enums/battle/cell-value.enum";
+import CellValueEnum from "../../../../domain/battle/enums/cell-value.enum";
 
 export class CellValueRedisMapper {
     static toPersistence(cell: CellValueEnum): string {

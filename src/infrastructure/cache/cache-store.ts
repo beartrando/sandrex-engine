@@ -1,8 +1,7 @@
-import Id from "../../domain/value-objects/id.vo";
-
 import CacheStoreInterface from "./interfaces/cache-store.interface";
 import CacheStoreMapper from "./interfaces/cache-store-mapper";
 import Redis from "ioredis";
+import Id from "../../domain/common/value-objects/id.vo";
 
 export class CacheStore<TEntity extends { id: Id }> implements CacheStoreInterface<TEntity> {
 

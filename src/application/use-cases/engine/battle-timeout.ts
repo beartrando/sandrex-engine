@@ -6,6 +6,7 @@ import BattleDomain from "../../../domain/battle/battle.domain";
 import BattleTimeoutCallbackFactory from "../../../infrastructure/timer/callbacks/battle-timeout-callback-factory";
 import BattleLeave from "../../../domain/battle/value-objects/battle-leave.vo";
 import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-registry";
+import Id from "../../../domain/common/value-objects/id.vo";
 
 export class BattleTimeoutUseCase {
     constructor(

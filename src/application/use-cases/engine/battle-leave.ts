@@ -1,11 +1,11 @@
 import BattleEntity from "../../../domain/battle/battle.entity";
-import BattleLeave from "../../../domain/value-objects/battle-leave.vo";
 import StateStoreInterface from "../../../infrastructure/state-store/interfaces/state-store.interface";
 import JobService from "../../../infrastructure/job/service";
 import TimerService from "../../../infrastructure/timer/service";
 import BattleDomain from "../../../domain/battle/battle.domain";
 import BattleTimeoutCallbackFactory from "../../../infrastructure/timer/callbacks/battle-timeout-callback-factory";
 import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-registry";
+import BattleLeave from "../../../domain/battle/value-objects/battle-leave.vo";
 
 export class BattleLeaveUseCase {
     constructor(

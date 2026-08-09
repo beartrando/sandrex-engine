@@ -2,8 +2,8 @@ import * as battleProto from "../../../contracts/proto/battle";
 import BattleEntity, {BattleEntityProps} from "../../../domain/battle/battle.entity";
 import BoardProtoMapper from "./battle/board.proto.mapper";
 import StatusProtoMapper from "./battle/status.proto.mapper";
-import Id from "../../../domain/value-objects/id.vo";
-import PlayerIds from "../../../domain/value-objects/battle/player-ids.vo";
+import Id from "../../../domain/common/value-objects/id.vo";
+import PlayerIds from "../../../domain/battle/value-objects/player-ids.vo";
 
 export class BattleProtoMapper {
     static toProto(battle: BattleEntity): battleProto.BattleObject {

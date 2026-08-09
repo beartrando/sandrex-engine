@@ -1,4 +1,4 @@
-import Id from "../../../domain/value-objects/id.vo";
+import Id from "../../../domain/common/value-objects/id.vo";
 
 export interface StateStoreInterface<TEntity extends { id: Id }> {
     save(entity: TEntity): Promise<void>;

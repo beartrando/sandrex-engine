@@ -1,7 +1,7 @@
 import * as engineProto from "../../../contracts/proto/engine";
-import BattleMove from "../../../domain/value-objects/battle-move.vo";
-import Id from "../../../domain/value-objects/id.vo";
-import CellIdx from "../../../domain/value-objects/battle/move/cell-idx.vo";
+import Id from "../../../domain/common/value-objects/id.vo";
+import BattleMove from "../../../domain/battle/value-objects/battle-move.vo";
+import CellIdx from "../../../domain/battle/value-objects/move/cell-idx.vo";
 
 export class BattleMoveProtoMapper {
     static toProto(move: BattleMove): engineProto.BattleMove {

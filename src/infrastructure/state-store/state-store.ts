@@ -1,5 +1,4 @@
-import Id from "../../domain/value-objects/id.vo";
-
+import Id from "../../domain/common/value-objects/id.vo";
 import StateStoreInterface from "./interfaces/state-store.interface";
 import CacheStore from "../cache/cache-store";
 

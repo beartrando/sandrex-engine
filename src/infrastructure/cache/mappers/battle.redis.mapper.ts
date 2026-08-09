@@ -1,10 +1,10 @@
 import BattleEntity, {BattleEntityProps,} from "../../../domain/battle/battle.entity";
 
-import Id from "../../../domain/value-objects/id.vo";
-import PlayerIds from "../../../domain/value-objects/battle/player-ids.vo";
 
 import BoardMapper from "./battle/board.redis.mapper";
 import StatusMapper from "./battle/status.redis.mapper";
+import Id from "../../../domain/common/value-objects/id.vo";
+import PlayerIds from "../../../domain/battle/value-objects/player-ids.vo";
 
 export interface BattleRedisObject {
     id: string;

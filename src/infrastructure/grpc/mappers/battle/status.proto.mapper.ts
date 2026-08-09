@@ -1,6 +1,6 @@
 import * as battleProto from "../../../../contracts/proto/battle";
-import Status from "../../../../domain/value-objects/battle/status.vo";
-import StatusEnum from "../../../../domain/enums/battle/status.enum";
+import Status from "../../../../domain/battle/value-objects/status.vo";
+import StatusEnum from "../../../../domain/battle/enums/status.enum";
 
 export class StatusProtoMapper {
 

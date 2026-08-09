@@ -1,14 +1,14 @@
 import StatusEnum from "../enums/status.enum";
 
-export class BattleStatus {
+export class Status {
     constructor(
         readonly value: StatusEnum,
     ) {
     }
 
-    equals(other: BattleStatus): boolean {
+    equals(other: Status): boolean {
         return this.value === other.value;
     }
 }
 
-export default BattleStatus;
+export default Status;

@@ -1,7 +1,7 @@
 import BattleEntity from "../battle.entity";
 import Board from "../value-objects/board.vo";
 import StatusEnum from "../enums/status.enum";
-import BattleStatus from "../value-objects/status.vo";
+import Status from "../value-objects/status.vo";
 
 export class BattleStartOperation {
     constructor() {
@@ -13,8 +13,8 @@ export class BattleStartOperation {
 
         // logger.log('New battle started', battle)
         entity.board = Board.empty();
-        entity.status = new BattleStatus(StatusEnum.Active);
-        entity.winnerId = "";
+        entity.status = new Status(StatusEnum.Active);
+        entity.winnerId = null;
 
         return entity;
 
