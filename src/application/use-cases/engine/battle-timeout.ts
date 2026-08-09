@@ -1,4 +1,4 @@
-import BattleEntity from "../../../domain/entities/battle/battle.entity";
+import BattleEntity from "../../../domain/battle/battle.entity";
 import StateStoreInterface from "../../../infrastructure/state-store/interfaces/state-store.interface";
 import JobService from "../../../infrastructure/job/service";
 import TimerService from "../../../infrastructure/timer/service";
@@ -15,7 +15,12 @@ export class BattleTimeoutUseCase {
     ) {
     }
 
-    async execute(battle: BattleEntity): Promise<void> {
+    async execute(battleId: Id): Promise<void> {
+        const battle = await this.battleStateStore.get(battleId);
+
+        if (!battle) {
+            return;
+        }
         const battleDomain = BattleDomain.of(battle);
         const profileId = battleDomain.turn();
         const battleLeave = BattleLeave.create({battleId: battle.id, profileId})

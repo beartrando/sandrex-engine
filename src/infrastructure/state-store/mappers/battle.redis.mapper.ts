@@ -1,4 +1,4 @@
-import BattleEntity, {BattleEntityProps,} from "../../../domain/entities/battle/battle.entity";
+import BattleEntity, {BattleEntityProps,} from "../../../domain/battle/battle.entity";
 
 import Id from "../../../domain/value-objects/id.vo";
 import PlayerIds from "../../../domain/value-objects/battle/player-ids.vo";

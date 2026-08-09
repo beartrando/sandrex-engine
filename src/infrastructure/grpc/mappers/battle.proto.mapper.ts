@@ -1,5 +1,5 @@
 import * as battleProto from "../../../contracts/proto/battle";
-import BattleEntity, {BattleEntityProps} from "../../../domain/entities/battle/battle.entity";
+import BattleEntity, {BattleEntityProps} from "../../../domain/battle/battle.entity";
 import BoardProtoMapper from "./battle/board.proto.mapper";
 import StatusProtoMapper from "./battle/status.proto.mapper";
 import Id from "../../../domain/value-objects/id.vo";

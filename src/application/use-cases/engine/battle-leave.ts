@@ -1,4 +1,4 @@
-import BattleEntity from "../../../domain/entities/battle/battle.entity";
+import BattleEntity from "../../../domain/battle/battle.entity";
 import BattleLeave from "../../../domain/value-objects/battle-leave.vo";
 import StateStoreInterface from "../../../infrastructure/state-store/interfaces/state-store.interface";
 import JobService from "../../../infrastructure/job/service";
@@ -21,7 +21,8 @@ export class BattleLeaveUseCase {
             return;
         }
 
-        BattleDomain.of(battle).leave(battleLeave);
+        const battleDomain = BattleDomain.of(battle);
+        battleDomain.leave(battleLeave);
         await this.battleStateStore.drop(battle.id);
         this.timerService.stop(BattleTimeoutCallbackFactory.createKey(battle));
         this.jobService.enqueue(this.topicBattleUpdated, battle);
