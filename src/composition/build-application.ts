@@ -35,8 +35,9 @@ import BattleStartedConsumer from "../infrastructure/message/consumers/battle-st
 import messageProducersConfig from "../infrastructure/message/config/producers.config";
 
 import TimerService from "../infrastructure/timer/service";
-import BattleLeaveCallbackFactory from "../infrastructure/timer/callbacks/battle-leave";
+import BattleTimeoutCallbackFactory from "../infrastructure/timer/callbacks/battle-timeout-callback-factory";
 import TimerCallbackFactoryRegistry from "../infrastructure/timer/callback-factory-registry";
+import BattleTimeoutUseCase from "../application/use-cases/engine/battle-timeout";
 
 
 function buildApplication() {
@@ -99,13 +100,20 @@ function buildApplication() {
         jobService,
     );
 
+    const battleTimeoutUseCase = new BattleTimeoutUseCase(
+        battleStateStore,
+        timerService,
+        timerCallbackFactoryRegistry,
+        jobService,
+    );
+
     // Timer callbacks
-    const battleLeaveCallbackFactory = new BattleLeaveCallbackFactory(
-        battleLeaveUseCase,
+    const battleTimeoutCallbackFactory = new BattleTimeoutCallbackFactory(
+        battleTimeoutUseCase,
     );
 
     timerCallbackFactoryRegistry.register(
-        battleLeaveCallbackFactory,
+        battleTimeoutCallbackFactory,
     );
 
     // Message consumers

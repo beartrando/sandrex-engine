@@ -1,0 +1,31 @@
+import BattleEntity from "../../../domain/entities/battle/battle.entity";
+import StateStoreInterface from "../../../infrastructure/state-store/interfaces/state-store.interface";
+import JobService from "../../../infrastructure/job/service";
+import TimerService from "../../../infrastructure/timer/service";
+import BattleDomain from "../../../domain/battle/battle.domain";
+import BattleTimeoutCallbackFactory from "../../../infrastructure/timer/callbacks/battle-timeout-callback-factory";
+import BattleLeave from "../../../domain/battle/value-objects/battle-leave.vo";
+
+export class BattleTimeoutUseCase {
+    constructor(
+        private readonly battleStateStore: StateStoreInterface<BattleEntity>,
+        private readonly timerService: TimerService,
+        private readonly jobService: JobService,
+        private readonly topicBattleUpdated: string,
+    ) {
+    }
+
+    async execute(battle: BattleEntity): Promise<void> {
+        const battleDomain = BattleDomain.of(battle);
+        const profileId = battleDomain.turn();
+        const battleLeave = BattleLeave.create({battleId: battle.id, profileId})
+        battleDomain.leave(battleLeave);
+        await this.battleStateStore.drop(battle.id);
+        this.timerService.stop(BattleTimeoutCallbackFactory.createKey(battle));
+        this.jobService.enqueue(this.topicBattleUpdated, battle);
+    }
+}
+
+
+export default BattleTimeoutUseCase;
+

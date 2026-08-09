@@ -9,6 +9,7 @@ import BattleCellRule from "./rules/battle-cell.rule";
 import BattleDrawRule from "./rules/battle-draw.rule";
 import BattleTurnRule from "./rules/battle-turn.rule";
 import BattleWinRule from "./rules/battle-win.rule";
+import Id from "../common/value-objects/id.vo";
 
 const cellRule = new BattleCellRule();
 const turnRule = new BattleTurnRule();
@@ -50,6 +51,10 @@ export class BattleDomain {
 
     leave(leave: BattleLeave): BattleEntity {
         return leaveOperation.execute(this.entity, leave);
+    }
+
+    turn(): Id {
+        return turnRule.calculate(this.entity);
     }
 }
 
