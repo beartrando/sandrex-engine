@@ -1,83 +1,159 @@
+import Application from "../application/application";
+
 import HealthUseCase from "../application/use-cases/health/health";
-import StatusUseCase from "../application/use-cases/health/status";
 import LivezUseCase from "../application/use-cases/health/livez";
 import ReadyzUseCase from "../application/use-cases/health/readyz";
-import HealthHandler from "../infrastructure/grpc/handlers/health.handler";
-import GrpcService from "../infrastructure/grpc/service";
-import grpcConfig from "../infrastructure/grpc/grpc.config";
-import Application from "../application/application";
-import MessageService from "../infrastructure/message/service";
-import JobService from "../infrastructure/job/service";
-import jobConfig from "../infrastructure/job/job.config";
-import AuthService from "../infrastructure/auth/service";
-import authConfig from "../infrastructure/auth/auth.config";
-import StateStoreService from "../infrastructure/state-store/service";
-import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
+import StatusUseCase from "../application/use-cases/health/status";
+
 import BattleStartUseCase from "../application/use-cases/engine/battle-start";
-import EngineHandler from "../infrastructure/grpc/handlers/engine.handler";
 import BattleMoveUseCase from "../application/use-cases/engine/battle-move";
 import BattleLeaveUseCase from "../application/use-cases/engine/battle-leave";
-import StateStore from "../infrastructure/state-store/state-store";
-import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redis.mapper";
-import CacheStore from "../infrastructure/cache/cache-store";
+
+import GrpcService from "../infrastructure/grpc/service";
+import grpcConfig from "../infrastructure/grpc/grpc.config";
+import EngineHandler from "../infrastructure/grpc/handlers/engine.handler";
+import HealthHandler from "../infrastructure/grpc/handlers/health.handler";
+
+import AuthService from "../infrastructure/auth/service";
+import authConfig from "../infrastructure/auth/auth.config";
+
 import CacheService from "../infrastructure/cache/service";
+import CacheStore from "../infrastructure/cache/cache-store";
 import redisConfig from "../infrastructure/cache/config/redis.config";
+import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redis.mapper";
+
+import StateStore from "../infrastructure/state-store/state-store";
+import StateStoreService from "../infrastructure/state-store/service";
+
+import JobService from "../infrastructure/job/service";
+import jobConfig from "../infrastructure/job/job.config";
+
+import MessageService from "../infrastructure/message/service";
 import messageConfig from "../infrastructure/message/config/message.config";
-import messageProducersConfig from "../infrastructure/message/config/producers.config";
 import messageConsumersConfig from "../infrastructure/message/config/consumers.config";
-import BattleLeaveCallbackFactory from "../infrastructure/timer/callbacks/battle-leave";
+import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
+import messageProducersConfig from "../infrastructure/message/config/producers.config";
+
 import TimerService from "../infrastructure/timer/service";
+import BattleLeaveCallbackFactory from "../infrastructure/timer/callbacks/battle-leave";
+
 
 function buildApplication() {
+    // Infrastructure
     const authService = new AuthService(authConfig);
     const timerService = new TimerService();
 
-    const jobService = new JobService(jobConfig, messageConfig, messageProducersConfig)
-
     const cacheService = new CacheService(redisConfig);
 
+    const jobService = new JobService(
+        jobConfig,
+        messageConfig,
+        messageProducersConfig,
+    );
+
+    // Cache stores
     const battleCacheStore = new CacheStore(
         "battle:",
         "battle:index",
         BattleRedisMapper,
     );
 
-    cacheService.register("battle", battleCacheStore);
+    cacheService.register(
+        "battle",
+        battleCacheStore,
+    );
 
-
+    // State stores
     const stateStoreService = new StateStoreService();
 
-    const battleStateStore = new StateStore(battleCacheStore);
+    const battleStateStore = new StateStore(
+        battleCacheStore,
+    );
 
-    stateStoreService.register("battle", battleStateStore);
+    stateStoreService.register(
+        "battle",
+        battleStateStore,
+    );
 
-    const battleStartUseCase = new BattleStartUseCase(battleStateStore, timerService, jobService);
-    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore, timerService, jobService);
-    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore, timerService, jobService);
-    const battleStartedConsumer = new BattleStartedConsumer(battleStartUseCase);
+    // Battle use cases
+    const battleStartUseCase = new BattleStartUseCase(
+        battleStateStore,
+        timerService,
+        jobService,
+    );
 
-    const battleLeaveCallbackFactory = new BattleLeaveCallbackFactory(battleLeaveUseCase);
-    timerService.registerFactory(BattleLeaveCallbackFactory.key, battleLeaveCallbackFactory);
+    const battleMoveUseCase = new BattleMoveUseCase(
+        battleStateStore,
+        timerService,
+        jobService,
+    );
 
-    const messageService = new MessageService(messageConfig, messageConsumersConfig, battleStartedConsumer);
+    const battleLeaveUseCase = new BattleLeaveUseCase(
+        battleStateStore,
+        timerService,
+        jobService,
+    );
 
-    const healthUseCase = new HealthUseCase(messageService, jobService, cacheService);
-    const statusUseCase = new StatusUseCase;
-    const livezUseCase = new LivezUseCase;
-    const readyzUseCase = new ReadyzUseCase;
+    // Timer callbacks
+    const battleLeaveCallbackFactory = new BattleLeaveCallbackFactory(
+        battleLeaveUseCase,
+    );
 
+    timerService.registerFactory(
+        BattleLeaveCallbackFactory.key,
+        battleLeaveCallbackFactory,
+    );
+
+    // Message consumers
+    const battleStartedConsumer = new BattleStartedConsumer(
+        battleStartUseCase,
+    );
+
+    const messageService = new MessageService(
+        messageConfig,
+        messageConsumersConfig,
+        battleStartedConsumer,
+    );
+
+    // Health
+    const healthUseCase = new HealthUseCase(
+        messageService,
+        jobService,
+        cacheService,
+    );
+
+    const statusUseCase = new StatusUseCase();
+    const livezUseCase = new LivezUseCase();
+    const readyzUseCase = new ReadyzUseCase();
+
+    // Handlers
     const engineHandler = new EngineHandler(
         battleStartUseCase,
         battleMoveUseCase,
         battleLeaveUseCase,
     );
 
-    const healthHandler = new HealthHandler(healthUseCase, statusUseCase, livezUseCase, readyzUseCase);
+    const healthHandler = new HealthHandler(
+        healthUseCase,
+        statusUseCase,
+        livezUseCase,
+        readyzUseCase,
+    );
 
-    const grpcService = new GrpcService(grpcConfig.port, engineHandler, healthHandler);
+    // Transport
+    const grpcService = new GrpcService(
+        grpcConfig.port,
+        engineHandler,
+        healthHandler,
+    );
 
-    return new Application(grpcService, stateStoreService, jobService, messageService, cacheService);
+    return new Application(
+        grpcService,
+        stateStoreService,
+        jobService,
+        messageService,
+        cacheService,
+    );
 }
-
 
 export default buildApplication;
