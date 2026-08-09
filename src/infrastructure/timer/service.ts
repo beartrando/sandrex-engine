@@ -5,24 +5,6 @@ import TimerServiceInterface from "./interfaces/timer-service.interface";
 
 export class TimerService implements TimerServiceInterface {
     private readonly timers = new Map<TimerKey, NodeJS.Timeout>();
-    private readonly factories = new Map<string, TimerCallbackFactoryInterface<any>>();
-
-    registerFactory(
-        key: string,
-        factory: TimerCallbackFactoryInterface<any>,
-    ): void {
-        this.factories.set(key, factory);
-    }
-
-    getFactory(key: string): TimerCallbackFactoryInterface<any> {
-        const factory = this.factories.get(key);
-
-        if (!factory) {
-            throw new Error(`Timer callback factory "${key}" is not registered`);
-        }
-
-        return factory;
-    }
 
     start(
         key: TimerKey,
@@ -53,7 +35,7 @@ export class TimerService implements TimerServiceInterface {
     restart(
         key: TimerKey,
         timeoutMs: number,
-        callback: () => void | Promise<void>,
+        callback: TimerCallback,
     ): void {
         this.start(key, timeoutMs, callback);
     }

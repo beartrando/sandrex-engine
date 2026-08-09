@@ -4,11 +4,13 @@ import StateStoreInterface from "../../../infrastructure/state-store/interfaces/
 import JobService from "../../../infrastructure/job/service";
 import TimerService from "../../../infrastructure/timer/service";
 import TimerCallbackFactoryInterface from "../../../infrastructure/timer/interfaces/timer-callback-factory.interface";
+import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-registry";
 
 export class BattleLeaveUseCase {
     constructor(
         private readonly battleStateStore: StateStoreInterface<BattleEntity>,
         private readonly timerService: TimerService,
+        private readonly timerCallbackFactoryRegistry: TimerCallbackFactoryRegistry,
         private readonly jobService: JobService,
     ) {
     }
@@ -27,7 +29,7 @@ export class BattleLeaveUseCase {
 
 
         // battle.leave(batleLeave);
-        // const battleLeaveCallbackFactory: TimerCallbackFactoryInterface<BattleEntity> = this.timerService.getFactory(BattleLeaveCallbackFactory.key);
+        // const battleLeaveCallbackFactory: TimerCallbackFactoryInterface<BattleEntity> = this.timerCallbackFactoryRegistry.getFactory(BattleLeaveCallbackFactory.key);
         // const battleLeaveCallbackFactory = this.timerService.stop(battleLeaveCallbackFactory.createKey(battle));
         // await this.battleStateStore.drop(battle.id);
     }

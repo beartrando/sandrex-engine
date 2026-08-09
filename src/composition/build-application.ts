@@ -36,12 +36,14 @@ import messageProducersConfig from "../infrastructure/message/config/producers.c
 
 import TimerService from "../infrastructure/timer/service";
 import BattleLeaveCallbackFactory from "../infrastructure/timer/callbacks/battle-leave";
+import TimerCallbackFactoryRegistry from "../infrastructure/timer/callback-factory-registry";
 
 
 function buildApplication() {
     // Infrastructure
     const authService = new AuthService(authConfig);
     const timerService = new TimerService();
+    const timerCallbackFactoryRegistry = new TimerCallbackFactoryRegistry();
 
     const cacheService = new CacheService(redisConfig);
 
@@ -79,18 +81,21 @@ function buildApplication() {
     const battleStartUseCase = new BattleStartUseCase(
         battleStateStore,
         timerService,
+        timerCallbackFactoryRegistry,
         jobService,
     );
 
     const battleMoveUseCase = new BattleMoveUseCase(
         battleStateStore,
         timerService,
+        timerCallbackFactoryRegistry,
         jobService,
     );
 
     const battleLeaveUseCase = new BattleLeaveUseCase(
         battleStateStore,
         timerService,
+        timerCallbackFactoryRegistry,
         jobService,
     );
 
@@ -99,8 +104,7 @@ function buildApplication() {
         battleLeaveUseCase,
     );
 
-    timerService.registerFactory(
-        BattleLeaveCallbackFactory.key,
+    timerCallbackFactoryRegistry.register(
         battleLeaveCallbackFactory,
     );
 

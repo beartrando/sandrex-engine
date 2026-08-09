@@ -20,6 +20,10 @@ export class BattleLeaveCallbackFactory implements TimerCallbackFactoryInterface
         return TimerKey.create(entity, this.event);
     }
 
+    registryKey(): string {
+        return BattleLeaveCallbackFactory.key;
+    }
+
     create(entity: BattleEntity): TimerCallback {
         return async () => {
 
