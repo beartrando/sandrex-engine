@@ -15,7 +15,7 @@ import EngineHandler from "../infrastructure/grpc/handlers/engine.handler";
 import HealthHandler from "../infrastructure/grpc/handlers/health.handler";
 
 import AuthService from "../infrastructure/auth/service";
-import authConfig from "../infrastructure/auth/auth.config";
+import authConfig from "../infrastructure/auth/config";
 
 import CacheService from "../infrastructure/cache/service";
 import CacheStore from "../infrastructure/cache/cache-store";
