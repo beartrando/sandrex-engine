@@ -22,7 +22,7 @@ import CacheStore from "../infrastructure/cache/cache-store";
 import redisConfig from "../infrastructure/cache/config/redis.config";
 import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redis.mapper";
 
-import StateStore from "../infrastructure/state-store/state-store";
+import CachedIdStateStore from "../infrastructure/state-store/state-stores/cached-id-state-store";
 import StateStoreService from "../infrastructure/state-store/service";
 
 import JobService from "../infrastructure/job/service";
@@ -70,7 +70,7 @@ function buildApplication() {
     // State stores
     const stateStoreService = new StateStoreService();
 
-    const battleStateStore = new StateStore(
+    const battleStateStore = new CachedIdStateStore(
         battleCacheStore,
     );
 
