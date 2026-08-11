@@ -1,8 +1,8 @@
 import Id from "../../../domain/common/value-objects/id.vo";
-import StateStoreInterface from "../interfaces/state-store.interface";
+import CachedIdStateStoreInterface from "../interfaces/cached-id-state-store.interface";
 import CacheStore from "../../cache/cache-store";
 
-export class CachedIdStateStore<TEntity extends { id: Id }> implements StateStoreInterface<TEntity> {
+export class CachedIdStateStore<TEntity extends { id: Id }> implements CachedIdStateStoreInterface<TEntity> {
     private readonly _registry = new Map<string, TEntity>();
 
     constructor(

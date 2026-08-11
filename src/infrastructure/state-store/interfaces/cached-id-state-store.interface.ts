@@ -1,6 +1,6 @@
 import Id from "../../../domain/common/value-objects/id.vo";
 
-export interface StateStoreInterface<TEntity extends { id: Id }> {
+export interface CachedIdStateStoreInterface<TEntity extends { id: Id }> {
     save(entity: TEntity): Promise<void>;
 
     get(id: Id): Promise<TEntity | null>;
@@ -12,4 +12,4 @@ export interface StateStoreInterface<TEntity extends { id: Id }> {
     restore(): Promise<TEntity[]>;
 }
 
-export default StateStoreInterface;
+export default CachedIdStateStoreInterface;

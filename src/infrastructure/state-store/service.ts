@@ -1,4 +1,4 @@
-import StateStoreInterface from "./interfaces/state-store.interface";
+import CachedIdStateStoreInterface from "./interfaces/cached-id-state-store.interface";
 import {StateStoreEntity, StateStoreKey} from "./config/state-store.config";
 
 
@@ -6,7 +6,7 @@ export class StateStoreService {
 
     private readonly registry = new Map<
         StateStoreKey,
-        StateStoreInterface<any>
+        CachedIdStateStoreInterface<any>
     >();
 
     async start(): Promise<void> {
@@ -19,7 +19,7 @@ export class StateStoreService {
 
     register<K extends StateStoreKey>(
         key: K,
-        store: StateStoreInterface<StateStoreEntity<K>>,
+        store: CachedIdStateStoreInterface<StateStoreEntity<K>>,
     ): void {
         if (this.registry.has(key)) {
             throw new Error(
@@ -36,7 +36,7 @@ export class StateStoreService {
 
     store<K extends StateStoreKey>(
         key: K,
-    ): StateStoreInterface<StateStoreEntity<K>> {
+    ): CachedIdStateStoreInterface<StateStoreEntity<K>> {
         const store = this.registry.get(key);
 
         if (!store) {
@@ -45,7 +45,7 @@ export class StateStoreService {
             );
         }
 
-        return store as StateStoreInterface<StateStoreEntity<K>>;
+        return store as CachedIdStateStoreInterface<StateStoreEntity<K>>;
     }
 
     async clearAll(): Promise<void> {
