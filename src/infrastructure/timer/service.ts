@@ -1,9 +1,20 @@
 import TimerCallbackInterface from "./interfaces/timer-callback.interface";
 import TimerKey from "./value-objects/timer-key.vo";
 import TimerServiceInterface from "./interfaces/timer-service.interface";
+import TimerCallbackFactoryRegistry from "./callback-factory-registry";
+import {KafkaConfig} from "@shared/kafka-manager";
+import BattleStartedConsumer from "../message/consumers/battle-started";
 
 export class TimerService implements TimerServiceInterface {
     private readonly timers = new Map<TimerKey, NodeJS.Timeout>();
+
+    constructor(
+        private readonly _callbackFactoryRegistry: TimerCallbackFactoryRegistry,
+    ) {}
+
+    get callbackFactoryRegistry(): TimerCallbackFactoryRegistry {
+        return this._callbackFactoryRegistry;
+    }
 
     start(
         key: TimerKey,

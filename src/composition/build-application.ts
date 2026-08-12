@@ -44,8 +44,8 @@ import TimerCallbackFactoryRegistry from "../infrastructure/timer/callback-facto
 function buildApplication() {
     // Infrastructure
     const authService = new AuthService(authConfig);
-    const timerService = new TimerService();
     const timerCallbackFactoryRegistry = new TimerCallbackFactoryRegistry();
+    const timerService = new TimerService(timerCallbackFactoryRegistry);
 
     const cacheService = new CacheService(redisConfig);
 
@@ -83,7 +83,6 @@ function buildApplication() {
     const battleStartUseCase = new BattleStartUseCase(
         battleStateStore,
         timerService,
-        timerCallbackFactoryRegistry,
         jobService,
         messageProducersConfig.battleStarted,
         domainBattleConfig.battleTurnTimeLimit,
@@ -92,7 +91,6 @@ function buildApplication() {
     const battleMoveUseCase = new BattleMoveUseCase(
         battleStateStore,
         timerService,
-        timerCallbackFactoryRegistry,
         jobService,
         messageProducersConfig.battleUpdated,
         domainBattleConfig.battleTurnTimeLimit,
@@ -101,7 +99,6 @@ function buildApplication() {
     const battleLeaveUseCase = new BattleLeaveUseCase(
         battleStateStore,
         timerService,
-        timerCallbackFactoryRegistry,
         jobService,
         messageProducersConfig.battleUpdated
     );
@@ -109,7 +106,6 @@ function buildApplication() {
     const battleTimeoutUseCase = new BattleTimeoutUseCase(
         battleStateStore,
         timerService,
-        timerCallbackFactoryRegistry,
         jobService,
         messageProducersConfig.battleUpdated,
     );

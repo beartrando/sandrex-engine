@@ -10,7 +10,6 @@ export class BattleStartUseCase {
     constructor(
         private readonly battleStateStore: CachedIdStateStoreInterface<BattleEntity>,
         private readonly timerService: TimerService,
-        private readonly timerCallbackFactoryRegistry: TimerCallbackFactoryRegistry,
         private readonly jobService: JobService,
         private readonly topicBattleStarted: string,
         private readonly battleTurnTimeLimit: number,
@@ -20,8 +19,8 @@ export class BattleStartUseCase {
     async execute(battle: BattleEntity): Promise<BattleEntity> {
         const battleDomain = BattleDomain.of(battle);
         battleDomain.start();
-        await this.battleStateStore.save(battle);
-        const callbackFactory = this.timerCallbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name);
+        await this.battleStateStore.set(battle);
+        const callbackFactory = this.timerService.callbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name);
         this.timerService.restart(
             callbackFactory.createKey(battle),
             this.battleTurnTimeLimit,

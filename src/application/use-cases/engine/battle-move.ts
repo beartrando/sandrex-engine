@@ -10,7 +10,6 @@ export class BattleMoveUseCase {
     constructor(
         private readonly battleStateStore: CachedIdStateStoreInterface<BattleEntity>,
         private readonly timerService: TimerService,
-        private readonly timerCallbackFactoryRegistry: TimerCallbackFactoryRegistry,
         private readonly jobService: JobService,
         private readonly topicBattleUpdated: string,
         private readonly battleTurnTimeLimit: number,
@@ -23,8 +22,8 @@ export class BattleMoveUseCase {
             return null;
         }
         await battle.move(move);
-        await this.battleStateStore.save(battle);
-        const callbackFActory = this.timerCallbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name);
+        await this.battleStateStore.set(battle);
+        const callbackFActory = this.timerService.callbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name);
         this.timerService.restart(
             callbackFActory.createKey(battle),
             this.battleTurnTimeLimit,

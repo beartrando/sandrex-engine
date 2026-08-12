@@ -10,7 +10,7 @@ export class CachedIdStateStore<TEntity extends { id: Id }> implements CachedIdS
     ) {
     }
 
-    async save(
+    async set(
         entity: TEntity,
     ): Promise<void> {
         this._registry.set(
@@ -27,7 +27,7 @@ export class CachedIdStateStore<TEntity extends { id: Id }> implements CachedIdS
         return this._registry.get(id.value) ?? null;
     }
 
-    async drop(
+    async delete(
         id: Id,
     ): Promise<void> {
         this._registry.delete(id.value);
