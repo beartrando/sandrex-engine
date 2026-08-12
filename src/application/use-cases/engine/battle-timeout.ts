@@ -4,7 +4,6 @@ import CachedIdStateStoreInterface
 import JobService from "../../../infrastructure/job/service";
 import TimerService from "../../../infrastructure/timer/service";
 import BattleDomain from "../../../domain/battle/battle.domain";
-import BattleTimeoutCallbackFactory from "../../../infrastructure/timer/callbacks/battle-timeout-callback-factory";
 import BattleLeave from "../../../domain/battle/value-objects/battle-leave.vo";
 import Id from "../../../domain/common/value-objects/id.vo";
 import TimerKey from "../../../infrastructure/timer/value-objects/timer-key.vo";
