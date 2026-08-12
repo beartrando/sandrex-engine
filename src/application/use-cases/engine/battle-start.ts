@@ -4,7 +4,7 @@ import JobService from "../../../infrastructure/job/service";
 import TimerService from "../../../infrastructure/timer/service";
 import BattleDomain from "../../../domain/battle/battle.domain";
 import BattleTimeoutCallbackFactory from "../../../infrastructure/timer/callbacks/battle-timeout-callback-factory";
-import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-registry";
+import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-holder";
 
 export class BattleStartUseCase {
     constructor(

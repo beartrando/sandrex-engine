@@ -44,7 +44,7 @@ export class EngineHandler {
 
                         if (battleEntity) {
                             const battle = BattleProtoMapper.toProto(battleEntity);
-                            // logger.log(battle);
+                            // logger.log(engine);
                             call.write(engineProto.BattleResponse.create({battle}));
                         }
                     }

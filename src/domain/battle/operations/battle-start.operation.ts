@@ -11,7 +11,7 @@ export class BattleStartOperation {
         entity: BattleEntity,
     ): BattleEntity {
 
-        // logger.log('New battle started', battle)
+        // logger.log('New engine started', engine)
         entity.board = Board.empty();
         entity.status = new Status(StatusEnum.Active);
         entity.winnerId = null;

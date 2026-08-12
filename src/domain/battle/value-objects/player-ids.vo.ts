@@ -33,7 +33,7 @@ export class PlayerIds {
             return CellValueEnum.O;
         }
 
-        throw new Error("Player does not belong to battle");
+        throw new Error("Player does not belong to engine");
     }
 
     opponentOf(playerId: Id): Id | null {
@@ -42,7 +42,7 @@ export class PlayerIds {
         );
 
         if (index === -1) {
-            throw new Error("Player does not belong to battle");
+            throw new Error("Player does not belong to engine");
         }
 
         if (this.value.length === 1) {

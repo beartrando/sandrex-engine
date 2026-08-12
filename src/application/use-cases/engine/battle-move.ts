@@ -2,7 +2,7 @@ import BattleEntity from "../../../domain/battle/battle.entity";
 import CachedIdStateStoreInterface from "../../../infrastructure/state-store/interfaces/cached-id-state-store.interface";
 import JobService from "../../../infrastructure/job/service";
 import TimerService from "../../../infrastructure/timer/service";
-import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-registry";
+import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-holder";
 import BattleTimeoutCallbackFactory from "../../../infrastructure/timer/callbacks/battle-timeout-callback-factory";
 import BattleMove from "../../../domain/battle/value-objects/battle-move.vo";
 

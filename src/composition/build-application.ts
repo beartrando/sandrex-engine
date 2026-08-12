@@ -38,14 +38,14 @@ import TimerService from "../infrastructure/timer/service";
 import BattleTimeoutCallbackFactory from "../infrastructure/timer/callbacks/battle-timeout-callback-factory";
 import BattleTimeoutUseCase from "../application/use-cases/engine/battle-timeout";
 import domainBattleConfig from "../domain/battle/config/config";
-import TimerCallbackFactoryRegistry from "../infrastructure/timer/callback-factory-registry";
+import TimerCallbackFactoryHolder from "../infrastructure/timer/callback-factory-holder";
 
 
 function buildApplication() {
     // Infrastructure
     const authService = new AuthService(authConfig);
-    const timerCallbackFactoryRegistry = new TimerCallbackFactoryRegistry();
-    const timerService = new TimerService(timerCallbackFactoryRegistry);
+    const timerCallbackFactoryHolder = new TimerCallbackFactoryHolder();
+    const timerService = new TimerService(timerCallbackFactoryHolder);
 
     const cacheService = new CacheService(redisConfig);
 
@@ -57,8 +57,8 @@ function buildApplication() {
 
     // Cache stores
     const battleCacheStore = new CacheStore(
-        "battle:",
-        "battle:index",
+        "engine:",
+        "engine:index",
         BattleRedisMapper,
     );
 
@@ -115,7 +115,7 @@ function buildApplication() {
         battleTimeoutUseCase,
     );
 
-    timerCallbackFactoryRegistry.register(
+    timerCallbackFactoryHolder.register(
         battleTimeoutCallbackFactory,
     );
 
