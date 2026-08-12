@@ -1,7 +1,7 @@
 import TimerServiceInterface from "./interfaces/timer-service.interface";
 import TimerCallbackFactoryHolderInterface from "./interfaces/timer-callback-factory-holder.interface";
 
-export class TimerService implements TimerServiceInterface<KEntity, TEntity> {
+export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEntity, TEntity> {
     private readonly timers = new Map<KEntity, NodeJS.Timeout>();
 
     constructor(

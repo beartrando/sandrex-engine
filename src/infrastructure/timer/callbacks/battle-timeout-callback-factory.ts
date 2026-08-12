@@ -8,7 +8,6 @@ export class BattleTimeoutCallbackFactory implements TimerCallbackFactoryInterfa
     constructor(
         private readonly battleTimeoutUseCase: BattleTimeoutUseCase,
     ) {
-        super();
     }
 
     create(entity: BattleEntity): TimerCallbackInterface {

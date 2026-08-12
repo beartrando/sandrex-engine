@@ -39,13 +39,15 @@ import BattleTimeoutCallbackFactory from "../infrastructure/timer/callbacks/batt
 import BattleTimeoutUseCase from "../application/use-cases/engine/battle-timeout";
 import domainBattleConfig from "../domain/battle/config/config";
 import TimerCallbackFactoryHolder from "../infrastructure/timer/callback-factory-holder";
+import BattleEntity from "../domain/battle/battle.entity";
+import TimerKey from "../infrastructure/timer/value-objects/timer-key.vo";
 
 
 function buildApplication() {
     // Infrastructure
     const authService = new AuthService(authConfig);
-    const timerCallbackFactoryHolder = new TimerCallbackFactoryHolder();
-    const timerService = new TimerService(timerCallbackFactoryHolder);
+    const timerCallbackFactoryHolder = new TimerCallbackFactoryHolder<BattleEntity>();
+    const timerService = new TimerService<TimerKey, BattleEntity>(timerCallbackFactoryHolder);
 
     const cacheService = new CacheService(redisConfig);
 
@@ -115,9 +117,7 @@ function buildApplication() {
         battleTimeoutUseCase,
     );
 
-    timerCallbackFactoryHolder.register(
-        battleTimeoutCallbackFactory,
-    );
+    timerCallbackFactoryHolder.factory = battleTimeoutCallbackFactory;
 
     // Message consumers
     const battleStartedConsumer = new BattleStartedConsumer(

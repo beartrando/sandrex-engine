@@ -1,15 +1,15 @@
 import BattleEntity from "../../../domain/battle/battle.entity";
-import CachedIdStateStoreInterface from "../../../infrastructure/state-store/interfaces/cached-id-state-store.interface";
+import CachedIdStateStoreInterface
+    from "../../../infrastructure/state-store/interfaces/cached-id-state-store.interface";
 import JobService from "../../../infrastructure/job/service";
 import TimerService from "../../../infrastructure/timer/service";
 import BattleDomain from "../../../domain/battle/battle.domain";
-import BattleTimeoutCallbackFactory from "../../../infrastructure/timer/callbacks/battle-timeout-callback-factory";
-import TimerCallbackFactoryRegistry from "../../../infrastructure/timer/callback-factory-holder";
+import TimerKey from "../../../infrastructure/timer/value-objects/timer-key.vo";
 
 export class BattleStartUseCase {
     constructor(
         private readonly battleStateStore: CachedIdStateStoreInterface<BattleEntity>,
-        private readonly timerService: TimerService,
+        private readonly timerService: TimerService<TimerKey, BattleEntity>,
         private readonly jobService: JobService,
         private readonly topicBattleStarted: string,
         private readonly battleTurnTimeLimit: number,
@@ -20,9 +20,8 @@ export class BattleStartUseCase {
         const battleDomain = BattleDomain.of(battle);
         battleDomain.start();
         await this.battleStateStore.set(battle);
-        const callbackFactory = this.timerService.callbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name);
         this.timerService.restart(
-            BattleTimeoutCallbackFactory.name,
+            TimerKey.create(battle),
             this.battleTurnTimeLimit,
             battle
         );
