@@ -23,11 +23,10 @@ export class BattleMoveUseCase {
         }
         await battle.move(move);
         await this.battleStateStore.set(battle);
-        const callbackFActory = this.timerService.callbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name);
         this.timerService.restart(
-            callbackFActory.createKey(battle),
+            BattleTimeoutCallbackFactory.name,
             this.battleTurnTimeLimit,
-            callbackFActory.create(battle)
+            battle
         );
         return battle;
     }

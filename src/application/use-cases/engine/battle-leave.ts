@@ -25,9 +25,7 @@ export class BattleLeaveUseCase {
         const battleDomain = BattleDomain.of(battle);
         battleDomain.leave(battleLeave);
         await this.battleStateStore.delete(battle.id);
-        this.timerService.stop(
-            this.timerService.callbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name).createKey(battle)
-        );
+        this.timerService.stop(BattleTimeoutCallbackFactory.name, battleDomain);
         this.jobService.enqueue(this.topicBattleUpdated, battle);
     }
 }

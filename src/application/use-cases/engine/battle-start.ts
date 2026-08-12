@@ -22,9 +22,9 @@ export class BattleStartUseCase {
         await this.battleStateStore.set(battle);
         const callbackFactory = this.timerService.callbackFactoryRegistry.get(BattleTimeoutCallbackFactory.name);
         this.timerService.restart(
-            callbackFactory.createKey(battle),
+            BattleTimeoutCallbackFactory.name,
             this.battleTurnTimeLimit,
-            callbackFactory.create(battle)
+            battle
         );
         this.jobService.enqueue(this.topicBattleStarted, battle);
         return battle;
