@@ -1,7 +1,7 @@
 import Id from "../../../domain/common/value-objects/id.vo";
 
 export interface CachedIdStateStoreInterface<TEntity extends { id: Id }> {
-    .set(entity: TEntity): Promise<void>;
+    set(entity: TEntity): Promise<void>;
 
     get(id: Id): Promise<TEntity | null>;
 
