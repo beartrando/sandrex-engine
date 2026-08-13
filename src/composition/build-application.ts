@@ -29,10 +29,10 @@ import JobService from "../infrastructure/job/service";
 import jobConfig from "../infrastructure/job/job.config";
 
 import MessageService from "../infrastructure/message/service";
-import messageConfig from "../infrastructure/message/config/message.config";
-import messageConsumersConfig from "../infrastructure/message/config/consumers.config";
+import messageConfig from "../infrastructure/message/configs/message.config";
+import messageConsumersConfig from "../infrastructure/message/configs/consumers.config";
 import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
-import messageProducersConfig from "../infrastructure/message/config/producers.config";
+import messageProducersConfig from "../infrastructure/message/configs/producers.config";
 
 import TimerService from "../infrastructure/timer/service";
 import BattleTimeoutCallbackFactory from "../infrastructure/timer/callbacks/battle-timeout-callback-factory";
