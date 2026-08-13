@@ -2,8 +2,9 @@ import * as battleProto from "../../../contracts/proto/battle";
 import BattleStartUseCase from "../../../application/use-cases/engine/battle-start";
 import BattleProtoMapper from "../../grpc/mappers/battle.proto.mapper";
 import logger from "@shared/logger";
+import UseCaseInterface from "../interfaces/use-case.interface";
 
-export class BattleStartedConsumer {
+export class BattleStartedConsumer implements UseCaseInterface<battleProto.BattleObject>{
     constructor(
         private readonly battleStartUseCase: BattleStartUseCase,
     ) {
