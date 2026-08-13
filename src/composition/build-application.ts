@@ -126,7 +126,11 @@ function buildApplication() {
     const messageService = new MessageService(
         messageConfig,
         messageConsumersConfig,
-        battleStartedConsumer,
+    );
+
+    messageService.addConsumer(
+        messageConsumersConfig.battleUpdated,
+        battleStartedConsumer.execute,
     );
 
     // Health
