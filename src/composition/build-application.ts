@@ -47,7 +47,8 @@ function buildApplication() {
     // Infrastructure
     const authService = new AuthService(authConfig);
     const timerCallbackFactoryHolder = new TimerCallbackFactoryHolder<BattleEntity>();
-    const timerService = new TimerService<TimerKey, BattleEntity>(timerCallbackFactoryHolder);
+    const timerService =
+        new TimerService<TimerKey, BattleEntity>(timerCallbackFactoryHolder, domainBattleConfig.battleTurnTimeLimit);
 
     const cacheService = new CacheService(redisConfig);
 
@@ -87,7 +88,6 @@ function buildApplication() {
         timerService,
         jobService,
         messageProducersConfig.battleStarted,
-        domainBattleConfig.battleTurnTimeLimit,
     );
 
     const battleMoveUseCase = new BattleMoveUseCase(
@@ -95,7 +95,6 @@ function buildApplication() {
         timerService,
         jobService,
         messageProducersConfig.battleUpdated,
-        domainBattleConfig.battleTurnTimeLimit,
     );
 
     const battleLeaveUseCase = new BattleLeaveUseCase(

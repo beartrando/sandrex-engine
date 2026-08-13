@@ -12,7 +12,6 @@ export class BattleMoveUseCase {
         private readonly timerService: TimerService<TimerKey, BattleEntity>,
         private readonly jobService: JobService,
         private readonly topicBattleUpdated: string,
-        private readonly battleTurnTimeLimit: number,
     ) {
     }
 
@@ -25,7 +24,6 @@ export class BattleMoveUseCase {
         await this.battleStateStore.set(battle);
         this.timerService.restart(
             TimerKey.create(battle),
-            this.battleTurnTimeLimit,
             battle
         );
         return battle;

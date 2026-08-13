@@ -1,19 +1,22 @@
 import TimerServiceInterface from "./interfaces/timer-service.interface";
 import TimerCallbackFactoryHolderInterface from "./interfaces/timer-callback-factory-holder.interface";
+import domainBattleConfig from "../../domain/battle/config/config";
 
 export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEntity, TEntity> {
     private readonly timers = new Map<KEntity, NodeJS.Timeout>();
 
     constructor(
         private readonly _callbackFactoryHolder: TimerCallbackFactoryHolderInterface<TEntity>,
+        private readonly timeoutMs: number,
     ) {
     }
 
     start(
         key: KEntity,
-        timeoutMs: number,
         entity: TEntity,
+        timeoutMs?: number,
     ): void {
+        const timeout = timeoutMs?? this.timeoutMs;
         const callbackFactory = this._callbackFactoryHolder.factory;
 
         const callback = callbackFactory.create(entity);
@@ -23,7 +26,7 @@ export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEn
         const timer = setTimeout(async () => {
             this.timers.delete(key);
             await callback();
-        }, timeoutMs);
+        }, timeout);
 
         this.timers.set(key, timer);
     }
@@ -43,10 +46,10 @@ export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEn
 
     restart(
         key: KEntity,
-        timeoutMs: number,
         entity: TEntity,
+        timeoutMs?: number,
     ): void {
-        this.start(key, timeoutMs, entity);
+        this.start(key, entity, timeoutMs);
     }
 }
 
