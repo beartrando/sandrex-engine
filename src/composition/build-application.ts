@@ -130,7 +130,7 @@ function buildApplication() {
 
     messageService.addConsumer(
         messageConsumersConfig.battleUpdated,
-        battleStartedConsumer.execute,
+        battleStartedConsumer.execute.bind(battleStartedConsumer),
     );
 
     // Health
