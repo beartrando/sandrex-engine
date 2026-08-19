@@ -118,9 +118,22 @@ function buildApplication() {
 
     timerCallbackFactoryHolder.factory = battleTimeoutCallbackFactory;
 
+
+    const statusUseCase = new StatusUseCase();
+    const livezUseCase = new LivezUseCase();
+    const readyzUseCase = new ReadyzUseCase();
+
+    // Handlers
+    const engineHandler = new EngineHandler(
+        battleStartUseCase,
+        battleMoveUseCase,
+        battleLeaveUseCase,
+    );
+
     // Message consumers
     const battleStartedConsumer = new BattleStartedConsumer(
         battleStartUseCase,
+        engineHandler,
     );
 
     const messageService = new MessageService(
@@ -138,17 +151,6 @@ function buildApplication() {
         messageService,
         jobService,
         cacheService,
-    );
-
-    const statusUseCase = new StatusUseCase();
-    const livezUseCase = new LivezUseCase();
-    const readyzUseCase = new ReadyzUseCase();
-
-    // Handlers
-    const engineHandler = new EngineHandler(
-        battleStartUseCase,
-        battleMoveUseCase,
-        battleLeaveUseCase,
     );
 
     const healthHandler = new HealthHandler(

@@ -11,11 +11,13 @@ import BattleTurnRule from "./rules/battle-turn.rule";
 import BattleWinRule from "./rules/battle-win.rule";
 import Id from "../common/value-objects/id.vo";
 import BattleStartOperation from "./operations/battle-start.operation";
+import BattleStatusActiveRule from "./rules/battle-status-active.rule";
 
 const cellRule = new BattleCellRule();
 const turnRule = new BattleTurnRule();
 const winRule = new BattleWinRule();
 const drawRule = new BattleDrawRule();
+const statusActiveRule = new BattleStatusActiveRule();
 
 const moveOperation = new BattleMoveOperation(
     cellRule,
@@ -28,7 +30,9 @@ const leaveOperation = new BattleLeaveOperation(
     turnRule,
 );
 
-const startOperation = new BattleStartOperation();
+const startOperation = new BattleStartOperation(
+    statusActiveRule,
+);
 
 export class BattleDomain {
     private constructor(private readonly _entity: BattleEntity) {

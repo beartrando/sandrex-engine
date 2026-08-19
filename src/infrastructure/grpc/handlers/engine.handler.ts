@@ -30,6 +30,7 @@ export class EngineHandler {
                         const battleEntity: BattleEntity = BattleProtoMapper.toDomain(event.start);
 
                         // logger.log(battleObj);
+
                         const battle = BattleProtoMapper.toProto(await this.battleStartUseCase.execute(battleEntity));
                         if (battle) {
                             call.write(engineProto.BattleResponse.create({battle}));

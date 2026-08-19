@@ -3,10 +3,12 @@ import BattleStartUseCase from "../../../application/use-cases/engine/battle-sta
 import BattleProtoMapper from "../../grpc/mappers/battle.proto.mapper";
 import logger from "@shared/logger";
 import UseCaseInterface from "../interfaces/use-case.interface";
+import EngineHandler from "../../grpc/handlers/engine.handler";
 
 export class BattleStartedConsumer implements UseCaseInterface<battleProto.BattleObject>{
     constructor(
         private readonly battleStartUseCase: BattleStartUseCase,
+        private readonly engineHandler: EngineHandler,
     ) {
     }
 

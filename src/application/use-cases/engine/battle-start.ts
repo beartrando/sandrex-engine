@@ -17,14 +17,20 @@ export class BattleStartUseCase {
 
     async execute(battle: BattleEntity): Promise<BattleEntity> {
         const battleDomain = BattleDomain.of(battle);
+
         battleDomain.start();
+
         await this.battleStateStore.set(battle);
+
         this.timerService.restart(
             TimerKey.create(battle),
             battle
         );
+
         this.jobService.enqueue(this.topicBattleStarted, battle);
+
         return battle;
+
     }
 }
 
