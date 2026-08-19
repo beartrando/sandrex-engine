@@ -1,8 +1,8 @@
 import Board from "../../../../domain/battle/value-objects/board.vo";
-import CellValueMapper from "./cell-value.redis.mapper";
+import CellValueMapper from "./cell-value.cache.mapper";
 
 
-export class BoardRedisMapper {
+export class BoardCacheMapper {
 
     static toPersistence(board: Board): string[] {
         return board.cells.map(CellValueMapper.toPersistence);
@@ -13,4 +13,4 @@ export class BoardRedisMapper {
     }
 }
 
-export default BoardRedisMapper;
+export default BoardCacheMapper;

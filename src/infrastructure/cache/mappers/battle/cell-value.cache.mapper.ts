@@ -1,6 +1,6 @@
 import CellValueEnum from "../../../../domain/battle/enums/cell-value.enum";
 
-export class CellValueRedisMapper {
+export class CellValueCacheMapper {
     static toPersistence(cell: CellValueEnum): string {
         return cell;
     }
@@ -14,4 +14,4 @@ export class CellValueRedisMapper {
     }
 }
 
-export default CellValueRedisMapper;
+export default CellValueCacheMapper;

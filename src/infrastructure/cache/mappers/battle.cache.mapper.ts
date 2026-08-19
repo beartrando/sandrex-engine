@@ -1,12 +1,12 @@
 import BattleEntity, {BattleEntityProps,} from "../../../domain/battle/battle.entity";
 
 
-import BoardMapper from "./battle/board.redis.mapper";
-import StatusMapper from "./battle/status.redis.mapper";
+import BoardMapper from "./battle/board.cache.mapper";
+import StatusMapper from "./battle/status.cache.mapper";
 import Id from "../../../domain/common/value-objects/id.vo";
 import PlayerIds from "../../../domain/battle/value-objects/player-ids.vo";
 
-export interface BattleRedisObject {
+export interface BattleCacheObject {
     id: string;
     playerIds: string[];
     board: string[];
@@ -15,9 +15,9 @@ export interface BattleRedisObject {
     lastMoveAt: Date | null;
 }
 
-export class BattleRedisMapper {
+export class BattleCacheMapper {
 
-    static toPersistence(battle: BattleEntity): BattleRedisObject {
+    static toPersistence(battle: BattleEntity): BattleCacheObject {
         return {
             id: battle.id.value,
             playerIds: battle.playerIds.value.map((id: Id) => id.value),
@@ -28,7 +28,7 @@ export class BattleRedisMapper {
         };
     }
 
-    static toDomain(battle: BattleRedisObject): BattleEntity {
+    static toDomain(battle: BattleCacheObject): BattleEntity {
         const props: BattleEntityProps = {
             id: new Id(battle.id),
             playerIds: new PlayerIds(battle.playerIds.map((id: string) => new Id(id))),
@@ -42,4 +42,4 @@ export class BattleRedisMapper {
     }
 }
 
-export default BattleRedisMapper;
+export default BattleCacheMapper;

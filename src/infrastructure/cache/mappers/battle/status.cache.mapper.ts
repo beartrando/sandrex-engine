@@ -1,7 +1,7 @@
 import Status from "../../../../domain/battle/value-objects/status.vo";
 import StatusEnum from "../../../../domain/battle/enums/status.enum";
 
-export class StatusRedisMapper {
+export class StatusCacheMapper {
 
     static toPersistence(status: Status): string {
         return status.value;
@@ -21,4 +21,4 @@ export class StatusRedisMapper {
     }
 }
 
-export default StatusRedisMapper;
+export default StatusCacheMapper;

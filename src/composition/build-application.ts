@@ -20,7 +20,7 @@ import authConfig from "../infrastructure/auth/config";
 import CacheService from "../infrastructure/cache/service";
 import CacheStore from "../infrastructure/cache/cache-store";
 import redisConfig from "../infrastructure/cache/config/redis.config";
-import BattleRedisMapper from "../infrastructure/state-store/mappers/battle.redis.mapper";
+import BattleCacheMapper from "../infrastructure/cache/mappers/battle.cache.mapper";
 
 import CachedIdStateStore from "../infrastructure/state-store/state-stores/cached-id-state-store";
 import StateStoreService from "../infrastructure/state-store/service";
@@ -62,7 +62,7 @@ function buildApplication() {
     const battleCacheStore = new CacheStore(
         "engine:",
         "engine:index",
-        BattleRedisMapper,
+        BattleCacheMapper,
     );
 
     cacheService.register(
