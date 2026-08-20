@@ -1,5 +1,6 @@
 import BattleEntity from "../battle.entity";
 import CellValueEnum from "../enums/cell-value.enum";
+import logger from "@shared/logger";
 
 export class BattleWinRule {
     calculate(entity: BattleEntity): boolean {
@@ -18,7 +19,7 @@ export class BattleWinRule {
             [2, 4, 6],
         ];
 
-        return winningLines.some(([a, b, c]) => {
+        const result = winningLines.some(([a, b, c]) => {
             const value = cells[a];
 
             return (
@@ -27,6 +28,11 @@ export class BattleWinRule {
                 value === cells[c]
             );
         });
+
+        logger.log(entity);
+        logger.log(result);
+
+        return result;
     }
 }
 

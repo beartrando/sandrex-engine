@@ -126,8 +126,7 @@ function buildApplication() {
 
     // Message consumers
     const battleStartedConsumer = new BattleStartedConsumer(
-        battleStartUseCase,
-        engineHandler,
+        battleService
     );
 
     const messageService = new MessageService(

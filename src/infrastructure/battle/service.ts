@@ -12,6 +12,7 @@ import BattleProtoMapper from "../grpc/mappers/battle.proto.mapper";
 import BattleMove from "../../domain/battle/value-objects/battle-move.vo";
 import CachedIdStateStoreInterface from "../state-store/interfaces/cached-id-state-store.interface";
 import Id from "../../domain/common/value-objects/id.vo";
+import logger from "@shared/logger";
 
 export class BattleService {
     constructor(
@@ -65,6 +66,7 @@ export class BattleService {
 
     async start(battleEntity: BattleEntity): Promise<void> {
 
+        // logger.log(battleEntity);
         const battle = this.battleStartUseCase.execute(battleEntity);
 
         await this.battleStateStore.set(battle);
@@ -78,6 +80,7 @@ export class BattleService {
         this.jobService.enqueue(this.topicBattleUpdated, battle);
 
         const resp = engineProto.BattleResponse.create({battle: BattleProtoMapper.toProto(battle)})
+        // logger.log(resp);
 
         this.engineStreamContainer.write(resp);
     }
