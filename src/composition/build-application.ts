@@ -36,11 +36,12 @@ import messageProducersConfig from "../infrastructure/message/configs/producers.
 
 import TimerService from "../infrastructure/timer/service";
 import BattleTimeoutCallbackFactory from "../infrastructure/timer/callbacks/battle-timeout-callback-factory";
-import BattleTimeoutUseCase from "../application/use-cases/engine/battle-timeout";
 import domainBattleConfig from "../domain/battle/config/config";
 import TimerCallbackFactoryHolder from "../infrastructure/timer/callback-factory-holder";
 import BattleEntity from "../domain/battle/battle.entity";
 import TimerKey from "../infrastructure/timer/value-objects/timer-key.vo";
+import BattleService from "../infrastructure/battle/service";
+import EngineStreamContainer from "../infrastructure/grpc/streams/engine.stream.container";
 
 
 function buildApplication() {
@@ -83,37 +84,31 @@ function buildApplication() {
     );
 
     // Battle use cases
-    const battleStartUseCase = new BattleStartUseCase(
+    const battleStartUseCase = new BattleStartUseCase();
+
+    const battleMoveUseCase = new BattleMoveUseCase();
+
+    const battleLeaveUseCase = new BattleLeaveUseCase();
+
+    const engineStreamContainer = new EngineStreamContainer();
+
+    const battleService = new BattleService(
+        battleStartUseCase,
+        battleMoveUseCase,
+        battleLeaveUseCase,
         battleStateStore,
         timerService,
         jobService,
+        engineStreamContainer,
         messageProducersConfig.battleStarted,
-    );
-
-    const battleMoveUseCase = new BattleMoveUseCase(
-        battleStateStore,
-        timerService,
-        jobService,
         messageProducersConfig.battleUpdated,
+        messageProducersConfig.battleFinished,
     );
 
-    const battleLeaveUseCase = new BattleLeaveUseCase(
-        battleStateStore,
-        timerService,
-        jobService,
-        messageProducersConfig.battleUpdated
-    );
-
-    const battleTimeoutUseCase = new BattleTimeoutUseCase(
-        battleStateStore,
-        timerService,
-        jobService,
-        messageProducersConfig.battleUpdated,
-    );
 
     // Timer callbacks
     const battleTimeoutCallbackFactory = new BattleTimeoutCallbackFactory(
-        battleTimeoutUseCase,
+        battleService,
     );
 
     timerCallbackFactoryHolder.factory = battleTimeoutCallbackFactory;
@@ -125,9 +120,8 @@ function buildApplication() {
 
     // Handlers
     const engineHandler = new EngineHandler(
-        battleStartUseCase,
-        battleMoveUseCase,
-        battleLeaveUseCase,
+        battleService,
+        engineStreamContainer,
     );
 
     // Message consumers

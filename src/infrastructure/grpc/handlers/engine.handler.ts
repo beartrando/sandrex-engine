@@ -9,54 +9,34 @@ import BattleEntity from "../../../domain/battle/battle.entity";
 import BattleProtoMapper from "../mappers/battle.proto.mapper";
 import BattleMoveRedisMapper from "../mappers/battle-move.proto.mapper";
 import BattleLeaveRedisMapper from "../mappers/battle-leave.proto.mapper";
+import EngineStream from "../types/engine.stream";
+import EngineStreamContainer from "../streams/engine.stream.container";
+import BattleService from "../../battle/service";
 
 
 export class EngineHandler {
     constructor(
-        private readonly battleStartUseCase: BattleStartUseCase,
-        private readonly battleMoveUseCase: BattleMoveUseCase,
-        private readonly battleLeaveUseCase: BattleLeaveUseCase
+        private readonly battleService: BattleService,
+        private readonly engineStreamContainer: EngineStreamContainer,
     ) {
     }
 
-    async battleChannel(
-        call: grpc.ServerDuplexStream<engineProto.BattleRequest, engineProto.BattleResponse>
-    ) {
+    async battleChannel(call: EngineStream) {
+        this.engineStreamContainer.connect(call);
         try {
             // слушаем входящие события от Streaming
             call.on("data", async (event: engineProto.BattleRequest) => {
                 try {
                     if (event.start) {
                         const battleEntity: BattleEntity = BattleProtoMapper.toDomain(event.start);
-
-                        // logger.log(battleObj);
-
-                        const battle = BattleProtoMapper.toProto(await this.battleStartUseCase.execute(battleEntity));
-                        if (battle) {
-                            call.write(engineProto.BattleResponse.create({battle}));
-                        }
-
-                    }
-
-                    if (event.move) {
+                        await this.battleService.start(battleEntity);
+                    } else if (event.move) {
                         const battleMove = BattleMoveRedisMapper.toDomain(event.move);
-
-                        const battleEntity = await this.battleMoveUseCase.execute(battleMove);
-
-                        if (battleEntity) {
-                            const battle = BattleProtoMapper.toProto(battleEntity);
-                            // logger.log(engine);
-                            call.write(engineProto.BattleResponse.create({battle}));
-                        }
-                    }
-
-                    if (event.leave) {
+                        await this.battleService.move(battleMove);
+                    } else  if (event.leave) {
                         const battleLeave = BattleLeaveRedisMapper.toDomain(event.leave);
-
-                        await this.battleLeaveUseCase.execute(battleLeave);
-                    }
-
-                    if (event.ping) {
+                        await this.battleService.leave(battleLeave);
+                    } else if (event.ping) {
                         // logger.info('Streaming-engine stream Ping');
                         const ping = emptyProto.Empty.create({});
                         call.write(engineProto.BattleResponse.create({ping}));
@@ -70,15 +50,18 @@ export class EngineHandler {
 
             call.on("end", () => {
                 call.end();
+                this.engineStreamContainer.disconnect(call);
             });
 
             call.on("error", (err) => {
+                this.engineStreamContainer.disconnect(call);
                 console.error("Stream error:", err);
                 call.end();
             });
 
             logger.log('Grpc streaming connection established');
         } catch (err: any) {
+            this.engineStreamContainer.disconnect(call);
             console.error("battleChannel error:", err);
             // callbackError(callback, err);
             call.end();
