@@ -8,9 +8,7 @@ export class BattleStartUseCase {
     execute(battle: BattleEntity): BattleEntity {
         const battleDomain = BattleDomain.of(battle);
 
-        battleDomain.start();
-
-        return battle;
+        return battleDomain.start();
     }
 }
 

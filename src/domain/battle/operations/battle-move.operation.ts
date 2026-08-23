@@ -5,6 +5,7 @@ import BattleCellRule from "../rules/battle-cell.rule";
 import BattleDrawRule from "../rules/battle-draw.rule";
 import BattleTurnRule from "../rules/battle-turn.rule";
 import BattleWinRule from "../rules/battle-win.rule";
+import logger from "@shared/logger";
 
 export class BattleMoveOperation {
     constructor(
@@ -21,14 +22,17 @@ export class BattleMoveOperation {
     ): BattleEntity {
         const playerId = move.profileId;
 
-        if (playerId != this.turnRule.calculate(entity)) {
+        if (playerId.value != this.turnRule.calculate(entity).value) {
             return entity;
         }
 
         if (!this.cellRule.calculate(entity, move.cellIdx)) {
+            logger.log('pupupu');
             return entity;
         }
 
+        logger.log(entity)
+        logger.log(move)
         entity.move(move);
 
         if (this.winRule.calculate(entity)) {
@@ -37,6 +41,7 @@ export class BattleMoveOperation {
             entity.finish();
         }
 
+        logger.log(entity)
         return entity;
     }
 }

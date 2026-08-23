@@ -1,18 +1,16 @@
 import TimerCallbackInterface from "../interfaces/timer-callback.interface";
-import BattleEntity from "../../../domain/battle/battle.entity";
 import TimerCallbackFactoryInterface from "../interfaces/timer-callback-factory.interface";
 import BattleService from "../../battle/service";
+import Id from "../../../domain/common/value-objects/id.vo";
 
-export class BattleTimeoutCallbackFactory implements TimerCallbackFactoryInterface<BattleEntity> {
+export class BattleTimeoutCallbackFactory implements TimerCallbackFactoryInterface<Id> {
 
     constructor(
         private readonly battleService: BattleService,
     ) {
     }
 
-    create(entity: BattleEntity): TimerCallbackInterface {
-        const battleId = entity.id;
-
+    create(battleId: Id): TimerCallbackInterface {
         return async () => {
             await this.battleService.timeout(battleId);
         };

@@ -12,6 +12,7 @@ import BattleWinRule from "./rules/battle-win.rule";
 import Id from "../common/value-objects/id.vo";
 import BattleStartOperation from "./operations/battle-start.operation";
 import BattleStatusActiveRule from "./rules/battle-status-active.rule";
+import logger from "@shared/logger";
 
 const cellRule = new BattleCellRule();
 const turnRule = new BattleTurnRule();
@@ -55,6 +56,7 @@ export class BattleDomain {
     }
 
     leave(leave: BattleLeave): BattleEntity {
+        logger.log(leave);
         return leaveOperation.execute(this.entity, leave);
     }
 

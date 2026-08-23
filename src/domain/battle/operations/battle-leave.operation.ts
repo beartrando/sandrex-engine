@@ -14,8 +14,7 @@ export class BattleLeaveOperation {
     ): BattleEntity {
         const currentPlayerId = this.turnRule.calculate(entity);
 
-        // здесь логика leave
-        // ...
+        entity.leave(currentPlayerId);
 
         return entity;
     }

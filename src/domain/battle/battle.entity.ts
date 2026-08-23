@@ -5,6 +5,7 @@ import BattleStatusEnum from "./enums/status.enum";
 import BattleMove from "./value-objects/battle-move.vo";
 import BattleLeave from "./value-objects/battle-leave.vo";
 import Id from "../common/value-objects/id.vo";
+import logger from "@shared/logger";
 
 export type BattleEntityProps = {
     id?: Id;
@@ -37,15 +38,6 @@ export class BattleEntity {
         );
     }
 
-    start(): BattleEntity {
-        this.board = Board.empty();
-        this.status = new Status(BattleStatusEnum.Active);
-        this.winnerId = null;
-        this.lastMoveAt = new Date();
-
-        return this;
-    }
-
     move(move: BattleMove): BattleEntity {
         const cellValue = this.playerIds.cellValueOf(move.profileId);
 
@@ -59,15 +51,17 @@ export class BattleEntity {
         return this;
     }
 
-    leave(leave: BattleLeave): BattleEntity {
+    leave(profileId: Id): BattleEntity {
+        logger.log(new Error().stack);
+
         this.status = new Status(BattleStatusEnum.Finished);
-        this.winnerId = this.playerIds.opponentOf(leave.profileId);
-        this.lastMoveAt = new Date();
+        this.winnerId = this.playerIds.opponentOf(profileId);
 
         return this;
     }
 
     finish(playerId?: Id): BattleEntity {
+        logger.log(new Error().stack);
         this.status = new Status(BattleStatusEnum.Finished);
         if (playerId) {
             this.winnerId = playerId;
