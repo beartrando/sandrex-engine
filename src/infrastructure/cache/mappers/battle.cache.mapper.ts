@@ -4,7 +4,7 @@ import BattleEntity, {BattleEntityProps,} from "../../../domain/battle/battle.en
 import BoardMapper from "./battle/board.cache.mapper";
 import StatusMapper from "./battle/status.cache.mapper";
 import Id from "../../../domain/common/value-objects/id.vo";
-import PlayerIds from "../../../domain/battle/value-objects/player-ids.vo";
+import BattlePlayerIds from "../../../domain/battle/value-objects/battle-player-ids.vo";
 
 export interface BattleCacheObject {
     id: string;
@@ -31,7 +31,7 @@ export class BattleCacheMapper {
     static toDomain(battle: BattleCacheObject): BattleEntity {
         const props: BattleEntityProps = {
             id: new Id(battle.id),
-            playerIds: new PlayerIds(battle.playerIds.map((id: string) => new Id(id))),
+            playerIds: new BattlePlayerIds(battle.playerIds.map((id: string) => new Id(id))),
             board: BoardMapper.toDomain(battle.board),
             status: StatusMapper.toDomain(battle.status),
             winnerId: battle.winnerId ? new Id(battle.winnerId) : null,

@@ -1,16 +1,16 @@
-import CellValueEnum from "../../../../domain/battle/enums/cell-value.enum";
+import BattleCellValueEnum from "../../../../domain/battle/enums/battle-cell-value.enum";
 
 export class CellValueCacheMapper {
-    static toPersistence(cell: CellValueEnum): string {
+    static toPersistence(cell: BattleCellValueEnum): string {
         return cell;
     }
 
-    static toDomain(cell: string): CellValueEnum {
-        if (!Object.values(CellValueEnum).includes(cell as CellValueEnum)) {
+    static toDomain(cell: string): BattleCellValueEnum {
+        if (!Object.values(BattleCellValueEnum).includes(cell as BattleCellValueEnum)) {
             throw new Error(`Unknown CellValue: ${cell}`);
         }
 
-        return cell as CellValueEnum;
+        return cell as BattleCellValueEnum;
     }
 }
 

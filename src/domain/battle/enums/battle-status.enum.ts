@@ -1,8 +1,8 @@
-export enum StatusEnum {
+export enum BattleStatusEnum {
     Unknown = "Unknown",
     New = "New",
     Active = "Active",
     Finished = "Finished",
 }
 
-export default StatusEnum;
+export default BattleStatusEnum;

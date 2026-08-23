@@ -13,8 +13,8 @@ export class Id {
         }
     }
 
-    static create(): Id {
-        return new Id(randomUUID());
+    static create(id?: string): Id {
+        return new Id(id ?? randomUUID());
     }
 
     equals(other: Id): boolean {

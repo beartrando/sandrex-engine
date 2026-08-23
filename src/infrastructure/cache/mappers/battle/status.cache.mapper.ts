@@ -1,22 +1,22 @@
-import Status from "../../../../domain/battle/value-objects/status.vo";
-import StatusEnum from "../../../../domain/battle/enums/status.enum";
+import BattleStatus from "../../../../domain/battle/value-objects/battle-status.vo";
+import BattleStatusEnum from "../../../../domain/battle/enums/battle-status.enum";
 
 export class StatusCacheMapper {
 
-    static toPersistence(status: Status): string {
+    static toPersistence(status: BattleStatus): string {
         return status.value;
     }
 
-    static toDomain(status: string): Status {
+    static toDomain(status: string): BattleStatus {
         switch (status) {
-            case StatusEnum.New:
-                return new Status(StatusEnum.New);
-            case StatusEnum.Active:
-                return new Status(StatusEnum.Active);
-            case StatusEnum.Finished:
-                return new Status(StatusEnum.Finished);
+            case BattleStatusEnum.New:
+                return new BattleStatus(BattleStatusEnum.New);
+            case BattleStatusEnum.Active:
+                return new BattleStatus(BattleStatusEnum.Active);
+            case BattleStatusEnum.Finished:
+                return new BattleStatus(BattleStatusEnum.Finished);
             default:
-                return new Status(StatusEnum.Unknown);
+                return new BattleStatus(BattleStatusEnum.Unknown);
         }
     }
 }

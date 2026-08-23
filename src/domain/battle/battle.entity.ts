@@ -1,17 +1,17 @@
-import Board from "./value-objects/board.vo";
-import PlayerIds from "./value-objects/player-ids.vo";
-import Status from "./value-objects/status.vo";
-import BattleStatusEnum from "./enums/status.enum";
+import BattleBoard from "./value-objects/battle-board.vo";
+import BattlePlayerIds from "./value-objects/battle-player-ids.vo";
+import BattleStatus from "./value-objects/battle-status.vo";
+import BattleStatusEnum from "./enums/battle-status.enum";
 import BattleMove from "./value-objects/battle-move.vo";
 import BattleLeave from "./value-objects/battle-leave.vo";
 import Id from "../common/value-objects/id.vo";
 import logger from "@shared/logger";
 
 export type BattleEntityProps = {
-    id?: Id;
-    playerIds: PlayerIds;
-    board?: Board;
-    status?: Status;
+    id: Id;
+    playerIds: BattlePlayerIds;
+    board?: BattleBoard;
+    status?: BattleStatus;
     winnerId?: Id | null;
     lastMoveAt?: Date | null;
 };
@@ -19,9 +19,9 @@ export type BattleEntityProps = {
 export class BattleEntity {
     constructor(
         readonly id: Id,
-        readonly playerIds: PlayerIds,
-        public board: Board,
-        public status: Status,
+        readonly playerIds: BattlePlayerIds,
+        public board: BattleBoard,
+        public status: BattleStatus,
         public winnerId: Id | null,
         public lastMoveAt: Date | null,
     ) {
@@ -29,10 +29,10 @@ export class BattleEntity {
 
     static create(props: BattleEntityProps): BattleEntity {
         return new BattleEntity(
-            props.id ?? Id.create(),
+            props.id,
             props.playerIds,
-            props.board ?? Board.empty(),
-            props.status ?? new Status(BattleStatusEnum.New),
+            props.board ?? BattleBoard.empty(),
+            props.status ?? new BattleStatus(BattleStatusEnum.New),
             props.winnerId ?? null,
             props.lastMoveAt ?? null,
         );
@@ -52,9 +52,9 @@ export class BattleEntity {
     }
 
     leave(profileId: Id): BattleEntity {
-        logger.log(new Error().stack);
+        // logger.log(new Error().stack);
 
-        this.status = new Status(BattleStatusEnum.Finished);
+        this.status = new BattleStatus(BattleStatusEnum.Finished);
         this.winnerId = this.playerIds.opponentOf(profileId);
 
         return this;
@@ -62,7 +62,7 @@ export class BattleEntity {
 
     finish(playerId?: Id): BattleEntity {
         logger.log(new Error().stack);
-        this.status = new Status(BattleStatusEnum.Finished);
+        this.status = new BattleStatus(BattleStatusEnum.Finished);
         if (playerId) {
             this.winnerId = playerId;
         }

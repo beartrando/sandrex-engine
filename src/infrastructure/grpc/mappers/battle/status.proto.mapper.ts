@@ -1,18 +1,18 @@
 import * as battleProto from "../../../../contracts/proto/battle";
-import Status from "../../../../domain/battle/value-objects/status.vo";
-import StatusEnum from "../../../../domain/battle/enums/status.enum";
+import BattleStatus from "../../../../domain/battle/value-objects/battle-status.vo";
+import BattleStatusEnum from "../../../../domain/battle/enums/battle-status.enum";
 
 export class StatusProtoMapper {
 
     static toProto(
-        status: Status,
+        status: BattleStatus,
     ): battleProto.BattleStatus {
         switch (status.value) {
-            case StatusEnum.New:
+            case BattleStatusEnum.New:
                 return battleProto.BattleStatus.NEW;
-            case StatusEnum.Active:
+            case BattleStatusEnum.Active:
                 return battleProto.BattleStatus.ACTIVE;
-            case StatusEnum.Finished:
+            case BattleStatusEnum.Finished:
                 return battleProto.BattleStatus.FINISHED;
             default:
                 return battleProto.BattleStatus.UNKNOWN;
@@ -21,16 +21,16 @@ export class StatusProtoMapper {
 
     static toDomain(
         status: battleProto.BattleStatus,
-    ): Status {
+    ): BattleStatus {
         switch (status) {
             case battleProto.BattleStatus.NEW:
-                return new Status(StatusEnum.New);
+                return new BattleStatus(BattleStatusEnum.New);
             case battleProto.BattleStatus.ACTIVE:
-                return new Status(StatusEnum.Active);
+                return new BattleStatus(BattleStatusEnum.Active);
             case battleProto.BattleStatus.FINISHED:
-                return new Status(StatusEnum.Finished);
+                return new BattleStatus(BattleStatusEnum.Finished);
             default:
-                return new Status(StatusEnum.Unknown);
+                return new BattleStatus(BattleStatusEnum.Unknown);
         }
     }
 }

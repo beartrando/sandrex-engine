@@ -1,7 +1,7 @@
 import Id from "../../common/value-objects/id.vo";
-import CellValueEnum from "../enums/cell-value.enum";
+import BattleCellValueEnum from "../enums/battle-cell-value.enum";
 
-export class PlayerIds {
+export class BattlePlayerIds {
     constructor(
         readonly value: readonly Id[],
     ) {
@@ -21,16 +21,16 @@ export class PlayerIds {
         }
     }
 
-    cellValueOf(playerId: Id): CellValueEnum {
+    cellValueOf(playerId: Id): BattleCellValueEnum {
         if (this.value[0].equals(playerId)) {
-            return CellValueEnum.X;
+            return BattleCellValueEnum.X;
         }
 
         if (
             this.value.length === 2 &&
             this.value[1].equals(playerId)
         ) {
-            return CellValueEnum.O;
+            return BattleCellValueEnum.O;
         }
 
         throw new Error("Player does not belong to engine");
@@ -53,4 +53,4 @@ export class PlayerIds {
     }
 }
 
-export default PlayerIds;
+export default BattlePlayerIds;

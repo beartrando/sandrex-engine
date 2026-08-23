@@ -1,10 +1,10 @@
 import BattleEntity from "../battle.entity";
-import CellValueEnum from "../enums/cell-value.enum";
-import StatusEnum from "../enums/status.enum";
+import BattleCellValueEnum from "../enums/battle-cell-value.enum";
+import BattleStatusEnum from "../enums/battle-status.enum";
 
 export class BattleStatusActiveRule {
     calculate(entity: BattleEntity): boolean {
-        return entity.status.value == StatusEnum.Active;
+        return entity.status.value == BattleStatusEnum.Active;
     }
 }
 

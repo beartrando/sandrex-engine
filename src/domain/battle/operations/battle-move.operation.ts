@@ -22,13 +22,14 @@ export class BattleMoveOperation {
     ): BattleEntity {
         const playerId = move.profileId;
 
-        if (playerId.value != this.turnRule.calculate(entity).value) {
-            return entity;
+        const turnPlayerId = this.turnRule.calculate(entity);
+
+        if (!playerId.equals(turnPlayerId)) {
+            throw new Error("Cannot move battle: not your turn");
         }
 
         if (!this.cellRule.calculate(entity, move.cellIdx)) {
-            logger.log('pupupu');
-            return entity;
+            throw new Error("Cannot move battle: cell is not empty");
         }
 
         logger.log(entity)

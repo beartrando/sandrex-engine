@@ -1,5 +1,5 @@
 import BattleEntity from "../battle.entity";
-import CellValueEnum from "../enums/cell-value.enum";
+import BattleCellValueEnum from "../enums/battle-cell-value.enum";
 import logger from "@shared/logger";
 
 export class BattleWinRule {
@@ -23,7 +23,7 @@ export class BattleWinRule {
             const value = cells[a];
 
             return (
-                value !== CellValueEnum.EMPTY &&
+                value !== BattleCellValueEnum.EMPTY &&
                 value === cells[b] &&
                 value === cells[c]
             );
