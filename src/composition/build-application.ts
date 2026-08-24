@@ -42,15 +42,15 @@ import BattleEntity from "../domain/battle/battle.entity";
 import TimerKey from "../infrastructure/timer/value-objects/timer-key.vo";
 import BattleService from "../infrastructure/battle/service";
 import EngineStreamContainer from "../infrastructure/grpc/streams/engine.stream.container";
-import Id from "../domain/common/value-objects/id.vo";
+import BattleId from "../domain/battle/value-objects/battle-id.vo";
 
 
 function buildApplication() {
     // Infrastructure
     const authService = new AuthService(authConfig);
-    const timerCallbackFactoryHolder = new TimerCallbackFactoryHolder<Id>();
+    const timerCallbackFactoryHolder = new TimerCallbackFactoryHolder<BattleId>();
     const timerService =
-        new TimerService<TimerKey, Id>(timerCallbackFactoryHolder, domainBattleConfig.battleTurnTimeLimit);
+        new TimerService<TimerKey, BattleId>(timerCallbackFactoryHolder, domainBattleConfig.battleTurnTimeLimit);
 
     const cacheService = new CacheService(redisConfig);
 
@@ -75,7 +75,7 @@ function buildApplication() {
     // State stores
     const stateStoreService = new StateStoreService();
 
-    const battleStateStore = new CachedIdStateStore(
+    const battleStateStore = new CachedIdStateStore<BattleEntity, BattleId>(
         battleCacheStore,
     );
 

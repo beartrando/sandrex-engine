@@ -1,10 +1,10 @@
-import BattleEntity, {BattleEntityProps,} from "../../../domain/battle/battle.entity";
-
+import BattleEntity from "../../../domain/battle/battle.entity";
 
 import BoardMapper from "./battle/board.cache.mapper";
 import StatusMapper from "./battle/status.cache.mapper";
-import Id from "../../../domain/common/value-objects/id.vo";
 import BattlePlayerIds from "../../../domain/battle/value-objects/battle-player-ids.vo";
+import BattleId from "../../../domain/battle/value-objects/battle-id.vo";
+import ProfileId from "../../../domain/profile/value-objects/profile-id.vo";
 
 export interface BattleCacheObject {
     id: string;
@@ -20,7 +20,7 @@ export class BattleCacheMapper {
     static toPersistence(battle: BattleEntity): BattleCacheObject {
         return {
             id: battle.id.value,
-            playerIds: battle.playerIds.value.map((id: Id) => id.value),
+            playerIds: battle.playerIds.value.map((id: ProfileId) => id.value),
             board: BoardMapper.toPersistence(battle.board),
             status: StatusMapper.toPersistence(battle.status),
             winnerId: battle.winnerId?.value ?? null,
@@ -29,12 +29,12 @@ export class BattleCacheMapper {
     }
 
     static toDomain(battle: BattleCacheObject): BattleEntity {
-        const props: BattleEntityProps = {
-            id: new Id(battle.id),
-            playerIds: new BattlePlayerIds(battle.playerIds.map((id: string) => new Id(id))),
+        const props = {
+            id: new BattleId(battle.id),
+            playerIds: new BattlePlayerIds(battle.playerIds.map((id: string) => new ProfileId(id))),
             board: BoardMapper.toDomain(battle.board),
             status: StatusMapper.toDomain(battle.status),
-            winnerId: battle.winnerId ? new Id(battle.winnerId) : null,
+            winnerId: battle.winnerId ? new ProfileId(battle.winnerId) : null,
             lastMoveAt: battle.lastMoveAt,
         };
 

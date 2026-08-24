@@ -2,11 +2,14 @@ import Id from "../../../domain/common/value-objects/id.vo";
 import CachedIdStateStoreInterface from "../interfaces/cached-id-state-store.interface";
 import CacheStore from "../../cache/cache-store";
 
-export class CachedIdStateStore<TEntity extends { id: Id }> implements CachedIdStateStoreInterface<TEntity> {
+export class CachedIdStateStore<
+    TEntity extends { id: TId },
+    TId extends Id<TId>,
+> implements CachedIdStateStoreInterface<TEntity> {
     private readonly _registry = new Map<string, TEntity>();
 
     constructor(
-        private readonly cacheStore: CacheStore<TEntity>,
+        private readonly cacheStore: CacheStore<TEntity, TId>,
     ) {
     }
 
@@ -22,13 +25,13 @@ export class CachedIdStateStore<TEntity extends { id: Id }> implements CachedIdS
     }
 
     async get(
-        id: Id,
+        id: TId,
     ): Promise<TEntity | null> {
         return this._registry.get(id.value) ?? null;
     }
 
     async delete(
-        id: Id,
+        id: TId,
     ): Promise<void> {
         this._registry.delete(id.value);
 

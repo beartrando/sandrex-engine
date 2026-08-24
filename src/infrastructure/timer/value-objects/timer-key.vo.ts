@@ -4,7 +4,7 @@ export class TimerKey {
     private constructor(readonly value: string) {
     }
 
-    static create<TEntity extends Id>(entity: TEntity): TimerKey {
+    static create<TId extends Id<TId>>(entity: TId): TimerKey {
         return new TimerKey(entity.value);
     }
 

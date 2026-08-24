@@ -1,6 +1,7 @@
 import BattleEntity from "./battle.entity";
 import BattleMove from "./value-objects/battle-move.vo";
 import BattleLeave from "./value-objects/battle-leave.vo";
+import BattleId from "./value-objects/battle-id.vo";
 
 import BattleMoveOperation from "./operations/battle-move.operation";
 import BattleLeaveOperation from "./operations/battle-leave.operation";
@@ -9,7 +10,6 @@ import BattleCellRule from "./rules/battle-cell.rule";
 import BattleDrawRule from "./rules/battle-draw.rule";
 import BattleTurnRule from "./rules/battle-turn.rule";
 import BattleWinRule from "./rules/battle-win.rule";
-import Id from "../common/value-objects/id.vo";
 import BattleStartOperation from "./operations/battle-start.operation";
 import BattleStatusActiveRule from "./rules/battle-status-active.rule";
 import logger from "@shared/logger";
@@ -60,7 +60,7 @@ export class BattleDomain {
         return leaveOperation.execute(this.entity, leave);
     }
 
-    turn(): Id {
+    turn(): BattleId {
         return turnRule.calculate(this.entity);
     }
 }

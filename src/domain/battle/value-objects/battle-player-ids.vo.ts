@@ -1,9 +1,9 @@
-import Id from "../../common/value-objects/id.vo";
 import BattleCellValueEnum from "../enums/battle-cell-value.enum";
+import ProfileId from "../../profile/value-objects/profile-id.vo";
 
 export class BattlePlayerIds {
     constructor(
-        readonly value: readonly Id[],
+        readonly value: readonly ProfileId[],
     ) {
         if (value.length < 1 || value.length > 2) {
             throw new Error(
@@ -21,7 +21,7 @@ export class BattlePlayerIds {
         }
     }
 
-    cellValueOf(playerId: Id): BattleCellValueEnum {
+    cellValueOf(playerId: ProfileId): BattleCellValueEnum {
         if (this.value[0].equals(playerId)) {
             return BattleCellValueEnum.X;
         }
@@ -36,7 +36,7 @@ export class BattlePlayerIds {
         throw new Error("Player does not belong to engine");
     }
 
-    opponentOf(playerId: Id): Id | null {
+    opponentOf(playerId: ProfileId): ProfileId | null {
         const index = this.value.findIndex(
             id => id.equals(playerId),
         );

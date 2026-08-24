@@ -11,11 +11,11 @@ import * as engineProto from "../../contracts/proto/engine";
 import BattleProtoMapper from "../grpc/mappers/battle.proto.mapper";
 import BattleMove from "../../domain/battle/value-objects/battle-move.vo";
 import CachedIdStateStoreInterface from "../state-store/interfaces/cached-id-state-store.interface";
-import Id from "../../domain/common/value-objects/id.vo";
 import logger from "@shared/logger";
 import BattleDomain from "../../domain/battle/battle.domain";
 import BattleStatusEnum from "../../domain/battle/enums/battle-status.enum";
 import BattleStatus from "../../domain/battle/value-objects/battle-status.vo";
+import BattleId from "../../domain/battle/value-objects/battle-id.vo";
 
 export class BattleService {
     constructor(
@@ -23,7 +23,7 @@ export class BattleService {
         private readonly battleMoveUseCase: BattleMoveUseCase,
         private readonly battleLeaveUseCase: BattleLeaveUseCase,
         private readonly battleStateStore: CachedIdStateStoreInterface<BattleEntity>,
-        private readonly timerService: TimerServiceInterface<TimerKey, Id>,
+        private readonly timerService: TimerServiceInterface<TimerKey, BattleId>,
         private readonly jobService: JobService,
         private readonly engineStreamContainer: EngineStreamContainer,
         private readonly topicBattleStarted: string,
@@ -32,7 +32,7 @@ export class BattleService {
     ) {
     }
 
-    async timeout(battleId: Id): Promise<void> {
+    async timeout(battleId: BattleId): Promise<void> {
         logger.log('battleTimeout');
 
         const battleEntity = await this.battleStateStore.get(battleId);
@@ -127,7 +127,7 @@ export class BattleService {
         this.terminate(battleLeave.battleId);
     }
 
-    async terminate(battleId: Id): Promise<void> {
+    async terminate(battleId: BattleId): Promise<void> {
         const battleEntity = await this.battleStateStore.get(battleId);
         if (battleEntity) {
             await this.battleStateStore.delete(battleId);

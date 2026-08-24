@@ -4,25 +4,26 @@ import BattleStatus from "./value-objects/battle-status.vo";
 import BattleStatusEnum from "./enums/battle-status.enum";
 import BattleMove from "./value-objects/battle-move.vo";
 import BattleLeave from "./value-objects/battle-leave.vo";
-import Id from "../common/value-objects/id.vo";
+import BattleId from "../battle/value-objects/battle-id.vo";
 import logger from "@shared/logger";
+import ProfileId from "../profile/value-objects/profile-id.vo";
 
 export type BattleEntityProps = {
-    id: Id;
+    id: BattleId;
     playerIds: BattlePlayerIds;
     board?: BattleBoard;
     status?: BattleStatus;
-    winnerId?: Id | null;
+    winnerId?: BattleId | null;
     lastMoveAt?: Date | null;
 };
 
 export class BattleEntity {
     constructor(
-        readonly id: Id,
+        readonly id: BattleId,
         readonly playerIds: BattlePlayerIds,
         public board: BattleBoard,
         public status: BattleStatus,
-        public winnerId: Id | null,
+        public winnerId: ProfileId | null,
         public lastMoveAt: Date | null,
     ) {
     }
@@ -51,7 +52,7 @@ export class BattleEntity {
         return this;
     }
 
-    leave(profileId: Id): BattleEntity {
+    leave(profileId: ProfileId): BattleEntity {
         // logger.log(new Error().stack);
 
         this.status = new BattleStatus(BattleStatusEnum.Finished);
@@ -60,7 +61,7 @@ export class BattleEntity {
         return this;
     }
 
-    finish(playerId?: Id): BattleEntity {
+    finish(playerId?: ProfileId): BattleEntity {
         logger.log(new Error().stack);
         this.status = new BattleStatus(BattleStatusEnum.Finished);
         if (playerId) {

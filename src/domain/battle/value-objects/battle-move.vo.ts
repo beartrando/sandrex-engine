@@ -1,16 +1,17 @@
-import Id from "../../common/value-objects/id.vo";
+import BattleId from "../../battle/value-objects/battle-id.vo";
 import battleCellIdx from "./move/cell-idx.vo";
+import ProfileId from "../../profile/value-objects/profile-id.vo";
 
 export type MoveProps = {
-    battleId: Id;
-    profileId: Id;
+    battleId: BattleId;
+    profileId: ProfileId;
     cellIdx: battleCellIdx;
 };
 
 export class BattleMove {
     private constructor(
-        public readonly battleId: Id,
-        public readonly profileId: Id,
+        public readonly battleId: BattleId,
+        public readonly profileId: ProfileId,
         public readonly cellIdx: battleCellIdx,
     ) {
     }

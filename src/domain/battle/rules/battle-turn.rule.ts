@@ -1,8 +1,8 @@
 import BattleEntity from "../battle.entity";
-import Id from "../../common/value-objects/id.vo";
+import BattleId from "../../battle/value-objects/battle-id.vo";
 
 export class BattleTurnRule {
-    calculate(entity: BattleEntity): Id {
+    calculate(entity: BattleEntity): BattleId {
         const moves = entity.board.cells.filter(
             cell => cell !== "EMPTY",
         ).length;
