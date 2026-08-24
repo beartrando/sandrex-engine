@@ -105,10 +105,11 @@ export class BattleService {
     }
 
     async leave(battleLeave: BattleLeave): Promise<void> {
-        logger.log(battleLeave);
+        // logger.log(battleLeave);
 
         const battleEntity = await this.battleStateStore.get(battleLeave.battleId);
         if (battleEntity) {
+            // logger.log('battle exists');
 
             const battle = this.battleLeaveUseCase.execute(battleEntity, battleLeave);
 

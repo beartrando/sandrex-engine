@@ -32,8 +32,8 @@ export class BattleMoveOperation {
             throw new Error("Cannot move battle: cell is not empty");
         }
 
-        logger.log(entity)
-        logger.log(move)
+        // logger.log(entity)
+        // logger.log(move)
         entity.move(move);
 
         if (this.winRule.calculate(entity)) {
@@ -42,7 +42,7 @@ export class BattleMoveOperation {
             entity.finish();
         }
 
-        logger.log(entity)
+        // logger.log(entity)
         return entity;
     }
 }

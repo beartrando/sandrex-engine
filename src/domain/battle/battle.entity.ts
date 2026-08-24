@@ -61,7 +61,7 @@ export class BattleEntity {
     }
 
     finish(playerId?: ProfileId): BattleEntity {
-        logger.log(new Error().stack);
+        // logger.log(new Error().stack);
         this.status = new BattleStatus(BattleStatusEnum.Finished);
         if (playerId) {
             this.winnerId = playerId;
