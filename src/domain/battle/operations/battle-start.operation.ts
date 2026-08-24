@@ -1,7 +1,5 @@
 import BattleEntity from "../battle.entity";
 import BattleBoard from "../value-objects/battle-board.vo";
-import BattleStatusEnum from "../enums/battle-status.enum";
-import BattleStatus from "../value-objects/battle-status.vo";
 import BattleStatusActiveRule from "../rules/battle-status-active.rule";
 
 export class BattleStartOperation {

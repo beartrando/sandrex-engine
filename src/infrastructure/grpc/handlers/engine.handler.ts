@@ -1,10 +1,6 @@
-import * as grpc from '@grpc/grpc-js';
 import * as engineProto from '../../../contracts/proto/engine';
 import * as emptyProto from '../../../contracts/proto/common/empty';
 import logger from "@shared/logger";
-import BattleLeaveUseCase from "../../../application/use-cases/engine/battle-leave";
-import BattleMoveUseCase from "../../../application/use-cases/engine/battle-move";
-import BattleStartUseCase from "../../../application/use-cases/engine/battle-start";
 import BattleEntity from "../../../domain/battle/battle.entity";
 import BattleProtoMapper from "../mappers/battle.proto.mapper";
 import BattleMoveRedisMapper from "../mappers/battle-move.proto.mapper";
@@ -33,7 +29,7 @@ export class EngineHandler {
                     } else if (event.move) {
                         const battleMove = BattleMoveRedisMapper.toDomain(event.move);
                         await this.battleService.move(battleMove);
-                    } else  if (event.leave) {
+                    } else if (event.leave) {
                         const battleLeave = BattleLeaveRedisMapper.toDomain(event.leave);
                         await this.battleService.leave(battleLeave);
                     } else if (event.ping) {

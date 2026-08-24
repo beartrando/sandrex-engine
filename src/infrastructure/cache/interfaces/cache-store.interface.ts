@@ -1,16 +1,18 @@
 import Redis from "ioredis";
 import Id from "../../../domain/common/value-objects/id.vo";
 
-export interface CacheStoreInterface<TEntity extends { id: Id }> {
+export interface CacheStoreInterface<
+    TEntity extends { id: Id<any> },
+> {
     setClient(client: Redis): void;
 
     set(entity: TEntity): Promise<void>;
 
-    get(id: Id): Promise<TEntity | null>;
+    get(id: TEntity["id"]): Promise<TEntity | null>;
 
-    invalidate(id: Id): Promise<void>;
+    invalidate(id: TEntity["id"]): Promise<void>;
 
-    exists(id: Id): Promise<boolean>;
+    exists(id: TEntity["id"]): Promise<boolean>;
 
     loadAll(): Promise<TEntity[]>;
 

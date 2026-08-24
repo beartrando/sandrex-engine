@@ -75,7 +75,7 @@ function buildApplication() {
     // State stores
     const stateStoreService = new StateStoreService();
 
-    const battleStateStore = new CachedIdStateStore<BattleEntity, BattleId>(
+    const battleStateStore = new CachedIdStateStore<BattleEntity>(
         battleCacheStore,
     );
 

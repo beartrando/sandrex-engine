@@ -3,7 +3,6 @@ import BattlePlayerIds from "./value-objects/battle-player-ids.vo";
 import BattleStatus from "./value-objects/battle-status.vo";
 import BattleStatusEnum from "./enums/battle-status.enum";
 import BattleMove from "./value-objects/battle-move.vo";
-import BattleLeave from "./value-objects/battle-leave.vo";
 import BattleId from "../battle/value-objects/battle-id.vo";
 import logger from "@shared/logger";
 import ProfileId from "../profile/value-objects/profile-id.vo";

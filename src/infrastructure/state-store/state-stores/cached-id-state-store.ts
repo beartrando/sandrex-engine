@@ -3,13 +3,12 @@ import CachedIdStateStoreInterface from "../interfaces/cached-id-state-store.int
 import CacheStore from "../../cache/cache-store";
 
 export class CachedIdStateStore<
-    TEntity extends { id: TId },
-    TId extends Id<TId>,
+    TEntity extends { id: Id<any> },
 > implements CachedIdStateStoreInterface<TEntity> {
     private readonly _registry = new Map<string, TEntity>();
 
     constructor(
-        private readonly cacheStore: CacheStore<TEntity, TId>,
+        private readonly cacheStore: CacheStore<TEntity>,
     ) {
     }
 
@@ -24,15 +23,11 @@ export class CachedIdStateStore<
         await this.cacheStore.set(entity);
     }
 
-    async get(
-        id: TId,
-    ): Promise<TEntity | null> {
+    async get(id: TEntity["id"]): Promise<TEntity | null> {
         return this._registry.get(id.value) ?? null;
     }
 
-    async delete(
-        id: TId,
-    ): Promise<void> {
+    async delete(id: TEntity["id"]): Promise<void> {
         this._registry.delete(id.value);
 
         await this.cacheStore.invalidate(id);

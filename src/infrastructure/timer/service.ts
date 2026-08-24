@@ -1,6 +1,5 @@
 import TimerServiceInterface from "./interfaces/timer-service.interface";
 import TimerCallbackFactoryHolderInterface from "./interfaces/timer-callback-factory-holder.interface";
-import domainBattleConfig from "../../domain/battle/config/config";
 
 export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEntity, TEntity> {
     private readonly timers = new Map<KEntity, NodeJS.Timeout>();
@@ -16,7 +15,7 @@ export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEn
         entity: TEntity,
         timeoutMs?: number,
     ): void {
-        const timeout = timeoutMs?? this.timeoutMs;
+        const timeout = timeoutMs ?? this.timeoutMs;
         const callbackFactory = this._callbackFactoryHolder.factory;
 
         const callback = callbackFactory.create(entity);

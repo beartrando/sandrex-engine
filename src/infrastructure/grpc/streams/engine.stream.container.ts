@@ -4,6 +4,10 @@ import * as engineProto from "../../../contracts/proto/engine";
 export class EngineStreamContainer {
     private stream: EngineStream | null = null;
 
+    get current(): EngineStream | null {
+        return this.stream;
+    }
+
     connect(stream: EngineStream): void {
         this.stream = stream;
     }
@@ -12,10 +16,6 @@ export class EngineStreamContainer {
         if (this.stream === stream) {
             this.stream = null;
         }
-    }
-
-    get current(): EngineStream | null {
-        return this.stream;
     }
 
     write(resp: engineProto.BattleResponse): void {

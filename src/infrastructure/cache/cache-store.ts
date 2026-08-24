@@ -4,8 +4,7 @@ import Redis from "ioredis";
 import Id from "../../domain/common/value-objects/id.vo";
 
 export class CacheStore<
-    TEntity extends { id: TId },
-    TId extends Id<TId>,
+    TEntity extends { id: Id<any> },
 > implements CacheStoreInterface<TEntity> {
 
     constructor(
@@ -43,7 +42,7 @@ export class CacheStore<
         );
     }
 
-    async get(id: TId): Promise<TEntity | null> {
+    async get(id: TEntity['id']): Promise<TEntity | null> {
         const data = await this.client.get(
             `${this.prefix}${id.value}`,
         );
@@ -55,7 +54,7 @@ export class CacheStore<
         return this.mapper.toDomain(JSON.parse(data));
     }
 
-    async exists(id: TId): Promise<boolean> {
+    async exists(id: TEntity['id']): Promise<boolean> {
         return this.client.exists(
             `${this.prefix}${id.value}`,
         ).then(Boolean);
@@ -76,7 +75,7 @@ export class CacheStore<
         await this.client.del(this.index);
     }
 
-    async invalidate(id: TId): Promise<void> {
+    async invalidate(id: TEntity['id']): Promise<void> {
         await this.client.del(
             `${this.prefix}${id.value}`,
         );

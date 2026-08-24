@@ -1,5 +1,4 @@
 import BattleEntity from "../battle.entity";
-import BattleCellValueEnum from "../enums/battle-cell-value.enum";
 import BattleStatusEnum from "../enums/battle-status.enum";
 
 export class BattleStatusActiveRule {
