@@ -52,7 +52,7 @@ export class BattleService {
 
     async start(battleEntity: BattleEntity): Promise<void> {
 
-        logger.log(battleEntity);
+        // logger.log(battleEntity);
         const battle = this.battleStartUseCase.execute(battleEntity);
 
         await this.battleStateStore.set(battle);

@@ -6,16 +6,17 @@ export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEn
 
     constructor(
         private readonly _callbackFactoryHolder: TimerCallbackFactoryHolderInterface<TEntity>,
-        private readonly timeoutMs: number,
+        private readonly timeoutS: number,
     ) {
     }
 
     start(
         key: KEntity,
         entity: TEntity,
-        timeoutMs?: number,
+        timeoutS?: number,
     ): void {
-        const timeout = timeoutMs ?? this.timeoutMs;
+        const timeout = 1000 * (timeoutS ?? this.timeoutS);
+        
         const callbackFactory = this._callbackFactoryHolder.factory;
 
         const callback = callbackFactory.create(entity);
@@ -46,9 +47,9 @@ export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEn
     restart(
         key: KEntity,
         entity: TEntity,
-        timeoutMs?: number,
+        timeoutS?: number,
     ): void {
-        this.start(key, entity, timeoutMs);
+        this.start(key, entity, timeoutS);
     }
 }
 
