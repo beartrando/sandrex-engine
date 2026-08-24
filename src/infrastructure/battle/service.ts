@@ -4,7 +4,6 @@ import BattleLeaveUseCase from "../../application/use-cases/engine/battle-leave"
 import BattleMoveUseCase from "../../application/use-cases/engine/battle-move";
 import BattleStartUseCase from "../../application/use-cases/engine/battle-start";
 import BattleLeave from "../../domain/battle/value-objects/battle-leave.vo";
-import TimerKey from "../timer/value-objects/timer-key.vo";
 import BattleEntity from "../../domain/battle/battle.entity";
 import EngineStreamContainer from "../grpc/streams/engine.stream.container";
 import * as engineProto from "../../contracts/proto/engine";
@@ -23,7 +22,7 @@ export class BattleService {
         private readonly battleMoveUseCase: BattleMoveUseCase,
         private readonly battleLeaveUseCase: BattleLeaveUseCase,
         private readonly battleStateStore: CachedIdStateStoreInterface<BattleEntity>,
-        private readonly timerService: TimerServiceInterface<TimerKey, BattleId>,
+        private readonly timerService: TimerServiceInterface<string, BattleId>,
         private readonly jobService: JobService,
         private readonly engineStreamContainer: EngineStreamContainer,
         private readonly topicBattleStarted: string,
@@ -58,7 +57,7 @@ export class BattleService {
         await this.battleStateStore.set(battle);
 
         this.timerService.restart(
-            TimerKey.create(battle.id),
+            battle.id.value,
             battle.id
         );
 
@@ -88,7 +87,7 @@ export class BattleService {
         await this.battleStateStore.set(battle);
 
         this.timerService.restart(
-            TimerKey.create(battle.id),
+            battle.id.value,
             battle.id
         );
 
@@ -133,7 +132,7 @@ export class BattleService {
             await this.battleStateStore.delete(battleId);
         }
 
-        this.timerService.stop(TimerKey.create(battleId));
+        this.timerService.stop(battleId.value);
 
         this.jobService.enqueue(this.topicBattleFinished, battleId);
     }

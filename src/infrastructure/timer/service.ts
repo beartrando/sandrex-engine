@@ -16,7 +16,7 @@ export class TimerService<KEntity, TEntity> implements TimerServiceInterface<KEn
         timeoutS?: number,
     ): void {
         const timeout = 1000 * (timeoutS ?? this.timeoutS);
-        
+
         const callbackFactory = this._callbackFactoryHolder.factory;
 
         const callback = callbackFactory.create(entity);
