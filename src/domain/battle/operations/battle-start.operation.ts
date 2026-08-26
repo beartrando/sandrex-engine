@@ -1,6 +1,7 @@
 import BattleEntity from "../battle.entity";
 import BattleBoard from "../value-objects/battle-board.vo";
 import BattleStatusActiveRule from "../rules/battle-status-active.rule";
+import BattleStatusEnum from "../enums/battle-status.enum";
 
 export class BattleStartOperation {
     constructor(
@@ -18,6 +19,7 @@ export class BattleStartOperation {
 
         // logger.log('New engine started', engine)
         entity.board = BattleBoard.empty();
+        entity.status = BattleStatusEnum.Active;
         entity.winnerId = null;
 
         return entity;
