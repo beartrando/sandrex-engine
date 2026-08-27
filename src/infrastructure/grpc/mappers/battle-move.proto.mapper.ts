@@ -1,6 +1,6 @@
 import * as engineProto from "../../../contracts/proto/engine";
 import BattleMove from "../../../domain/battle/value-objects/battle-move.vo";
-import battleCellIdx from "../../../domain/battle/value-objects/move/cell-idx.vo";
+import BattleMoveCellIdx from "../../../domain/battle/value-objects/move/battle-move-cell-idx.vo";
 import ProfileId from "../../../domain/profile/value-objects/profile-id.vo";
 import BattleId from "../../../domain/battle/value-objects/battle-id.vo";
 
@@ -17,7 +17,7 @@ export class BattleMoveProtoMapper {
         return BattleMove.create({
             battleId: new BattleId(move.battleId),
             profileId: new ProfileId(move.profileId),
-            cellIdx: new battleCellIdx(move.cellIdx),
+            cellIdx: new BattleMoveCellIdx(move.cellIdx),
         });
     }
 }

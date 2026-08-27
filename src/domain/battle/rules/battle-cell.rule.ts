@@ -1,11 +1,11 @@
 import BattleEntity from "../battle.entity";
-import battleCellIdx from "../value-objects/move/cell-idx.vo";
+import BattleMoveCellIdx from "../value-objects/move/battle-move-cell-idx.vo";
 import BattleCellValueEnum from "../enums/battle-cell-value.enum";
 
 export class BattleCellRule {
     calculate(
         entity: BattleEntity,
-        cellIdx: battleCellIdx,
+        cellIdx: BattleMoveCellIdx,
     ): boolean {
         return entity.board.cells[cellIdx.value] === BattleCellValueEnum.EMPTY;
     }
