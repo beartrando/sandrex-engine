@@ -39,7 +39,7 @@ export class Application {
         } catch (err) {
             logger.error(
                 {err},
-                '💥 Failed to start Engine',
+                '💥 Failed to start Engine service',
             );
             process.exit(1);
         }

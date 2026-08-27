@@ -11,14 +11,14 @@ import BattleDrawRule from "./rules/battle-draw.rule";
 import BattleTurnRule from "./rules/battle-turn.rule";
 import BattleWinRule from "./rules/battle-win.rule";
 import BattleStartOperation from "./operations/battle-start.operation";
-import BattleStatusActiveRule from "./rules/battle-status-active.rule";
+import BattleStatusReadyRule from "./rules/battle-status-ready.rule";
 import logger from "@shared/logger";
 
 const cellRule = new BattleCellRule();
 const turnRule = new BattleTurnRule();
 const winRule = new BattleWinRule();
 const drawRule = new BattleDrawRule();
-const statusActiveRule = new BattleStatusActiveRule();
+const statusActiveRule = new BattleStatusReadyRule();
 
 const moveOperation = new BattleMoveOperation(
     cellRule,

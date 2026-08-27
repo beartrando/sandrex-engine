@@ -1,12 +1,12 @@
 import BattleEntity from "../battle.entity";
 import BattleBoard from "../value-objects/battle-board.vo";
-import BattleStatusActiveRule from "../rules/battle-status-active.rule";
+import BattleStatusReadyRule from "../rules/battle-status-ready.rule";
 import BattleStatusEnum from "../enums/battle-status.enum";
 import BattleStatus from "../value-objects/battle-status.vo";
 
 export class BattleStartOperation {
     constructor(
-        private readonly statusActiveRule: BattleStatusActiveRule,
+        private readonly statusReadyRule: BattleStatusReadyRule,
     ) {
     }
 
@@ -14,7 +14,7 @@ export class BattleStartOperation {
         entity: BattleEntity,
     ): BattleEntity {
 
-        if (!this.statusActiveRule.calculate(entity)) {
+        if (!this.statusReadyRule.calculate(entity)) {
             throw new Error("Cannot start battle: battle is not active");
         }
 

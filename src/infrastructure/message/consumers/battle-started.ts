@@ -11,8 +11,10 @@ export class BattleStartedConsumer implements UseCaseInterface<battleProto.Battl
     }
 
     async execute(topic: string, partition: number, message: battleProto.BattleObject): Promise<void> {
+        logger.log(message);
         try {
             const battle = BattleProtoMapper.toDomain(message);
+            logger.log(battle);
             await this.battleService.start(battle);
         } catch (error) {
             logger.error(`[Kafka] Failed to process message`, {
