@@ -13,6 +13,7 @@ import BattleWinRule from "./rules/battle-win.rule";
 import BattleStartOperation from "./operations/battle-start.operation";
 import BattleStatusReadyRule from "./rules/battle-status-ready.rule";
 import logger from "@shared/logger";
+import ProfileId from "../profile/value-objects/profile-id.vo";
 
 const cellRule = new BattleCellRule();
 const turnRule = new BattleTurnRule();
@@ -60,7 +61,7 @@ export class BattleDomain {
         return leaveOperation.execute(this.entity, leave);
     }
 
-    turn(): BattleId {
+    turn(): ProfileId {
         return turnRule.calculate(this.entity);
     }
 }
