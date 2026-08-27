@@ -1,18 +1,18 @@
 import * as battleProto from "../../../../contracts/proto/battle";
-import CellValueProtoMapper from "./cell-value.proto.mapper";
+import BattleCellValueProtoMapper from "./battle-cell-value.proto.mapper";
 import BattleBoard from "../../../../domain/battle/value-objects/battle-board.vo";
 
-export class BoardProtoMapper {
+export class BattleBoardProtoMapper {
 
     static toProto(board: BattleBoard): battleProto.BattleCellValue[] {
-        return board.cells.map(CellValueProtoMapper.toProto);
+        return board.cells.map(BattleCellValueProtoMapper.toProto);
     }
 
     static toDomain(
         cells: readonly battleProto.BattleCellValue[],
     ): BattleBoard {
-        return new BattleBoard(cells.map(CellValueProtoMapper.toDomain));
+        return new BattleBoard(cells.map(BattleCellValueProtoMapper.toDomain));
     }
 }
 
-export default BoardProtoMapper;
+export default BattleBoardProtoMapper;

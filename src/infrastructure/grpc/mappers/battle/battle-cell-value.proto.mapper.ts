@@ -1,7 +1,7 @@
 import * as battleProto from "../../../../contracts/proto/battle";
 import BattleCellValueEnum from "../../../../domain/battle/enums/battle-cell-value.enum";
 
-export class CellValueProtoMapper {
+export class BattleCellValueProtoMapper {
 
     static toProto(cell: BattleCellValueEnum): battleProto.BattleCellValue {
         switch (cell) {
@@ -33,4 +33,4 @@ export class CellValueProtoMapper {
 
 }
 
-export default CellValueProtoMapper;
+export default BattleCellValueProtoMapper;
