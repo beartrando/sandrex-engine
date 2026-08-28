@@ -14,6 +14,8 @@ import BattleStartOperation from "./operations/battle-start.operation";
 import BattleStatusReadyRule from "./rules/battle-status-ready.rule";
 import logger from "@shared/logger";
 import ProfileId from "../profile/value-objects/profile-id.vo";
+import BattleStatusEnum from "./enums/battle-status.enum";
+import BattleStatus from "./value-objects/battle-status.vo";
 
 const cellRule = new BattleCellRule();
 const turnRule = new BattleTurnRule();
@@ -53,7 +55,10 @@ export class BattleDomain {
     }
 
     start(): BattleEntity {
-        return startOperation.execute(this.entity);
+        if (this.entity.status.equals(BattleStatus.create(BattleStatusEnum.Ready))) {
+            return startOperation.execute(this.entity);
+        }
+        return this.entity;
     }
 
     leave(leave: BattleLeave): BattleEntity {

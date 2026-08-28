@@ -52,6 +52,16 @@ export class BattleService {
     async start(battleEntity: BattleEntity): Promise<void> {
 
         // logger.log(battleEntity);
+
+        const cachedBattle = await this.battleStateStore.get(battleEntity.id);
+
+        if (cachedBattle) {
+            const battle = BattleProtoMapper.toProto(cachedBattle);
+            const resp = engineProto.BattleResponse.create({battle})
+            this.engineStreamContainer.write(resp);
+            return;
+        }
+
         const battle = this.battleStartUseCase.execute(battleEntity);
 
         await this.battleStateStore.set(battle);
