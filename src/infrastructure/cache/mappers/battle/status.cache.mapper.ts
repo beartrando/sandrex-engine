@@ -9,8 +9,8 @@ export class StatusCacheMapper {
 
     static toDomain(status: string): BattleStatus {
         switch (status) {
-            case BattleStatusEnum.New:
-                return new BattleStatus(BattleStatusEnum.New);
+            case BattleStatusEnum.Created:
+                return new BattleStatus(BattleStatusEnum.Created);
             case BattleStatusEnum.Ready:
                 return new BattleStatus(BattleStatusEnum.Ready);
             case BattleStatusEnum.Active:
