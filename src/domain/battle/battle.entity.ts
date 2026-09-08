@@ -10,9 +10,10 @@ import ProfileId from "../profile/value-objects/profile-id.vo";
 export type BattleEntityProps = {
     id: BattleId;
     playerIds: BattlePlayerIds;
+    approvals?: BattlePlayerApprovals;
     board?: BattleBoard;
     status?: BattleStatus;
-    winnerId?: BattleId | null;
+    winnerId?: ProfileId | null;
     lastMoveAt?: Date | null;
 };
 
@@ -20,6 +21,7 @@ export class BattleEntity {
     constructor(
         readonly id: BattleId,
         readonly playerIds: BattlePlayerIds,
+        public approvals?: BattlePlayerApprovals;
         public board: BattleBoard,
         public status: BattleStatus,
         public winnerId: ProfileId | null,
@@ -31,6 +33,7 @@ export class BattleEntity {
         return new BattleEntity(
             props.id,
             props.playerIds,
+            props.approvals,
             props.board ?? BattleBoard.empty(),
             props.status ?? new BattleStatus(BattleStatusEnum.Created),
             props.winnerId ?? null,
