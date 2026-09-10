@@ -10,7 +10,13 @@ export class BattlePlayerApprovals {
     }
 
     approve(profileId: ProfileId): BattlePlayerApprovals {
-        this.approvals.set(profileId, true);
+        const existingProfileId = [...this.approvals.keys()].find(
+            id => id.equals(profileId),
+        );
+
+        if (existingProfileId) {
+            this.approvals.set(existingProfileId, true);
+        }
 
         return this;
     }

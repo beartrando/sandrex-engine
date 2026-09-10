@@ -14,7 +14,7 @@ import BattleStatusReadyRule from "./rules/battle-status-ready.rule";
 import logger from "@shared/logger";
 import ProfileId from "../profile/value-objects/profile-id.vo";
 import BattleStart from "./value-objects/battle-start.vo";
-import BattleApprovedRule from "./rules/battle-approved.rule";
+import BattleStartApprovedRule from "./rules/battle-start-approved.rule";
 import BattleStartOperation from "./operations/battle-start.operation";
 import BattleStatusStartedRule from "./rules/battle-status-started.rule";
 import BattleStatusEnum from "./enums/battle-status.enum";
@@ -24,12 +24,12 @@ const cellRule = new BattleCellRule();
 const turnRule = new BattleTurnRule();
 const winRule = new BattleWinRule();
 const drawRule = new BattleDrawRule();
-const statusReadyRule = new BattleStatusReadyRule();
-const statusStartedRule = new BattleStatusStartedRule();
-const battleApprovedRule = new BattleApprovedRule();
+const battleStatusReadyRule = new BattleStatusReadyRule();
+const battleStatusStartedRule = new BattleStatusStartedRule();
+const battleApprovedRule = new BattleStartApprovedRule();
 
 const moveOperation = new BattleMoveOperation(
-    statusStartedRule,
+    battleStatusStartedRule,
     cellRule,
     turnRule,
     winRule,
@@ -41,12 +41,12 @@ const leaveOperation = new BattleLeaveOperation(
 );
 
 const startOperation = new BattleStartOperation(
+    battleStatusReadyRule,
     battleApprovedRule,
-    statusReadyRule,
 );
 
 const createOperation = new BattleCreateOperation(
-    statusReadyRule,
+    battleStatusReadyRule,
 );
 
 export class BattleDomain {

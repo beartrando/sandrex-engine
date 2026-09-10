@@ -25,19 +25,19 @@ export class EngineHandler {
             call.on("data", async (event: engineProto.BattleRequest) => {
                 try {
                     if (event.create) {
-                        logger.log(event);
+                        // logger.log(event);
                         const battleEntity: BattleEntity = BattleProtoMapper.toDomain(event.create);
                         await this.battleService.create(battleEntity);
                     } else if (event.start) {
-                        logger.log(event);
+                        // logger.log(event);
                         const battleStart = BattleStartProtoMapper.toDomain(event.start);
                         await this.battleService.start(battleStart);
                     } else if (event.move) {
-                        logger.log(event);
+                        // logger.log(event);
                         const battleMove = BattleMoveProtoMapper.toDomain(event.move);
                         await this.battleService.move(battleMove);
                     } else if (event.leave) {
-                        logger.log(event);
+                        // logger.log(event);
                         const battleLeave = BattleLeaveProtoMapper.toDomain(event.leave);
                         await this.battleService.leave(battleLeave);
                     } else if (event.ping) {

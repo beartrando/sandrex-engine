@@ -2,14 +2,14 @@ import BattleEntity from "../battle.entity";
 import BattleStatusEnum from "../enums/battle-status.enum";
 import BattleStatus from "../value-objects/battle-status.vo";
 import BattleStart from "../value-objects/battle-start.vo";
-import BattleApprovedRule from "../rules/battle-approved.rule";
+import BattleStartApprovedRule from "../rules/battle-start-approved.rule";
 import BattleStatusReadyRule from "../rules/battle-status-ready.rule";
 import logger from "@shared/logger";
 
 export class BattleStartOperation {
     constructor(
         private readonly statusReadyRule: BattleStatusReadyRule,
-        private readonly approvedRule: BattleApprovedRule,
+        private readonly startApprovedRule: BattleStartApprovedRule,
     ) {
     }
 
@@ -23,10 +23,15 @@ export class BattleStartOperation {
             throw new Error("Cannot start battle: battle is not ready");
         }
 
+        // logger.log('here')
+
         battleEntity.approvals.approve(battleStart.profileId);
-        if (this.approvedRule.calculate(battleEntity)) {
+        if (this.startApprovedRule.calculate(battleEntity)) {
+            // logger.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11')
             return battleEntity.start();
         }
+
+        // logger.log(battleEntity)
 
         return battleEntity;
 
