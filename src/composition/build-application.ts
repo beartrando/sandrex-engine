@@ -5,7 +5,7 @@ import LivezUseCase from "../application/use-cases/health/livez";
 import ReadyzUseCase from "../application/use-cases/health/readyz";
 import StatusUseCase from "../application/use-cases/health/status";
 
-import BattleStartUseCase from "../application/use-cases/engine/battle-start";
+import BattleCreateUseCase from "../application/use-cases/engine/battle-init";
 import BattleMoveUseCase from "../application/use-cases/engine/battle-move";
 import BattleLeaveUseCase from "../application/use-cases/engine/battle-leave";
 
@@ -31,7 +31,7 @@ import jobConfig from "../infrastructure/job/job.config";
 import MessageService from "../infrastructure/message/service";
 import messageConfig from "../infrastructure/message/configs/message.config";
 import messageConsumersConfig from "../infrastructure/message/configs/consumers.config";
-import BattleStartedConsumer from "../infrastructure/message/consumers/battle-started";
+import BattleCreatedConsumer from "../infrastructure/message/consumers/battle-created";
 import messageProducersConfig from "../infrastructure/message/configs/producers.config";
 
 import TimerService from "../infrastructure/timer/service";
@@ -42,6 +42,9 @@ import BattleEntity from "../domain/battle/battle.entity";
 import BattleService from "../infrastructure/battle/service";
 import EngineStreamContainer from "../infrastructure/grpc/streams/engine.stream.container";
 import BattleId from "../domain/battle/value-objects/battle-id.vo";
+import BattleTimeoutUseCase from "../application/use-cases/engine/battle-timeout";
+import BattleStartUseCase from "../application/use-cases/engine/battle-start";
+import BattleStatusStartedRule from "../domain/battle/rules/battle-status-started.rule";
 
 
 function buildApplication() {
@@ -58,6 +61,8 @@ function buildApplication() {
         messageConfig,
         messageProducersConfig,
     );
+
+    const battleStatusStartedRule = new BattleStatusStartedRule();
 
     // Cache stores
     const battleCacheStore = new CacheStore(
@@ -84,25 +89,37 @@ function buildApplication() {
     );
 
     // Battle use cases
-    const battleStartUseCase = new BattleStartUseCase();
 
-    const battleMoveUseCase = new BattleMoveUseCase();
+    const battleCreateUseCase = new BattleCreateUseCase(battleStateStore);
 
-    const battleLeaveUseCase = new BattleLeaveUseCase();
+    const battleMoveUseCase = new BattleMoveUseCase(battleStateStore);
+
+    const battleStartUseCase = new BattleStartUseCase(battleStateStore);
+
+    const battleLeaveUseCase = new BattleLeaveUseCase(battleStateStore);
+
+    const battleTimeoutUseCase = new BattleTimeoutUseCase(
+        battleStateStore,
+        battleLeaveUseCase,
+        battleStatusStartedRule
+    );
 
     const engineStreamContainer = new EngineStreamContainer();
 
     const battleService = new BattleService(
-        battleStartUseCase,
+        battleTimeoutUseCase,
+        battleCreateUseCase,
         battleMoveUseCase,
+        battleStartUseCase,
         battleLeaveUseCase,
-        battleStateStore,
         timerService,
         jobService,
         engineStreamContainer,
         messageProducersConfig.battleStarted,
         messageProducersConfig.battleUpdated,
-        messageProducersConfig.battleFinished,
+        messageProducersConfig.battleTerminated,
+        domainBattleConfig.battleTurnTimeLimit,
+        domainBattleConfig.battleStartTimeLimit,
     );
 
 
@@ -125,7 +142,7 @@ function buildApplication() {
     );
 
     // Message consumers
-    const battleStartedConsumer = new BattleStartedConsumer(
+    const battleCreatedConsumer = new BattleCreatedConsumer(
         battleService
     );
 
@@ -135,8 +152,8 @@ function buildApplication() {
     );
 
     messageService.addConsumer(
-        messageConsumersConfig.battleUpdated,
-        battleStartedConsumer.execute.bind(battleStartedConsumer),
+        messageConsumersConfig.battleCreated,
+        battleCreatedConsumer.execute.bind(battleCreatedConsumer),
     );
 
     // Health

@@ -1,4 +1,5 @@
 import ProfileId from "../../profile/value-objects/profile-id.vo";
+import BattlePlayerIds from "./battle-player-ids.vo";
 
 export type BattlePlayerApprovalsProps = Map<ProfileId, boolean>;
 
@@ -18,9 +19,14 @@ export class BattlePlayerApprovals {
         return this.approvals.get(profileId) ?? false;
     }
 
-    allApproved(): boolean {
-        return [...this.approvals.values()].every(Boolean);
+    static empty(playerIds: BattlePlayerIds): BattlePlayerApprovals {
+        return new BattlePlayerApprovals(
+            new Map(
+                playerIds.value.map((profileId: ProfileId) => [profileId, false]),
+            ),
+        );
     }
+
 }
 
 export default BattlePlayerApprovals;

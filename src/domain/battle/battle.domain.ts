@@ -1,7 +1,6 @@
 import BattleEntity from "./battle.entity";
 import BattleMove from "./value-objects/battle-move.vo";
 import BattleLeave from "./value-objects/battle-leave.vo";
-import BattleId from "./value-objects/battle-id.vo";
 
 import BattleMoveOperation from "./operations/battle-move.operation";
 import BattleLeaveOperation from "./operations/battle-leave.operation";
@@ -10,10 +9,14 @@ import BattleCellRule from "./rules/battle-cell.rule";
 import BattleDrawRule from "./rules/battle-draw.rule";
 import BattleTurnRule from "./rules/battle-turn.rule";
 import BattleWinRule from "./rules/battle-win.rule";
-import BattleStartOperation from "./operations/battle-start.operation";
+import BattleCreateOperation from "./operations/battle-init.operation";
 import BattleStatusReadyRule from "./rules/battle-status-ready.rule";
 import logger from "@shared/logger";
 import ProfileId from "../profile/value-objects/profile-id.vo";
+import BattleStart from "./value-objects/battle-start.vo";
+import BattleApprovedRule from "./rules/battle-approved.rule";
+import BattleStartOperation from "./operations/battle-start.operation";
+import BattleStatusStartedRule from "./rules/battle-status-started.rule";
 import BattleStatusEnum from "./enums/battle-status.enum";
 import BattleStatus from "./value-objects/battle-status.vo";
 
@@ -21,9 +24,12 @@ const cellRule = new BattleCellRule();
 const turnRule = new BattleTurnRule();
 const winRule = new BattleWinRule();
 const drawRule = new BattleDrawRule();
-const statusActiveRule = new BattleStatusReadyRule();
+const statusReadyRule = new BattleStatusReadyRule();
+const statusStartedRule = new BattleStatusStartedRule();
+const battleApprovedRule = new BattleApprovedRule();
 
 const moveOperation = new BattleMoveOperation(
+    statusStartedRule,
     cellRule,
     turnRule,
     winRule,
@@ -35,7 +41,12 @@ const leaveOperation = new BattleLeaveOperation(
 );
 
 const startOperation = new BattleStartOperation(
-    statusActiveRule,
+    battleApprovedRule,
+    statusReadyRule,
+);
+
+const createOperation = new BattleCreateOperation(
+    statusReadyRule,
 );
 
 export class BattleDomain {
@@ -54,11 +65,8 @@ export class BattleDomain {
         return moveOperation.execute(this.entity, move);
     }
 
-    start(): BattleEntity {
-        if (this.entity.status.equals(BattleStatus.create(BattleStatusEnum.Ready))) {
-            return startOperation.execute(this.entity);
-        }
-        return this.entity;
+    init(): BattleEntity {
+        return createOperation.execute(this.entity);
     }
 
     leave(leave: BattleLeave): BattleEntity {
@@ -68,6 +76,15 @@ export class BattleDomain {
 
     turn(): ProfileId {
         return turnRule.calculate(this.entity);
+    }
+
+    start(start: BattleStart): BattleEntity {
+        return startOperation.execute(this.entity, start);
+    }
+
+    cancel(): BattleEntity {
+        this.entity.status = BattleStatus.create(BattleStatusEnum.Cancelled);
+        return this.entity;
     }
 }
 

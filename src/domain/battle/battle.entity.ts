@@ -1,10 +1,10 @@
 import BattleBoard from "./value-objects/battle-board.vo";
 import BattlePlayerIds from "./value-objects/battle-player-ids.vo";
+import BattlePlayerApprovals from "./value-objects/battle-player-approvals.vo";
 import BattleStatus from "./value-objects/battle-status.vo";
 import BattleStatusEnum from "./enums/battle-status.enum";
 import BattleMove from "./value-objects/battle-move.vo";
 import BattleId from "../battle/value-objects/battle-id.vo";
-import logger from "@shared/logger";
 import ProfileId from "../profile/value-objects/profile-id.vo";
 
 export type BattleEntityProps = {
@@ -21,7 +21,7 @@ export class BattleEntity {
     constructor(
         readonly id: BattleId,
         readonly playerIds: BattlePlayerIds,
-        public approvals?: BattlePlayerApprovals;
+        public approvals: BattlePlayerApprovals,
         public board: BattleBoard,
         public status: BattleStatus,
         public winnerId: ProfileId | null,
@@ -33,12 +33,22 @@ export class BattleEntity {
         return new BattleEntity(
             props.id,
             props.playerIds,
-            props.approvals,
+            props.approvals ?? BattlePlayerApprovals.empty(props.playerIds),
             props.board ?? BattleBoard.empty(),
             props.status ?? new BattleStatus(BattleStatusEnum.Created),
             props.winnerId ?? null,
             props.lastMoveAt ?? null,
         );
+    }
+
+    approve(profileId: ProfileId): BattleEntity {
+        this.approvals.approve(profileId);
+
+        return this;
+    }
+
+    isApproved(profileId: ProfileId): boolean {
+        return this.approvals.isApproved(profileId);
     }
 
     move(move: BattleMove): BattleEntity {
@@ -70,6 +80,11 @@ export class BattleEntity {
             this.winnerId = playerId;
         }
 
+        return this;
+    }
+
+    start(): BattleEntity {
+        this.status = BattleStatus.create(BattleStatusEnum.Started);
         return this;
     }
 }

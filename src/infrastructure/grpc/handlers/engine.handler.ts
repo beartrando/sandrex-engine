@@ -3,11 +3,12 @@ import * as emptyProto from '../../../contracts/proto/common/empty';
 import logger from "@shared/logger";
 import BattleEntity from "../../../domain/battle/battle.entity";
 import BattleProtoMapper from "../mappers/battle.proto.mapper";
-import BattleMoveRedisMapper from "../mappers/battle-move.proto.mapper";
-import BattleLeaveRedisMapper from "../mappers/battle-leave.proto.mapper";
+import BattleMoveProtoMapper from "../mappers/battle-move.proto.mapper";
+import BattleLeaveProtoMapper from "../mappers/battle-leave.proto.mapper";
 import EngineStream from "../types/engine.stream";
 import EngineStreamContainer from "../streams/engine.stream.container";
 import BattleService from "../../battle/service";
+import BattleStartProtoMapper from "../mappers/battle-start-proto.mapper";
 
 
 export class EngineHandler {
@@ -23,14 +24,21 @@ export class EngineHandler {
             // слушаем входящие события от Streaming
             call.on("data", async (event: engineProto.BattleRequest) => {
                 try {
-                    if (event.start) {
-                        const battleEntity: BattleEntity = BattleProtoMapper.toDomain(event.start);
-                        await this.battleService.start(battleEntity);
+                    if (event.create) {
+                        logger.log(event);
+                        const battleEntity: BattleEntity = BattleProtoMapper.toDomain(event.create);
+                        await this.battleService.create(battleEntity);
+                    } else if (event.start) {
+                        logger.log(event);
+                        const battleStart = BattleStartProtoMapper.toDomain(event.start);
+                        await this.battleService.start(battleStart);
                     } else if (event.move) {
-                        const battleMove = BattleMoveRedisMapper.toDomain(event.move);
+                        logger.log(event);
+                        const battleMove = BattleMoveProtoMapper.toDomain(event.move);
                         await this.battleService.move(battleMove);
                     } else if (event.leave) {
-                        const battleLeave = BattleLeaveRedisMapper.toDomain(event.leave);
+                        logger.log(event);
+                        const battleLeave = BattleLeaveProtoMapper.toDomain(event.leave);
                         await this.battleService.leave(battleLeave);
                     } else if (event.ping) {
                         // logger.info('Streaming-engine stream Ping');
@@ -66,5 +74,6 @@ export class EngineHandler {
 }
 
 export default EngineHandler;
+
 
 

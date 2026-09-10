@@ -1,14 +1,15 @@
 import BattleId from "./battle-id.vo";
+import ProfileId from "../../profile/value-objects/profile-id.vo";
 
 export type LeaveProps = {
     battleId: BattleId;
-    profileId: BattleId;
+    profileId: ProfileId;
 };
 
 export class BattleLeave {
     public constructor(
         public readonly battleId: BattleId,
-        public readonly profileId: BattleId,
+        public readonly profileId: ProfileId,
     ) {
     }
 

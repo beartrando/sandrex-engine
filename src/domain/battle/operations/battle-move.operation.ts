@@ -5,10 +5,12 @@ import BattleCellRule from "../rules/battle-cell.rule";
 import BattleDrawRule from "../rules/battle-draw.rule";
 import BattleTurnRule from "../rules/battle-turn.rule";
 import BattleWinRule from "../rules/battle-win.rule";
-import logger from "@shared/logger";
+import BattleStatusEnum from "../enums/battle-status.enum";
+import BattleStatusStartedRule from "../rules/battle-status-started.rule";
 
 export class BattleMoveOperation {
     constructor(
+        private readonly battleStatusStartedRule: BattleStatusStartedRule,
         private readonly cellRule: BattleCellRule,
         private readonly turnRule: BattleTurnRule,
         private readonly winRule: BattleWinRule,
@@ -23,6 +25,10 @@ export class BattleMoveOperation {
         const playerId = move.profileId;
 
         const turnPlayerId = this.turnRule.calculate(entity);
+
+        if (!this.battleStatusStartedRule.calculate(entity)) {
+            throw new Error("Battle is not started");
+        }
 
         if (!playerId.equals(turnPlayerId)) {
             throw new Error("Cannot move battle: not your turn");

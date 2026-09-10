@@ -1,14 +1,29 @@
 import BattleEntity from "../../../domain/battle/battle.entity";
 import BattleDomain from "../../../domain/battle/battle.domain";
+import CachedIdStateStoreInterface
+    from "../../../infrastructure/state-store/interfaces/cached-id-state-store.interface";
+import logger from "@shared/logger";
+import BattleStart from "../../../domain/battle/value-objects/battle-start.vo";
 
 export class BattleStartUseCase {
-    constructor() {
+    constructor(
+        private readonly battleStateStore: CachedIdStateStoreInterface<BattleEntity>,
+    ) {
     }
 
-    execute(battle: BattleEntity): BattleEntity {
-        const battleDomain = BattleDomain.of(battle);
+    async execute(battleStart: BattleStart): Promise<BattleEntity | null> {
+        const battleEntity = await this.battleStateStore.get(battleStart.battleId);
 
-        return battleDomain.start();
+        if (!battleEntity) {
+            logger.warn('battle does not exist')
+            return null;
+        }
+
+        const battleDomain = BattleDomain.of(battleEntity);
+        const resultBattle = battleDomain.start(battleStart);
+
+        await this.battleStateStore.set(resultBattle);
+        return resultBattle;
     }
 }
 

@@ -13,10 +13,12 @@ export class StatusCacheMapper {
                 return new BattleStatus(BattleStatusEnum.Created);
             case BattleStatusEnum.Ready:
                 return new BattleStatus(BattleStatusEnum.Ready);
-            case BattleStatusEnum.Active:
-                return new BattleStatus(BattleStatusEnum.Active);
+            case BattleStatusEnum.Started:
+                return new BattleStatus(BattleStatusEnum.Started);
             case BattleStatusEnum.Finished:
                 return new BattleStatus(BattleStatusEnum.Finished);
+            case BattleStatusEnum.Cancelled:
+                return new BattleStatus(BattleStatusEnum.Cancelled);
             default:
                 return new BattleStatus(BattleStatusEnum.Unknown);
         }

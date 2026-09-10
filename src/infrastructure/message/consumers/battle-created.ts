@@ -4,7 +4,7 @@ import logger from "@shared/logger";
 import UseCaseInterface from "../interfaces/use-case.interface";
 import BattleService from "../../battle/service";
 
-export class BattleStartedConsumer implements UseCaseInterface<battleProto.BattleObject> {
+export class BattleCreatedConsumer implements UseCaseInterface<battleProto.BattleObject> {
     constructor(
         private readonly battleService: BattleService,
     ) {
@@ -15,7 +15,7 @@ export class BattleStartedConsumer implements UseCaseInterface<battleProto.Battl
         try {
             const battle = BattleProtoMapper.toDomain(message);
             logger.log(battle);
-            await this.battleService.start(battle);
+            await this.battleService.create(battle);
         } catch (error) {
             logger.error(`[Kafka] Failed to process message`, {
                 rawValue: message.id,
@@ -26,5 +26,5 @@ export class BattleStartedConsumer implements UseCaseInterface<battleProto.Battl
 
 }
 
-export default BattleStartedConsumer;
+export default BattleCreatedConsumer;
 
