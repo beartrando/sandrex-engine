@@ -152,7 +152,7 @@ function buildApplication() {
     );
 
     messageService.addConsumer(
-        messageConsumersConfig.battleCreated,
+        messageConsumersConfig.battleMatched,
         battleCreatedConsumer.execute.bind(battleCreatedConsumer),
     );
 

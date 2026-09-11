@@ -11,6 +11,8 @@ export class StatusCacheMapper {
         switch (status) {
             case BattleStatusEnum.Created:
                 return new BattleStatus(BattleStatusEnum.Created);
+            case BattleStatusEnum.Matched:
+                return new BattleStatus(BattleStatusEnum.Matched);
             case BattleStatusEnum.Ready:
                 return new BattleStatus(BattleStatusEnum.Ready);
             case BattleStatusEnum.Started:

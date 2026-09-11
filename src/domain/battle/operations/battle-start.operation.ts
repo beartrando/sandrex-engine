@@ -3,12 +3,12 @@ import BattleStatusEnum from "../enums/battle-status.enum";
 import BattleStatus from "../value-objects/battle-status.vo";
 import BattleStart from "../value-objects/battle-start.vo";
 import BattleStartApprovedRule from "../rules/battle-start-approved.rule";
-import BattleStatusReadyRule from "../rules/battle-status-ready.rule";
+import BattleStatusMatchedRule from "../rules/battle-status-matched.rule";
 import logger from "@shared/logger";
 
 export class BattleStartOperation {
     constructor(
-        private readonly statusReadyRule: BattleStatusReadyRule,
+        private readonly statusReadyRule: BattleStatusMatchedRule,
         private readonly startApprovedRule: BattleStartApprovedRule,
     ) {
     }

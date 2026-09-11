@@ -2,6 +2,7 @@ import BattleEntity from "../../../domain/battle/battle.entity";
 import BattleDomain from "../../../domain/battle/battle.domain";
 import CachedIdStateStoreInterface
     from "../../../infrastructure/state-store/interfaces/cached-id-state-store.interface";
+import logger from "@shared/logger";
 
 export class BattleCreateUseCase {
     constructor(
@@ -15,6 +16,7 @@ export class BattleCreateUseCase {
         const battleEntity = await this.battleStateStore.get(battle.id);
 
         if (battleEntity) {
+            logger.log(battleEntity);
             return battleEntity;
         }
 
@@ -24,6 +26,7 @@ export class BattleCreateUseCase {
 
         await this.battleStateStore.set(resultBattle);
 
+        logger.log(resultBattle);
         return resultBattle;
     }
 }

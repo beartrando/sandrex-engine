@@ -11,6 +11,7 @@ import BattleTurnRule from "./rules/battle-turn.rule";
 import BattleWinRule from "./rules/battle-win.rule";
 import BattleCreateOperation from "./operations/battle-init.operation";
 import BattleStatusReadyRule from "./rules/battle-status-ready.rule";
+import BattleStatusMatchedRule from "./rules/battle-status-matched.rule";
 import logger from "@shared/logger";
 import ProfileId from "../profile/value-objects/profile-id.vo";
 import BattleStart from "./value-objects/battle-start.vo";
@@ -25,6 +26,7 @@ const turnRule = new BattleTurnRule();
 const winRule = new BattleWinRule();
 const drawRule = new BattleDrawRule();
 const battleStatusReadyRule = new BattleStatusReadyRule();
+const battleStatusMatchedRule = new BattleStatusMatchedRule();
 const battleStatusStartedRule = new BattleStatusStartedRule();
 const battleApprovedRule = new BattleStartApprovedRule();
 
@@ -46,7 +48,7 @@ const startOperation = new BattleStartOperation(
 );
 
 const createOperation = new BattleCreateOperation(
-    battleStatusReadyRule,
+    battleStatusMatchedRule,
 );
 
 export class BattleDomain {

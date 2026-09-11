@@ -1,12 +1,12 @@
 import BattleEntity from "../battle.entity";
 import BattleBoard from "../value-objects/battle-board.vo";
-import BattleStatusReadyRule from "../rules/battle-status-ready.rule";
+import BattleStatusMatchedRule from "../rules/battle-status-matched.rule";
 import BattleStatusEnum from "../enums/battle-status.enum";
 import BattleStatus from "../value-objects/battle-status.vo";
 
 export class BattleInitOperation {
     constructor(
-        private readonly statusReadyRule: BattleStatusReadyRule,
+        private readonly statusMatchedRule: BattleStatusMatchedRule,
     ) {
     }
 
@@ -14,8 +14,8 @@ export class BattleInitOperation {
         entity: BattleEntity,
     ): BattleEntity {
 
-        if (!this.statusReadyRule.calculate(entity)) {
-            throw new Error("Cannot init battle: battle is not ready");
+        if (!this.statusMatchedRule.calculate(entity)) {
+            throw new Error("Cannot init battle: battle is not matched status");
         }
 
         // logger.log('New engine started', engine)
