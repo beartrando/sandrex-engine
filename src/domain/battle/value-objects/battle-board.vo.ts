@@ -25,6 +25,12 @@ export class BattleBoard {
         );
     }
 
+    isEmpty(): boolean {
+        return this.cells.every(
+            cell => cell === BattleCellValueEnum.EMPTY,
+        );
+    }
+
     move(
         cellIndex: number,
         value: BattleCellValueEnum,

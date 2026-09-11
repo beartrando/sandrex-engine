@@ -26,7 +26,7 @@ export class BattleTimeoutUseCase {
             return null;
         }
 
-        if (this.battleStatusStartedRule.calculate(exports)) {
+        if (this.battleStatusStartedRule.calculate(battleEntity) && !battleEntity.board.isEmpty()) {
             const profileId = BattleDomain.of(battleEntity).turn();
 
             const battleLeave = BattleLeave.create({battleId, profileId});
@@ -35,7 +35,6 @@ export class BattleTimeoutUseCase {
 
             return resultBattle;
         }
-
         const battleDomain = BattleDomain.of(battleEntity);
         const resultBattle = battleDomain.cancel();
         await this.battleStateStore.delete(resultBattle.id);
