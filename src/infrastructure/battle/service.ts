@@ -37,7 +37,7 @@ export class BattleService {
 
     async timeout(battleId: BattleId): Promise<void> {
         const battleEntity = await this.battleTimeoutUseCase.execute(battleId);
-        if(battleEntity) {
+        if (battleEntity) {
             const battleObject = BattleProtoMapper.toProto(battleEntity);
 
             this.jobService.enqueue(this.topicBattleUpdated, battleObject);
@@ -45,7 +45,11 @@ export class BattleService {
             const resp = engineProto.BattleResponse.create({battle: battleObject})
             // logger.log(resp);
 
-            this.engineStreamContainer.write(resp);
+            try {
+                this.engineStreamContainer.write(resp);
+            } catch (err) {
+                logger.warn({err});
+            }
         } else {
             this.jobService.enqueue(this.topicBattleTerminated, battleId);
         }

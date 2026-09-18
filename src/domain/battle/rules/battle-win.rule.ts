@@ -29,8 +29,8 @@ export class BattleWinRule {
             );
         });
 
-        logger.log(entity);
-        logger.log(result);
+        // logger.log(entity);
+        // logger.log(result);
 
         return result;
     }
