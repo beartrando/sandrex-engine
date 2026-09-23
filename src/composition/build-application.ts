@@ -31,7 +31,7 @@ import jobConfig from "../infrastructure/job/job.config";
 import MessageService from "../infrastructure/message/service";
 import messageConfig from "../infrastructure/message/configs/message.config";
 import messageConsumersConfig from "../infrastructure/message/configs/consumers.config";
-import BattleCreatedConsumer from "../infrastructure/message/consumers/battle-created";
+import BattleMatchedConsumer from "../infrastructure/message/consumers/battle-matched.consumer";
 import messageProducersConfig from "../infrastructure/message/configs/producers.config";
 
 import TimerService from "../infrastructure/timer/service";
@@ -142,7 +142,7 @@ function buildApplication() {
     );
 
     // Message consumers
-    const battleCreatedConsumer = new BattleCreatedConsumer(
+    const battleMatchedConsumer = new BattleMatchedConsumer(
         battleService
     );
 
@@ -153,7 +153,7 @@ function buildApplication() {
 
     messageService.addConsumer(
         messageConsumersConfig.battleMatched,
-        battleCreatedConsumer.execute.bind(battleCreatedConsumer),
+        battleMatchedConsumer.execute.bind(battleMatchedConsumer),
     );
 
     // Health

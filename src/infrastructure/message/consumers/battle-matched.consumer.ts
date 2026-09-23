@@ -4,14 +4,14 @@ import logger from "@shared/logger";
 import UseCaseInterface from "../interfaces/use-case.interface";
 import BattleService from "../../battle/service";
 
-export class BattleCreatedConsumer implements UseCaseInterface<battleProto.BattleObject> {
+export class BattleMatchedConsumer implements UseCaseInterface<battleProto.BattleObject> {
     constructor(
         private readonly battleService: BattleService,
     ) {
     }
 
     async execute(topic: string, partition: number, message: battleProto.BattleObject): Promise<void> {
-        // logger.log(message);
+        logger.log(message);
         try {
             const battle = BattleProtoMapper.toDomain(message);
             // logger.log(battle);
@@ -26,5 +26,5 @@ export class BattleCreatedConsumer implements UseCaseInterface<battleProto.Battl
 
 }
 
-export default BattleCreatedConsumer;
+export default BattleMatchedConsumer;
 
