@@ -99,7 +99,7 @@ jobs:
 
       - name: Print payload
         run: |
-          SERVICE_NAME=$(echo "${{ github.event.repository.name }}" | sed 's/^tic-tac-toe-//')
+          SERVICE_NAME=$(echo "${{ github.event.repository.name }}" | sed 's/^sandrex-//')
           
           PAYLOAD=$(cat <<EOF
           {
@@ -120,10 +120,10 @@ jobs:
 
       - name: Trigger monorepo build
         run: |
-          SERVICE_NAME=$(echo "${{ github.event.repository.name }}" | sed 's/^tic-tac-toe-//')
+          SERVICE_NAME=$(echo "${{ github.event.repository.name }}" | sed 's/^sandrex-//')
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GH_PAT }}" \
-            https://api.github.com/repos/beartrando/tic-tac-toe-infra/dispatches \
+            https://api.github.com/repos/beartrando/sandrex-infra/dispatches \
             -d "{\"event_type\":\"service-updated\",\"client_payload\":{\"service\":\"$SERVICE_NAME\",\"repo\":\"${GITHUB_REPOSITORY}\",\"branch\":\"${GITHUB_REF_NAME}\",\"version\":\"${{ needs.determine-version.outputs.version }}\",\"sha\":\"${{ github.sha }}\"}}"
           
